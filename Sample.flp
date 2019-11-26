@@ -1,5 +1,4 @@
-#[A sample program that shows the basic stucture 
-and new syntax for ForteLangPrime]#
+#[A sample program that shows the basic stucture and new syntax for ForteLangPrime]#
 
 {
 
@@ -31,14 +30,12 @@ and new syntax for ForteLangPrime]#
 	## as "extra", by using the ... operator
 	isComplex i<{re<Num>, im<Num>, ...}> -> <Bool> = true;
 
-	#[
-		This example shows the use of set construction, as well as accessing
-		elements from sets. The type signature <{re<Num>, im<Num>, ...}>
-		indicates that the parameter c1 has type that is a set containing 
-		named attributes re and im, which are both of type Num. In addition to that
-		c1 may also contain other members, but these are cannot be accessed
-		within this function
-	]#
+	## This example shows the use of set construction, as well as accessing
+	## elements from sets. The type signature <{re<Num>, im<Num>, ...}>
+	## indicates that the parameter c1 has type that is a set containing 
+	## named attributes re and im, which are both of type Num. In addition to that
+	## c1 may also contain other members, but these are cannot be accessed
+	## within this function
 	addComplex c1<{re<Num>, im<Num>, ...}> -> c2<{re<Num>, im<Num>, ...}> -> <{re<Num>, im<Num>}> =
 		{
 			re <Num> = c1.re + c2.re;
@@ -58,8 +55,18 @@ and new syntax for ForteLangPrime]#
 	exampleMatch set<{...}> -> <Bool> =
 		?= 
 		| {just<a>, ...} ->> true
-		| {nothing<a>, ...} -> false
+		| {nothing<a>, ...} -> false;
 
-	main 
+	## Function composition has a few forms. For example, we have
+	## toString : Num -> String and toCharList : String -> [String]
+	## If we want to convert a number to a [String], we can do
+	## toString, followed by toCharList.
+	toString number<Num> -> <String> = #[ Some implementation ]#;
+	toCharList string<String> -> <[String]> = #[ Some other implementation ]#;
+	numToCharList number<Num> -> <[String]> = toCharList (toString number);
+	numToCharList number<Num> -> <[String]> = toString number |> toCharList;
 
+	## Despite being well typed, ForteLangPrime (similar to ForteLang)
+	## will not have the ability to declare type aliases or custom types.
+	## This design choice is heavily inspired by the Nix expression language.
 }
