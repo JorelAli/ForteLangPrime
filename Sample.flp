@@ -4,8 +4,7 @@
 
 	## Types are declared using the 
 	## < and > operators. List types are 
-	## declared using []. Supports higher
-	## level types similar to System F
+	## declared using [].
 	map function<(a -> b)> -> list<[a]> -> <[b]> =
 
 		## ForteLangPrime, similar to ForteLang doesn't
@@ -16,14 +15,14 @@
 		## ?=, which is declared before the name of the variable
 		## to match on
 		?= list
-		| [] ->> []
-		| ->> [function list] ++ map (tail list) function;
+		| [] => []
+		| => [function list] ++ map (tail list) function;
 
 	## Guards are now handled using the ?: operator
 	## Guards are the only structure (in addition to matching)
 	## that lets you perform conditional statements
 	max i<Num> -> j<Num> -> <Num> =
-		?: | i < j ->> j | ->> i;
+		?: | i < j => j | => i;
 
 	## Set "matching" is performed at the type level. It lets you
 	## require sets with certain attributes and certain types, as well
@@ -54,7 +53,7 @@
 	nothing -> <{nothing<a>}> = { nothing <a> = !!; };
 	exampleMatch set<{...}> -> <Bool> =
 		?= 
-		| {just<a>, ...} ->> true
+		| {just<a>, ...} => true
 		| {nothing<a>, ...} -> false;
 
 	## Function composition has a few forms. For example, we have
