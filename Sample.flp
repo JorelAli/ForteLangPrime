@@ -47,15 +47,6 @@
 	## An example of how the names for unused parameters can be straight up ommitted
 	onlyFirst firstElement<a> -> <b> -> <a> = firstElement;
 
-	## An example of how the "Maybe" type can be implemented
-	## in ForteLangPrime... maybe
-	just element<a> -> <{just<a>}> = { just <a> = element; };
-	nothing -> <{nothing<a>}> = { nothing <a> = !!; };
-	exampleMatch set<{...}> -> <Bool> =
-		?= 
-		| {just<a>, ...} => true
-		| {nothing<a>, ...} -> false;
-
 	## Function composition has a few forms. For example, we have
 	## toString : Num -> String and toCharList : String -> [String]
 	## If we want to convert a number to a [String], we can do
@@ -65,7 +56,8 @@
 	numToCharList number<Num> -> <[String]> = toCharList (toString number);
 	numToCharList number<Num> -> <[String]> = toString number |> toCharList;
 
-	## Despite being well typed, ForteLangPrime (similar to ForteLang)
-	## will not have the ability to declare type aliases or custom types.
-	## This design choice is heavily inspired by the Nix expression language.
+	## Lambda expressions are defined using the similar syntax
+	## from ForteLang, except typed
+	someFunction <[String]> = map (x<Num> -> <String> = toString x) [1, 2, 3];
+
 }
