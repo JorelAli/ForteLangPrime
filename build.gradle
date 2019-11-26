@@ -12,6 +12,12 @@ plugins {
 	id 'ca.coglinc2.javacc' version '3.0.0'
 }
 
+dependencies {
+    implementation 'com.google.guava:guava:26.0-jre'
+    //implementation 'org.ow2.asm:7.2'
+	compile group: 'org.ow2.asm', name: 'asm', version: '7.2'
+}
+
 repositories {
 	jcenter()
 	mavenCentral()
@@ -30,6 +36,6 @@ sourceSets {
 eclipseClasspath.dependsOn("compileJavacc")
 
 compileJavacc {
-     inputDirectory = file('src/javacc')
-     outputDirectory = file('src/javacc')
+     inputDirectory = file('src')
+     outputDirectory = file('src')
 }

@@ -4,8 +4,6 @@ options {
 
 PARSER_BEGIN(ForteLangPrime)
 
-package javacc;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.LinkedHashMap;
@@ -28,6 +26,7 @@ import java.nio.file.Files;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import org.objectweb.asm.*;
 
 public class ForteLangPrime {
 	
@@ -85,9 +84,9 @@ TOKEN : { < NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > }
 SKIP : { "\n" | "\r" | " " | "\t" }
 
 /** Main endpoint */
-Expression input(String input) throws Exception : { Expression expr; } {
+void input(String input) throws Exception : { } {
 	//expr = expr()
 	<EOF>
-	{ return expr; }
+	//{ return expr; }
 }
 
