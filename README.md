@@ -32,6 +32,7 @@ Java is compatible with all operating systems. You write code once and can run i
 - [ ] Set data structure (like Nix)
 - [ ] Doesn't require indentation to declare scope (like Java)
 - [ ] Arbitrary precision numbers (like Python)
+- [ ] Pragmas (like C)
 
 ### Other sneaky features
 
@@ -49,7 +50,6 @@ Java is compatible with all operating systems. You write code once and can run i
 
 - Custom operators
 - Custom types (only type aliases)
-- If statements
 
 -----
 
@@ -77,5 +77,36 @@ Pattern matching is performed using the `?=` operator. `?= expression | case => 
 For example, to check if a list is empty, we pattern match on the variable `list` (which is of type "List of `a`s"). If the list is `[]` (an empty list), then we return `true`. Otherwise, we return `false`.
 ```
 isEmpty list<[a]> -> <Bool> =
-  ?= list | [] => true | => false
+  ?= list 
+  | [] => true 
+  | => false
 ```
+
+### Guards (conditional statements)
+
+Guards are used to handle conditional statements, by using the `?:` operator.
+
+```haskell
+max num1<Num> -> num2<Num> -> <Num> =
+  ?: 
+  | num1 > num2 => num1
+  | => num2
+```
+
+### Pragmas
+
+At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something. I currently don't have a plan on how pragmas will be implemented - I'm thinking of using a Java-based implementation (i.e. you can write pragmas in Java and add your Java program to the ForteLangPrime compiler).
+
+At the moment the following pragmas have been planned:
+
+- `@if` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
+  ```haskell
+  ## Pragmas are defined at the top of a file
+  @if
+  
+  max num1<Num> -> num2<Num> -> <Num> =
+    if num1 > num2 
+      then num1
+    else num2
+  ```
+
