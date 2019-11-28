@@ -119,7 +119,9 @@ The following pragmas have been planned:
 
 ```haskell
 program -> pragmas expression
-pragmas -> pragma pragmas
+pragmas -> 
+  | pragma pragmas
+  | EPSILON
 pragma -> @PRAGMA_IDENT
 
 expression ->
