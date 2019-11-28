@@ -53,9 +53,9 @@ Java is compatible with all operating systems. You write code once and can run i
 
 -----
 
-## Syntax (preview)
+# Syntax (preview)
 
-### Record updating
+## Record updating
 
 ForteLangPrime's record updating will primarily be inspired using ForteLang's set operators. ForteLang provides the following extra operators that perform set operations:
 
@@ -70,7 +70,7 @@ Hence, updating a record is simply performing a union of a set with a set of cer
 { x = 3; } /+ { x = 4; } ## { x = 4; }
 ```
 
-### Pattern matching
+## Pattern matching
 
 Pattern matching is performed using the `?=` operator. `?= expression | case => result | ... | => result`
 
@@ -82,7 +82,7 @@ isEmpty list<[a]> -> <Bool> =
   | => false
 ```
 
-### Guards (conditional statements)
+## Guards (conditional statements)
 
 Guards are used to handle conditional statements, by using the `?:` operator.
 
@@ -93,7 +93,7 @@ max num1<Num> -> num2<Num> -> <Num> =
   | => num2
 ```
 
-### Pragmas
+## Pragmas
 
 At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something. I currently don't have a plan on how pragmas will be implemented - I'm thinking of using a Java-based implementation (i.e. you can write pragmas in Java and add your Java program to the ForteLangPrime compiler).
 
@@ -110,3 +110,38 @@ At the moment the following pragmas have been planned:
     else num2
   ```
 
+-----
+
+# Grammar
+
+```
+program -> pragmas expression
+pragmas -> pragma pragmas
+pragma -> @PRAGMA_IDENT
+
+expression ->
+  | guards
+  | match
+  | set
+  | list
+  | string
+  | 
+  
+string -> '"' STRING '"'  
+  
+list -> '[' listContents ']'
+listContents -> 
+  | listElements
+  | EPSILON
+listElements -> 
+  | expression ',' listElements
+  | expression
+
+match -> '?=' expression matchStatements '|' '=>' expression
+matchExpressions -> matchExpression matchExpressions | EPSILON
+matchExpression -> '|' expression '=>' expression
+  
+guards -> '?:' innerGuards '|' '=>' expression
+innerGuards -> guard innerGuards | EPSILON
+guard -> '|' expression '=>' expression
+```
