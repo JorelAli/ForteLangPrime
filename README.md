@@ -132,8 +132,18 @@ expression ->
   | string
   | number
   
+
+  
 number -> [0-9]+(.[0-9]+)?
 string -> '"' STRING '"'  
+
+set -> '{' setDeclarations '}'
+setDeclarations ->
+  | setElements
+  | EPSILON
+setElements ->
+  | functionDeclaration ',' setElements
+  | functionDeclaration
   
 list -> '[' listContents ']'
 listContents -> 
