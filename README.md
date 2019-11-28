@@ -95,11 +95,13 @@ max num1<Num> -> num2<Num> -> <Num> =
 
 ## Pragmas
 
-At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something. I currently don't have a plan on how pragmas will be implemented - I'm thinking of using a Java-based implementation (i.e. you can write pragmas in Java and add your Java program to the ForteLangPrime compiler).
+At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something.
 
-At the moment the following pragmas have been planned:
+Currently (as of time of writing), I only plan to have a few hardcoded pragmas in ForteLangPrime. In the end, I'm thinking of creating an API which lets you write pragmas in Java, which can be added to the compiler at compile time.
 
-- `@if` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
+The following pragmas have been planned:
+
+- `@If` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
   ```haskell
   ## Pragmas are defined at the top of a file
   @if
@@ -109,12 +111,13 @@ At the moment the following pragmas have been planned:
       then num1
     else num2
   ```
+- `@NumberCommas` - lets you declare numbers with commas in them. For example: `1,000,000`
 
 -----
 
 # Grammar
 
-```
+```haskell
 program -> pragmas expression
 pragmas -> pragma pragmas
 pragma -> @PRAGMA_IDENT
@@ -125,8 +128,9 @@ expression ->
   | set
   | list
   | string
-  | 
+  | number
   
+number -> [0-9]+(.[0-9]+)?
 string -> '"' STRING '"'  
   
 list -> '[' listContents ']'
