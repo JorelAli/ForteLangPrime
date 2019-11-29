@@ -124,6 +124,15 @@ pragmas ->
   | EPSILON
 pragma -> @PRAGMA_IDENT
 
+application ->
+  | '(' guards ')' params
+  | '(' match ')' params
+  | '(' lambda ')' params
+  | variable params
+params -> 
+  | EPSILON
+  | expression params
+
 expression ->
   | guards
   | match
@@ -132,7 +141,9 @@ expression ->
   | string
   | number
   | lambda
+  | variable
   | '(' expression ')'
+  | application
   
 lambda -> '(' functionDeclaration ')'
   
