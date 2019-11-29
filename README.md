@@ -21,7 +21,7 @@ In addition to these projects, inspiration was also taken from:
 
 ### Why Java?
 
-Java is compatible with all operating systems. You write code once and can run it anywhere. So far, I've not found any programming language that also has this feature (except Java). Since I have a very strong understanding of Java, my main aims are to create some well-optimised bytecode such that it's fully compatible with Java (as opposed to say, Kotlin or Groovy, which requires additional libraries (e.g. Kotlin Runtime)).
+Java is compatible with all operating systems. You write code once and can run it anywhere. So far, I've not found any programming language that also has this feature (I'm dismissing things that also run on the JVM, like Scala) that works as reliably as Java does. Since I have a very strong understanding of Java, my main aims are to create some well-optimised bytecode such that it's fully compatible with Java (as opposed to say, Kotlin or Groovy, which requires additional libraries (e.g. Kotlin Runtime/Standard Library)).
 
 ### Core concepts/features
 
