@@ -147,6 +147,7 @@ expression ->
   | variable
   | '(' expression ')'
   | application
+  | application '|>' expression
 ```
 
 ```haskell
