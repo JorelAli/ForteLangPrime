@@ -131,19 +131,45 @@ expression ->
   | list
   | string
   | number
+  | lambda
+  | '(' expression ')'
   
-
+lambda -> '(' functionDeclaration ')'
   
 number -> [0-9]+(.[0-9]+)?
 string -> '"' STRING '"'  
+
+types -> 
+  | identifier '<' type '>'
+  | identifier '<' type '>' '->' types
+identifier -> 
+  | [a-zA-Z_'@-?!]+
+  | EPSILON
+type ->
+  | 'Num'
+  | 'String'
+  | 'Bool'
+  | '[' type ']'
+  | '{' setTypes '}'
+setTypes ->
+  | '...'
+  | otherSetTypes
+otherSetTypes ->
+  | namedIdentifier '<' type '>'
+  | namedIdentifier '<' type '>' ',' otherSetTypes
+  | namedIdentifier '<' type '>' ',' '...'
+namedIdentifier -> [a-zA-Z_'@-?!]+
+
+functionDeclaration -> functionName types '=' expression
+functionName -> [a-zA-Z_'@-?!]+
 
 set -> '{' setDeclarations '}'
 setDeclarations ->
   | setElements
   | EPSILON
 setElements ->
-  | functionDeclaration ',' setElements
-  | functionDeclaration
+  | functionDeclaration ';' setElements
+  | functionDeclaration ';'
   
 list -> '[' listContents ']'
 listContents -> 
