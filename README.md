@@ -123,7 +123,10 @@ pragmas ->
   | pragma pragmas
   | EPSILON
 pragma -> @PRAGMA_IDENT
+```
 
+Function application & expressions
+```haskell
 application ->
   | '(' guards ')' params
   | '(' match ')' params
@@ -144,12 +147,16 @@ expression ->
   | variable
   | '(' expression ')'
   | application
-  
+```
+
+```haskell
 lambda -> '(' functionDeclaration ')'
-  
 number -> [0-9]+(.[0-9]+)?
 string -> '"' STRING '"'  
+```
 
+Types
+```haskell
 types -> 
   | identifier '<' type '>'
   | identifier '<' type '>' '->' types
@@ -170,7 +177,10 @@ otherSetTypes ->
   | namedIdentifier '<' type '>' ',' otherSetTypes
   | namedIdentifier '<' type '>' ',' '...'
 namedIdentifier -> [a-zA-Z_'@-?!]+
+```
 
+Sets
+```haskell
 functionDeclaration -> functionName types '=' expression
 functionName -> [a-zA-Z_'@-?!]+
 
@@ -181,7 +191,10 @@ setDeclarations ->
 setElements ->
   | functionDeclaration ';' setElements
   | functionDeclaration ';'
-  
+```
+
+Lists
+```haskell
 list -> '[' listContents ']'
 listContents -> 
   | listElements
@@ -189,7 +202,10 @@ listContents ->
 listElements -> 
   | expression ',' listElements
   | expression
+```
 
+Matching & Guards
+```haskell
 match -> '?=' expression matchStatements '|' '=>' expression
 matchExpressions -> matchExpression matchExpressions | EPSILON
 matchExpression -> '|' expression '=>' expression
