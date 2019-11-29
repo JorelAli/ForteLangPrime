@@ -215,3 +215,10 @@ guards -> '?:' innerGuards '|' '=>' expression
 innerGuards -> guard innerGuards | EPSILON
 guard -> '|' expression '=>' expression
 ```
+
+Pragmas
+```haskell
+@If
+
+guards -> 'if' expression 'then' expression 'else' expression
+```
