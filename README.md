@@ -104,7 +104,7 @@ The following pragmas have been planned:
 - `@If` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
   ```haskell
   ## Pragmas are defined at the top of a file
-  @if
+  @If
   
   max num1<Num> -> num2<Num> -> <Num> =
     if num1 > num2 
