@@ -14,6 +14,7 @@ import java.util.Stack;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import java.util.regex.Pattern;
 
@@ -28,15 +29,48 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.objectweb.asm.*;
 
+import exceptions.*;
+
 public class ForteLangPrime {
 	
-	public static void parse(String input) {
-	  	try { 
-			InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-			//return new ForteLangPrime(inputStream).input(input);
+//	public static void parse(String input) {
+//	  	try { 
+//			InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
+//			new ForteLangPrime(inputStream).main();
+//		} catch(Exception e) {
+//		  	e.printStackTrace();
+//		  	//return null;
+//		}
+//	}
+
+	public static enum Pragma {
+		IF("IF");
+
+		private String name;
+	
+		Pragma(String name) {
+			this.name = name;
+		}
+
+		public static Pragma getPragma(String name) throws InvalidPragmaException {
+			for(Pragma pragma : Pragma.values()) {
+				if(pragma.name.equals(name)) {
+					return pragma;
+				}
+			}
+			throw new InvalidPragmaException(name);
+		}
+	}
+
+	public List<Pragma> pragmas;
+
+	public void main() {
+		pragmas = new ArrayList<Pragma>();
+
+		try { 
+			this.input();
 		} catch(Exception e) {
-		  	e.printStackTrace();
-		  	//return null;
+			e.printStackTrace();
 		}
 	}
 }
@@ -51,10 +85,19 @@ TOKEN : { < CLOSECBRACE : "}" > }
 TOKEN : { < OPENSBRACKET : "[" > }
 TOKEN : { < CLOSESBRACKET : "]" > }
 TOKEN : { < COLON : ":" > }
+TOKEN : { < SEMICOLON : ";" > }
 TOKEN : { < ARROW : "->" > }
+TOKEN : { < COMMA : "," > }
 TOKEN : { < FAT_ARROW : "=>" > }
 TOKEN : { < DOUBLE_ARROW : "->>" > }
 TOKEN : { < PLAY_BUTTON : "|>" > }
+TOKEN : { < AT : "@" > }
+TOKEN : { < GUARD : "?:" > }
+TOKEN : { < PIPE : "|" > }
+TOKEN : { < EQUALS : "=" > }
+TOKEN : { < LCHEVRON : "<" > }
+TOKEN : { < RCHEVRON : ">" > }
+
 
 //Operators
 TOKEN : { < CONCAT : "++" > }
@@ -74,19 +117,189 @@ TOKEN : { < STRING : "String" > } //Strings and chars are the same thing, char[]
 //TOKEN : { < SET : "Set" >} //We'll use the {} notation to denote a Set
 
 //Keywords
-TOKEN : { < MATCH : "match" > }
+TOKEN : { < TRUE : "true" > }
+TOKEN : { < FALSE : "false" > }
 
 //Other
-TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "@", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* (["\'"])* > }
+TOKEN : { < PRAGMA : (["A"-"Z"])+ > }
+TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* (["\'"])* > }
 TOKEN : { < NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > }
+//TOKEN : { < PRAGMA_NUMBER : (["0"-"9", ","])+ (["."])? (["0"-"9"])* > }
 
 //Whitespace
 SKIP : { "\n" | "\r" | " " | "\t" }
 
 /** Main endpoint */
-void input(String input) throws Exception : { } {
+void input() throws Exception : { } {
 	//expr = expr()
+	program()
 	<EOF>
 	//{ return expr; }
 }
 
+void program() throws Exception : { } {
+	pragmas()
+	expression()
+}
+
+void epsilon() throws Exception : { } {
+	{
+	  { }
+	}
+}
+
+void pragmas() throws Exception : { } {
+	(	 	pragma() pragmas()
+	) | epsilon()
+}
+
+void pragma() throws Exception : { Token pragma; } {
+	< AT >
+	pragma = < PRAGMA >
+
+	{
+	  pragmas.add(Pragma.getPragma(pragma.image));
+	  System.out.println(pragmas);
+	}
+}
+
+void number() throws Exception : { } {
+  < NUMBER >	
+}
+
+void expression() throws Exception : { } {
+	variable()
+	| guards()
+	| list()
+	| number()
+	| bool()
+	| set()
+	| LOOKAHEAD(2) < OPENBRACKET > expression() < CLOSEBRACKET >
+	| lambda()
+}
+
+void set() throws Exception : { } {
+	< OPENCBRACE >
+	setDeclarations()
+	< CLOSECBRACE >
+}
+
+void setDeclarations() throws Exception : { } {
+	setElements() | epsilon()
+}
+
+void setElements() throws Exception : { } {
+	functionDeclaration() < SEMICOLON > (setElements())?
+}
+
+void variable() throws Exception : { } {
+	< VAR_NAME >
+
+	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
+	( LOOKAHEAD(2)		{
+			if(!getToken(0).image.equals("if")) {
+				throw new Exception("Expected if");
+			}
+		}
+		expression()
+		< VAR_NAME >
+		{
+			if(!getToken(0).image.equals("then")) {
+				throw new Exception("Expected then");
+			}
+		}
+		expression()
+		< VAR_NAME >
+		{
+			if(!getToken(0).image.equals("else")) {
+				throw new Exception("Expected else");
+			}
+		}
+		expression()
+	)?
+}
+
+void bool() throws Exception : { } {
+	< TRUE > | < FALSE >
+}
+
+void lambda() throws Exception : { } {
+	< OPENBRACKET > functionDeclaration() < CLOSEBRACKET >
+}
+
+void types() throws Exception : { } {
+	identifier()
+	< LCHEVRON >
+	type()
+	< RCHEVRON >
+	(		< ARROW >
+		types()
+	)?
+}
+
+void type() throws Exception : { } {
+	"Num"
+	| "String"
+	| "Bool"
+	| < OPENSBRACKET > type() < CLOSESBRACKET >
+	| < OPENCBRACE > setTypes() < CLOSECBRACE >
+}
+
+void setTypes() throws Exception : { } {
+	"..." | otherSetTypes()
+}
+
+void otherSetTypes() throws Exception : { } {
+	< VAR_NAME > //TODO: namedIdentifier
+	< LCHEVRON >
+	type()
+	< RCHEVRON >
+	(
+	  < COMMA >
+	  (
+	    "..." | otherSetTypes()	  )	)?
+}
+
+void identifier() throws Exception : { } {
+	< VAR_NAME > | epsilon()
+}
+
+void functionDeclaration() throws Exception : { } {
+	< VAR_NAME > //TODO: functionName
+	types()
+	< EQUALS >
+	expression()
+}
+
+void list() throws Exception : { } {
+	< OPENSBRACKET >
+	listContents()
+	< CLOSESBRACKET >
+}
+
+void listContents() throws Exception : { } {
+	listElements() | epsilon()
+}
+
+void listElements() throws Exception : { } {
+	expression() (< COMMA > listElements())?
+}
+
+void guards() throws Exception : { } {
+	< GUARD >
+	innerGuards()
+}
+
+void innerGuards() throws Exception : { } {
+   LOOKAHEAD(2)
+	(	  guard() innerGuards()
+	) | (
+		< PIPE >
+		< FAT_ARROW >
+		expression()
+	)//epsilon()
+}
+
+void guard() throws Exception : { } {
+	< PIPE > expression() < FAT_ARROW > expression()
+}

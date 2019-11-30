@@ -23,31 +23,51 @@ public interface ForteLangPrimeConstants {
   /** RegularExpression Id. */
   int COLON = 7;
   /** RegularExpression Id. */
-  int ARROW = 8;
+  int SEMICOLON = 8;
   /** RegularExpression Id. */
-  int FAT_ARROW = 9;
+  int ARROW = 9;
   /** RegularExpression Id. */
-  int DOUBLE_ARROW = 10;
+  int COMMA = 10;
   /** RegularExpression Id. */
-  int PLAY_BUTTON = 11;
+  int FAT_ARROW = 11;
   /** RegularExpression Id. */
-  int CONCAT = 12;
+  int DOUBLE_ARROW = 12;
   /** RegularExpression Id. */
-  int PLUS = 13;
+  int PLAY_BUTTON = 13;
   /** RegularExpression Id. */
-  int ROUGHLY_EQUALS = 14;
+  int AT = 14;
   /** RegularExpression Id. */
-  int NUM = 15;
+  int GUARD = 15;
   /** RegularExpression Id. */
-  int BOOL = 16;
+  int PIPE = 16;
   /** RegularExpression Id. */
-  int STRING = 17;
+  int EQUALS = 17;
   /** RegularExpression Id. */
-  int MATCH = 18;
+  int LCHEVRON = 18;
   /** RegularExpression Id. */
-  int VAR_NAME = 19;
+  int RCHEVRON = 19;
   /** RegularExpression Id. */
-  int NUMBER = 20;
+  int CONCAT = 20;
+  /** RegularExpression Id. */
+  int PLUS = 21;
+  /** RegularExpression Id. */
+  int ROUGHLY_EQUALS = 22;
+  /** RegularExpression Id. */
+  int NUM = 23;
+  /** RegularExpression Id. */
+  int BOOL = 24;
+  /** RegularExpression Id. */
+  int STRING = 25;
+  /** RegularExpression Id. */
+  int TRUE = 26;
+  /** RegularExpression Id. */
+  int FALSE = 27;
+  /** RegularExpression Id. */
+  int PRAGMA = 28;
+  /** RegularExpression Id. */
+  int VAR_NAME = 29;
+  /** RegularExpression Id. */
+  int NUMBER = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -62,23 +82,34 @@ public interface ForteLangPrimeConstants {
     "\"[\"",
     "\"]\"",
     "\":\"",
+    "\";\"",
     "\"->\"",
+    "\",\"",
     "\"=>\"",
     "\"->>\"",
     "\"|>\"",
+    "\"@\"",
+    "\"?:\"",
+    "\"|\"",
+    "\"=\"",
+    "\"<\"",
+    "\">\"",
     "\"++\"",
     "\"+\"",
     "\"~=\"",
     "\"Num\"",
     "\"Bool\"",
     "\"String\"",
-    "\"match\"",
+    "\"true\"",
+    "\"false\"",
+    "<PRAGMA>",
     "<VAR_NAME>",
     "<NUMBER>",
     "\"\\n\"",
     "\"\\r\"",
     "\" \"",
     "\"\\t\"",
+    "\"...\"",
   };
 
 }
