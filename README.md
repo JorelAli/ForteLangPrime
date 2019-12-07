@@ -93,6 +93,46 @@ max num1<Num> -> num2<Num> -> <Num> =
   | => num2
 ```
 
+## Type aliases
+
+Type aliases let you refer to sets easily. They have to start with a capital letter.
+
+```haskell
+Color = {
+  red<Int>;
+  green<Int>;
+  blue<Int>;
+}
+
+Person = {
+  name<String>;
+  age<Int>;
+  eyeColor<Color>;
+}
+```
+
+## Enums
+
+Enums are basically sets, which use the following syntax:
+
+```haskell
+Fruit = {| BANANA, APPLE, PEAR, ORANGE, STRAWBERRY |}
+```
+
+They can be referred to using the same syntax as sets, and _have_ to be fully qualified:
+
+```haskell
+fruitToString fruit<Fruit> -> <String> =
+  ?= fruit
+  | fruit.BANANA => "banana"
+  | fruit.APPLE => "apple"
+  | fruit.PEAR => "pear"
+  | fruit.ORANGE => "orange"
+  | fruit.STRAWBERRY => "strawberry"
+```
+
+As enums are similar to type declarations, they _must_ be named with a capital letter
+
 ## Pragmas
 
 At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something.
@@ -101,17 +141,17 @@ Currently (as of time of writing), I only plan to have a few hardcoded pragmas i
 
 The following pragmas have been planned:
 
-- `@If` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
+- `@IF` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
   ```haskell
   ## Pragmas are defined at the top of a file
-  @If
+  @IF
   
   max num1<Num> -> num2<Num> -> <Num> =
     if num1 > num2 
       then num1
     else num2
   ```
-- `@NumberCommas` - lets you declare numbers with commas in them. For example: `1,000,000`
+- `@NUMBER_COMMAS` - lets you declare numbers with commas in them. For example: `1,000,000`
 
 -----
 
@@ -216,9 +256,14 @@ innerGuards -> guard innerGuards | EPSILON
 guard -> '|' expression '=>' expression
 ```
 
+Enums
+```haskell
+enum -> `{|` enumElements `|}`
+```
+
 Pragmas
 ```haskell
-@If
+@IF
 
 guards -> 'if' expression 'then' expression 'else' expression
 ```
