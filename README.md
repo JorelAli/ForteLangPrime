@@ -55,11 +55,51 @@ Java is compatible with all operating systems. You write code once and can run i
 
 # Syntax (preview)
 
+## Sets (records)
+
+ForteLangPrime's main data types are "sets", which are similar to records in Haskell and Elm. Expressions declared in a set must be followed with a `;`. For example, a set that contains some maths helper functions would look like:
+
+```haskell
+{
+  add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
+  mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
+  pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
+}
+```
+
+```haskell
+{
+  mathLib <{
+     add i1<Num> -> i2<Num> -> <Num>;
+     mul i1<Num> -> i2<Num> -> <Num>;
+     pow i1<Num> -> i2<Num> -> <Num>;
+     advanceMath <{
+       sin i1<Num> -> <Num>;
+       cos i1<Num> -> <Num>;
+       tan i1<Num> -> <Num>;
+     }>;
+  }> = {
+    add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
+    mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
+    pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
+    advanceMath <{
+      sin i1<Num> -> <Num>;
+      cos i1<Num> -> <Num>;
+      tan i1<Num> -> <Num>;
+    }> = {
+      sin i1<Num> -> <Num> = #[Sine implementation here]#;
+      cos i1<Num> -> <Num> = #[Cosine implementation here]#;
+      tan i1<Num> -> <Num> = #[Tangent implementation here]#;
+    }
+  };
+}
+```
+
 ## Record updating
 
 ForteLangPrime's record updating will primarily be inspired using ForteLang's set operators. ForteLang provides the following extra operators that perform set operations:
 
-```python
+```haskell
 x /+ y ## Set union
 x /- y ## Set intersection
 x // y ## Set difference
@@ -99,14 +139,14 @@ Type aliases let you refer to sets easily. They have to start with a capital let
 
 ```haskell
 Color = {
-  red<Int>;
-  green<Int>;
-  blue<Int>;
+  red<Num>;
+  green<Num>;
+  blue<Num>;
 }
 
 Person = {
   name<String>;
-  age<Int>;
+  age<Num>;
   eyeColor<Color>;
 }
 ```
@@ -152,6 +192,7 @@ The following pragmas have been planned:
     else num2
   ```
 - `@NUMBER_COMMAS` - lets you declare numbers with commas in them. For example: `1,000,000`
+- `@ABORT` - an Easter egg that allows you to declare `a@bort` anywhere in your code for 
 
 -----
 
@@ -211,12 +252,10 @@ type ->
   | '[' type ']'
   | '{' setTypes '}'
 setTypes ->
-  | '...'
   | otherSetTypes
 otherSetTypes ->
   | namedIdentifier '<' type '>'
   | namedIdentifier '<' type '>' ',' otherSetTypes
-  | namedIdentifier '<' type '>' ',' '...'
 namedIdentifier -> [a-zA-Z_'@-?!]+
 ```
 
