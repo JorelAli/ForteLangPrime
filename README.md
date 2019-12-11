@@ -67,6 +67,7 @@ ForteLangPrime's main data types are "sets", which are similar to records in Has
 }
 ```
 
+Some set declaration
 ```haskell
 {
   mathLib <{
@@ -87,6 +88,22 @@ ForteLangPrime's main data types are "sets", which are similar to records in Has
       cos i1<Num> -> <Num>;
       tan i1<Num> -> <Num>;
     }> = {
+      sin i1<Num> -> <Num> = #[Sine implementation here]#;
+      cos i1<Num> -> <Num> = #[Cosine implementation here]#;
+      tan i1<Num> -> <Num> = #[Tangent implementation here]#;
+    }
+  };
+}
+```
+
+The same set declaration, using the `infer` keyword. The `infer` keyword can be used to infer the types of a set. This can only be used within a set's type declaration
+```haskell
+{
+  mathLib <{infer}> = {
+    add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
+    mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
+    pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
+    advanceMath <{infer}> = {
       sin i1<Num> -> <Num> = #[Sine implementation here]#;
       cos i1<Num> -> <Num> = #[Cosine implementation here]#;
       tan i1<Num> -> <Num> = #[Tangent implementation here]#;
@@ -244,6 +261,7 @@ type ->
   | '{' setTypes '}'
 setTypes ->
   | otherSetTypes
+  | 'infer'
 otherSetTypes ->
   | namedIdentifier '<' type '>'
   | namedIdentifier '<' type '>' ',' otherSetTypes
