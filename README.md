@@ -55,6 +55,33 @@ Java is compatible with all operating systems. You write code once and can run i
 
 # Syntax (preview)
 
+## Type inheritance
+
+ForteLangPrime will include some basic level of type-level inheritance. For example:
+
+```haskell
+Num       ## Any number
+Num@Int   ## An integer
+Num@Float ## A floating point number
+```
+
+Types (`Num`, `String` etc.) and type aliases can be extended:
+
+```haskell
+Num@Digit val<Num> = 
+    if val <= 9 && val >= 0 then true else false
+```
+
+And can be pattern matched:
+
+```haskell
+isInteger val<Num> =
+    ?= val
+    | Num@Int => true
+    | Num@Digit => true
+    | => false
+```
+
 ## Sets (records)
 
 ForteLangPrime's main data types are "sets", which are similar to records in Haskell and Elm. Expressions declared in a set must be followed with a `;`. For example, a set that contains some maths helper functions would look like:
