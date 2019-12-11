@@ -181,16 +181,6 @@ Currently (as of time of writing), I only plan to have a few hardcoded pragmas i
 
 The following pragmas have been planned:
 
-- `@IF` - adds `if ... then ... else` syntax to ForteLangPrime. For example:
-  ```haskell
-  ## Pragmas are defined at the top of a file
-  @IF
-  
-  max num1<Num> -> num2<Num> -> <Num> =
-    if num1 > num2 
-      then num1
-    else num2
-  ```
 - `@NUMBER_COMMAS` - lets you declare numbers with commas in them. For example: `1,000,000`
 - `@ABORT` - an Easter egg that allows you to declare `a@bort` anywhere in your code for 
 
@@ -226,6 +216,7 @@ expression ->
   | number
   | lambda
   | variable
+  | if
   | '(' expression ')'
   | application
   | application '|>' expression
@@ -300,9 +291,7 @@ Enums
 enum -> `{|` enumElements `|}`
 ```
 
-Pragmas
+If statements
 ```haskell
-@IF
-
-guards -> 'if' expression 'then' expression 'else' expression
+if -> 'if' expression 'then' expression 'else' expression
 ```
