@@ -111,6 +111,7 @@ Java's data types:
 - char, boolean
 */
 TOKEN : { < NUM : "Num" > }
+TOKEN : { < INT : "Num@Int" > }
 TOKEN : { < BOOL : "Bool" > }
 TOKEN : { < STRING : "String" > } //Strings and chars are the same thing, char[]
 //TOKEN : { < LIST : "List" > } //We'll use the [] notation to denote a List
@@ -119,6 +120,16 @@ TOKEN : { < STRING : "String" > } //Strings and chars are the same thing, char[]
 //Keywords
 TOKEN : { < TRUE : "true" > }
 TOKEN : { < FALSE : "false" > }
+TOKEN : { < IF : "if" > }
+TOKEN : { < THEN : "then" > }
+TOKEN : { < ELSE : "else" > }
+
+//File declaractions
+TOKEN : { < LIBRARY : "Library" > }
+TOKEN : { < IMPORT : "import" > }
+TOKEN : { < EXPORT : "export" > }
+TOKEN : { < AS : "as" > }
+
 
 //Other
 TOKEN : { < PRAGMA : (["A"-"Z"])+ > }
@@ -138,8 +149,20 @@ void input() throws Exception : { } {
 }
 
 void program() throws Exception : { } {
+  	programDeclaration()
 	pragmas()
 	expression()
+}
+
+void programDeclaration() throws Exception : { } {
+	( < LIBRARY > )
+	< OPENCBRACE >
+	linkingDeclarations()
+	< CLOSECBRACE >
+}
+
+void linkingDeclarations() throws Exception : { } {
+	(< IMPORT > | < EXPORT >)?
 }
 
 void epsilon() throws Exception : { } {
@@ -176,6 +199,16 @@ void expression() throws Exception : { } {
 	| set()
 	| LOOKAHEAD(2) < OPENBRACKET > expression() < CLOSEBRACKET >
 	| lambda()
+	| ifExpr()
+}
+
+void ifExpr() throws Exception : { } {
+	< IF >
+	expression()
+	< THEN >
+	expression()
+	< ELSE >
+	expression()
 }
 
 void set() throws Exception : { } {
@@ -195,28 +228,29 @@ void setElements() throws Exception : { } {
 void variable() throws Exception : { } {
 	< VAR_NAME >
 
-	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
-	( LOOKAHEAD(2)		{
-			if(!getToken(0).image.equals("if")) {
-				throw new Exception("Expected if");
-			}
-		}
-		expression()
-		< VAR_NAME >
-		{
-			if(!getToken(0).image.equals("then")) {
-				throw new Exception("Expected then");
-			}
-		}
-		expression()
-		< VAR_NAME >
-		{
-			if(!getToken(0).image.equals("else")) {
-				throw new Exception("Expected else");
-			}
-		}
-		expression()
-	)?
+//	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
+//	( LOOKAHEAD(2)
+//		{
+//			if(!getToken(0).image.equals("if")) {
+//				throw new Exception("Expected if");
+//			}
+//		}
+//		expression()
+//		< VAR_NAME >
+//		{
+//			if(!getToken(0).image.equals("then")) {
+//				throw new Exception("Expected then");
+//			}
+//		}
+//		expression()
+//		< VAR_NAME >
+//		{
+//			if(!getToken(0).image.equals("else")) {
+//				throw new Exception("Expected else");
+//			}
+//		}
+//		expression()
+//	)?
 }
 
 void bool() throws Exception : { } {

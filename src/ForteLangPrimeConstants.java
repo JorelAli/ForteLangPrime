@@ -55,19 +55,33 @@ public interface ForteLangPrimeConstants {
   /** RegularExpression Id. */
   int NUM = 23;
   /** RegularExpression Id. */
-  int BOOL = 24;
+  int INT = 24;
   /** RegularExpression Id. */
-  int STRING = 25;
+  int BOOL = 25;
   /** RegularExpression Id. */
-  int TRUE = 26;
+  int STRING = 26;
   /** RegularExpression Id. */
-  int FALSE = 27;
+  int TRUE = 27;
   /** RegularExpression Id. */
-  int PRAGMA = 28;
+  int FALSE = 28;
   /** RegularExpression Id. */
-  int VAR_NAME = 29;
+  int IF = 29;
   /** RegularExpression Id. */
-  int NUMBER = 30;
+  int THEN = 30;
+  /** RegularExpression Id. */
+  int ELSE = 31;
+  /** RegularExpression Id. */
+  int LIBRARY = 32;
+  /** RegularExpression Id. */
+  int IMPORT = 33;
+  /** RegularExpression Id. */
+  int EXPORT = 34;
+  /** RegularExpression Id. */
+  int PRAGMA = 35;
+  /** RegularExpression Id. */
+  int VAR_NAME = 36;
+  /** RegularExpression Id. */
+  int NUMBER = 37;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -98,10 +112,17 @@ public interface ForteLangPrimeConstants {
     "\"+\"",
     "\"~=\"",
     "\"Num\"",
+    "\"Num@Int\"",
     "\"Bool\"",
     "\"String\"",
     "\"true\"",
     "\"false\"",
+    "\"if\"",
+    "\"then\"",
+    "\"else\"",
+    "\"Library\"",
+    "\"import\"",
+    "\"export\"",
     "<PRAGMA>",
     "<VAR_NAME>",
     "<NUMBER>",

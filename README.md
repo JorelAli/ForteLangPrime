@@ -26,7 +26,6 @@ Java is compatible with all operating systems. You write code once and can run i
 ### Core concepts/features
 
 - [ ] Compiles down to Java Bytecode
-- [ ] Few keywords, providing more flexibility to the user for what to name variables/functions
 - [ ] Statically typed
 - [ ] Lazily evaluated
 - [ ] Set data structure (like Nix)
@@ -43,7 +42,7 @@ Java is compatible with all operating systems. You write code once and can run i
 - Record updating (like Elm). For example:
   ```python
   point = { x = 2; y = 3; }    ## {x=2, y=3}
-  newPoint = {point | x = 3; } ## {x=3, y=3}
+  newPoint = { point | x = 3; } ## {x=3, y=3}
   ```
   
 ### Features that won't be added
@@ -54,6 +53,25 @@ Java is compatible with all operating systems. You write code once and can run i
 -----
 
 # Syntax (preview)
+
+## Library declaration
+
+Libraries are the 'main type' of a ForteLangPrime file. The main aim is to declare a list of functions which can be used by other JVM languages.
+
+```haskell
+Library {
+
+	import "someFile.flp" as Blah
+	export addOne 
+
+} {
+
+	addOne a<Num> -> <Num> = a + 1;
+
+	somePrivateFunction 3<Num> -> <Num> = 2;
+
+}
+```
 
 ## Type inheritance
 
@@ -68,8 +86,7 @@ Num@Float ## A floating point number
 Types (`Num`, `String` etc.) and type aliases can be extended:
 
 ```haskell
-Num@Digit val<Num> = 
-    if val <= 9 && val >= 0 then true else false
+Num@Digit val<Num> = val <= 9 && val >= 0;
 ```
 
 And can be pattern matched:
@@ -79,7 +96,7 @@ isInteger val<Num> =
     ?= val
     | Num@Int => true
     | Num@Digit => true
-    | => false
+    | => false;
 ```
 
 ## Sets (records)
@@ -200,7 +217,7 @@ Person = {
 Enums are basically sets, which use the following syntax:
 
 ```haskell
-Fruit = {| BANANA, APPLE, PEAR, ORANGE, STRAWBERRY |}
+Fruit = {| BANANA, APPLE, PEAR, ORANGE, STRAWBERRY |};
 ```
 
 They can be referred to using the same syntax as sets, and _have_ to be fully qualified:
@@ -208,11 +225,11 @@ They can be referred to using the same syntax as sets, and _have_ to be fully qu
 ```haskell
 fruitToString fruit<Fruit> -> <String> =
   ?= fruit
-  | fruit.BANANA => "banana"
-  | fruit.APPLE => "apple"
-  | fruit.PEAR => "pear"
-  | fruit.ORANGE => "orange"
-  | fruit.STRAWBERRY => "strawberry"
+  | Fruit.BANANA => "banana"
+  | Fruit.APPLE => "apple"
+  | Fruit.PEAR => "pear"
+  | Fruit.ORANGE => "orange"
+  | Fruit.STRAWBERRY => "strawberry"
 ```
 
 As enums are similar to type declarations, they _must_ be named with a capital letter

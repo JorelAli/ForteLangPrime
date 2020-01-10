@@ -1,6 +1,5 @@
-@IF
+Library {} {
 
-{
 	someFunction <Num> = 2;
 	
 	someOtherFunction a<Num> -> b<Num> -> <Num> = 3;
@@ -13,4 +12,5 @@
 	a <Num> = if 2 then 3 else 4;
 	
 	a <Num> = c;
+	
 }
