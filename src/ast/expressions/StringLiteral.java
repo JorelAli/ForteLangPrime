@@ -1,5 +1,6 @@
 package ast.expressions;
 
+import ast.enums.ExpressionType;
 import ast.types.StandardTypes;
 import ast.types.Type;
 import ast.types.TypingContext;
@@ -31,6 +32,11 @@ public class StringLiteral implements Expression {
 	@Override
 	public Expression deepCopy() {
 		return new StringLiteral(this.value);
+	}
+	
+	@Override
+	public ExpressionType getInternalType() {
+		return ExpressionType.STRING;
 	}
 
 }

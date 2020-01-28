@@ -1,6 +1,6 @@
 package ast.types;
 
-public class ListType {
+public class ListType implements Type {
 	
 	//The type of this list
 	private Type type;

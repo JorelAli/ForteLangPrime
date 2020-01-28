@@ -2,6 +2,7 @@ package ast.expressions;
 
 import java.math.BigDecimal;
 
+import ast.enums.ExpressionType;
 import ast.types.Type;
 import ast.types.TypingContext;
 import exceptions.TypeException;
@@ -33,6 +34,11 @@ public class NumLiteral implements Expression {
 	@Override
 	public Expression deepCopy() {
 		return new NumLiteral(value.toPlainString());
+	}
+
+	@Override
+	public ExpressionType getInternalType() {
+		return ExpressionType.NUM_LITERAL;
 	}
 
 }

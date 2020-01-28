@@ -1,5 +1,6 @@
 package ast.expressions;
 
+import ast.enums.ExpressionType;
 import ast.types.Type;
 import ast.types.TypingContext;
 import exceptions.TypeException;
@@ -34,6 +35,11 @@ public class Variable implements Expression {
 	@Override
 	public Expression deepCopy() {
 		return new Variable(this.name);
+	}
+	
+	@Override
+	public ExpressionType getInternalType() {
+		return ExpressionType.VARIABLE;
 	}
 
 }

@@ -1,24 +1,31 @@
 package ast.expressions;
 
+import javax.annotation.Nullable;
+
 import ast.enums.ExpressionType;
+import ast.types.ListType;
 import ast.types.Type;
 import ast.types.TypingContext;
 import exceptions.TypeException;
 
-public class Lambda implements Expression {
+public class ListExpression implements Expression {
+	
+	@Nullable private Expression element;
+	private ListExpression elements;
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		TypingContext newContext = new TypingContext();
-		newContext.putAll(context);
-		//Etc. etc.
-		// TODO Auto-generated method stub
-		return null;
+		if(element != null) {
+			return new ListType(element.getType(context));
+		} else {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
 	@Override
 	public boolean isReducable() {
-		return false;
+		return false; // Or can you?
 	}
 
 	@Override
@@ -35,7 +42,7 @@ public class Lambda implements Expression {
 
 	@Override
 	public ExpressionType getInternalType() {
-		return ExpressionType.LAMBDA;
+		return ExpressionType.LIST;
 	}
 
 }

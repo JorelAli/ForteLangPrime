@@ -2,6 +2,7 @@ package ast.expressions;
 
 import java.util.LinkedHashMap;
 
+import ast.enums.ExpressionType;
 import ast.types.StandardTypes;
 import ast.types.Type;
 import ast.types.TypingContext;
@@ -11,6 +12,17 @@ public class Guards implements Expression {
 	
 	private LinkedHashMap<Expression, Expression> statements;
 	private Expression finalStatement;
+	
+	public Guards(LinkedHashMap<Expression, Expression> statements, Expression finalStatement) {
+		this.statements = statements;
+		this.finalStatement = finalStatement;
+	}
+	
+	public static Guards fromIfStatement(Expression ifExpr, Expression thenExpr, Expression elseExpr) {
+		LinkedHashMap<Expression, Expression> statement = new LinkedHashMap<>();
+		statement.put(ifExpr, thenExpr);
+		return new Guards(statement, elseExpr);
+	}
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
@@ -38,14 +50,19 @@ public class Guards implements Expression {
 
 	@Override
 	public Expression substitute(String name, Expression val) {
+//		for(Statement)
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Expression deepCopy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Guards(new LinkedHashMap<Expression, Expression>(statements), finalStatement.deepCopy());
+	}
+
+	@Override
+	public ExpressionType getInternalType() {
+		return ExpressionType.GUARDS;
 	}
 
 }
