@@ -61,17 +61,59 @@ Libraries are the 'main type' of a ForteLangPrime file. The main aim is to decla
 ```haskell
 Library {
 
-	import "someFile.flp" as Blah
-	export addOne 
+    import "someFile.flp" as Blah
+    export addOne 
 
 } {
 
-	addOne a<Num> -> <Num> = a + 1;
+    addOne a<Num> -> <Num> = a + 1;
 
-	somePrivateFunction 3<Num> -> <Num> = 2;
+    somePrivateFunction 3<Num> -> <Num> = 2;
 
 }
 ```
+
+## Script declaration
+
+```haskell
+Script {} {
+    main input<String> -> <String> =
+	  ## Your code here;
+}
+```
+
+In script declarations, the metadata is used to declare which functions can be used in the scope, for example when imported using a repl.
+
+For example, opening the repl with an imported script, say:
+
+```haskell
+Script {
+    export hello
+} {
+    hello <String> = "hello";
+	bye <String> = "bye";
+}
+```
+
+will import the function `hello` into the scope of the repl, but the function `bye` will not be available for use in the repl.
+
+## File declaration
+
+This is basically what the main structure of a FLP file will look like:
+
+```haskell
+TYPE {
+    METADATA
+} {
+    FUNCTIONS
+}
+```
+
+There are three main sections:
+
+- `TYPE` is the 'type' of the file. This can consist of `Library` or `Script`. `Library` is used for interop with Java-based languages (so, functions can be called from Java programs). `Script` is used for lightweight scripting or for a repl.
+- `METADATA` provides information about the file. This normally consists of what imports are required and what functions are exported (made public). The access modifiers in FLP are different to those in Java, it's either public (exported) or private (not exported). There is no sort of 'protected' or 'package private'. This is also the part where pragmas are declared.
+- `FUNCTIONS` is where functions are declared.
 
 ## Type inheritance
 

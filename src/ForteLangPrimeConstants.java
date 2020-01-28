@@ -77,11 +77,13 @@ public interface ForteLangPrimeConstants {
   /** RegularExpression Id. */
   int EXPORT = 34;
   /** RegularExpression Id. */
-  int PRAGMA = 35;
+  int AS = 35;
   /** RegularExpression Id. */
-  int VAR_NAME = 36;
+  int PRAGMA = 36;
   /** RegularExpression Id. */
-  int NUMBER = 37;
+  int VAR_NAME = 37;
+  /** RegularExpression Id. */
+  int NUMBER = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -123,6 +125,7 @@ public interface ForteLangPrimeConstants {
     "\"Library\"",
     "\"import\"",
     "\"export\"",
+    "\"as\"",
     "<PRAGMA>",
     "<VAR_NAME>",
     "<NUMBER>",

@@ -315,8 +315,8 @@ pragmas.add(Pragma.getPragma(pragma.image));
 
   final public void setTypes() throws ParseException, Exception {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case 42:{
-      jj_consume_token(42);
+    case 43:{
+      jj_consume_token(43);
       break;
       }
     case VAR_NAME:{
@@ -339,8 +339,8 @@ pragmas.add(Pragma.getPragma(pragma.image));
     case COMMA:{
       jj_consume_token(COMMA);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case 42:{
-        jj_consume_token(42);
+      case 43:{
+        jj_consume_token(43);
         break;
         }
       case VAR_NAME:{
@@ -467,29 +467,17 @@ pragmas.add(Pragma.getPragma(pragma.image));
     finally { jj_save(1, xla); }
   }
 
-  private boolean jj_3R_10()
- {
-    if (jj_scan_token(OPENSBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_3()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   private boolean jj_3R_1()
  {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(36)) {
+    if (jj_scan_token(37)) {
     jj_scanpos = xsp;
     if (jj_3R_3()) {
     jj_scanpos = xsp;
     if (jj_3R_4()) {
     jj_scanpos = xsp;
-    if (jj_scan_token(37)) {
+    if (jj_scan_token(38)) {
     jj_scanpos = xsp;
     if (jj_3R_5()) {
     jj_scanpos = xsp;
@@ -596,6 +584,18 @@ pragmas.add(Pragma.getPragma(pragma.image));
     return false;
   }
 
+  private boolean jj_3R_10()
+ {
+    if (jj_scan_token(OPENSBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_3()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public ForteLangPrimeTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -618,7 +618,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
       jj_la1_0 = new int[] {0x0,0x0,0x4000,0x18008028,0x20000002,0x0,0x0,0x18000000,0x200,0x6800028,0x0,0x0,0x400,0x0,0x3800802a,0x400,0x10000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x6,0x6,0x0,0x30,0x0,0x10,0x10,0x0,0x0,0x0,0x410,0x410,0x0,0x10,0x30,0x0,0x0,};
+      jj_la1_1 = new int[] {0x6,0x6,0x0,0x60,0x0,0x20,0x20,0x0,0x0,0x0,0x820,0x820,0x0,0x20,0x60,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -826,7 +826,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[43];
+    boolean[] la1tokens = new boolean[44];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -843,7 +843,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
         }
       }
     }
-    for (int i = 0; i < 43; i++) {
+    for (int i = 0; i < 44; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
