@@ -1,6 +1,6 @@
 package ast.expressions;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 import ast.enums.ExpressionType;
 import ast.types.ListType;
@@ -10,16 +10,16 @@ import exceptions.TypeException;
 
 public class ListExpression implements Expression {
 	
-	@Nullable private Expression element;
-	private ListExpression elements;
+	private List<Expression> elements;
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		if(element != null) {
-			return new ListType(element.getType(context));
-		} else {
+		if(elements.size() == 0) {
 			// TODO Auto-generated method stub
 			return null;
+		} else {
+			//TODO: Check that each type is of the same type
+			return new ListType(elements.get(0).getType(context));
 		}
 	}
 
