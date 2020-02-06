@@ -127,6 +127,8 @@ TOKEN : { < ELSE : "else" > }
 
 //File declaractions
 TOKEN : { < LIBRARY : "Library" > }
+TOKEN : { < SCRIPT : "Script" > }
+TOKEN : { < FILE_TYPE : < LIBRARY > | < SCRIPT > >  }
 TOKEN : { < IMPORT : "import" > }
 TOKEN : { < EXPORT : "export" > }
 TOKEN : { < AS : "as" > }
@@ -147,6 +149,19 @@ void input() throws Exception : { } {
 	program()
 	<EOF>
 	//{ return expr; }
+}
+
+void flpFile() throws Exception : { } {
+	< FILE_TYPE >
+	fileMetadata()
+}
+
+//exports, imports, pragmas?
+void fileMetadata() throws Exception : { } {
+	(	  < IMPORT > /*TODO: String*/ (< AS > < VAR_NAME >)?
+	) | (
+	  < EXPORT > < VAR_NAME >
+	)
 }
 
 void program() throws Exception : { } {

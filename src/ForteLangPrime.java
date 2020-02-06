@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import org.objectweb.asm.*;
 
 import exceptions.*;
+import ast.*;
 
 public class ForteLangPrime implements ForteLangPrimeConstants {
 
@@ -74,6 +75,10 @@ public class ForteLangPrime implements ForteLangPrimeConstants {
   final public void input() throws ParseException, Exception {
     program();
     jj_consume_token(0);
+  }
+
+  final public void flpFile() throws ParseException, Exception {
+    jj_consume_token(FILE_TYPE);
   }
 
   final public void program() throws ParseException, Exception {
@@ -315,8 +320,8 @@ pragmas.add(Pragma.getPragma(pragma.image));
 
   final public void setTypes() throws ParseException, Exception {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case 43:{
-      jj_consume_token(43);
+    case 45:{
+      jj_consume_token(45);
       break;
       }
     case VAR_NAME:{
@@ -339,8 +344,8 @@ pragmas.add(Pragma.getPragma(pragma.image));
     case COMMA:{
       jj_consume_token(COMMA);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case 43:{
-        jj_consume_token(43);
+      case 45:{
+        jj_consume_token(45);
         break;
         }
       case VAR_NAME:{
@@ -467,50 +472,6 @@ pragmas.add(Pragma.getPragma(pragma.image));
     finally { jj_save(1, xla); }
   }
 
-  private boolean jj_3R_1()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(37)) {
-    jj_scanpos = xsp;
-    if (jj_3R_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_4()) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(38)) {
-    jj_scanpos = xsp;
-    if (jj_3R_5()) {
-    jj_scanpos = xsp;
-    if (jj_3R_6()) {
-    jj_scanpos = xsp;
-    if (jj_3_1()) {
-    jj_scanpos = xsp;
-    if (jj_3R_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_13()
- {
-    if (jj_scan_token(OPENBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12()
- {
-    if (jj_scan_token(OPENCBRACE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_11()
  {
     Token xsp;
@@ -596,6 +557,50 @@ pragmas.add(Pragma.getPragma(pragma.image));
     return false;
   }
 
+  private boolean jj_3R_1()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(39)) {
+    jj_scanpos = xsp;
+    if (jj_3R_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_4()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(40)) {
+    jj_scanpos = xsp;
+    if (jj_3R_5()) {
+    jj_scanpos = xsp;
+    if (jj_3R_6()) {
+    jj_scanpos = xsp;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3R_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_8()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_13()
+ {
+    if (jj_scan_token(OPENBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    if (jj_scan_token(OPENCBRACE)) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public ForteLangPrimeTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -618,7 +623,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
       jj_la1_0 = new int[] {0x0,0x0,0x4000,0x18008028,0x20000002,0x0,0x0,0x18000000,0x200,0x6800028,0x0,0x0,0x400,0x0,0x3800802a,0x400,0x10000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x6,0x6,0x0,0x60,0x0,0x20,0x20,0x0,0x0,0x0,0x820,0x820,0x0,0x20,0x60,0x0,0x0,};
+      jj_la1_1 = new int[] {0x18,0x18,0x0,0x180,0x0,0x80,0x80,0x0,0x0,0x0,0x2080,0x2080,0x0,0x80,0x180,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -826,7 +831,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[44];
+    boolean[] la1tokens = new boolean[46];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -843,7 +848,7 @@ pragmas.add(Pragma.getPragma(pragma.image));
         }
       }
     }
-    for (int i = 0; i < 44; i++) {
+    for (int i = 0; i < 46; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
