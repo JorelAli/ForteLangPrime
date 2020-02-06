@@ -141,6 +141,22 @@ isInteger val<Num> =
     | => false;
 ```
 
+## Algebraic Data Types & Type Generics
+
+ForteLangPrime will include algebraic data types and support for generics.
+
+```haskell
+{
+
+    ## Example of a binary tree
+    Tree<T> = Node<{
+        lhs<Tree<T>>;
+        rhs<Tree<T>>;
+    }> || Leaf<T>;
+}
+```
+
+
 ## Sets (records)
 
 ForteLangPrime's main data types are "sets", which are similar to records in Haskell and Elm. Expressions declared in a set must be followed with a `;`. For example, a set that contains some maths helper functions would look like:
