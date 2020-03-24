@@ -6,7 +6,7 @@ Library {} {
 	
 	someOtherFunction <Num> = 
 		?: 
-		| 2 => 2
+		| true => 2
 		| => 3;
 		
 	a <Num> = if 2 then 3 else 4;

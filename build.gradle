@@ -36,6 +36,6 @@ sourceSets {
 eclipseClasspath.dependsOn("compileJavacc")
 
 compileJavacc {
-     inputDirectory = file('src')
-     outputDirectory = file('src')
+     inputDirectory = file('src/dev/jorel/fortelangprime/parser')
+     outputDirectory = file('src/dev/jorel/fortelangprime/parser')
 }
