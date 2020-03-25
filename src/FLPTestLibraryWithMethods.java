@@ -30,7 +30,7 @@ public class FLPTestLibraryWithMethods implements Opcodes {
 	 * @return
 	 */
 	public static byte[] dump(String fileName, String libName, String metadata, FLPFunction[] functions) {
-		ClassWriter classWriter = new ClassWriter(0);
+		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
 		classWriter.visit(V1_8, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);

@@ -10,10 +10,11 @@ import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
 public class ExprStringLit implements Expr {
 	
+	private int lineNumber;
 	private String value;
 	
-	public ExprStringLit(String value) {
-		System.out.println(value);
+	public ExprStringLit(int lineNumber, String value) {
+		this.lineNumber = lineNumber;
 		this.value = value;
 	}
 
@@ -34,7 +35,7 @@ public class ExprStringLit implements Expr {
 
 	@Override
 	public Expr deepCopy() {
-		return new ExprStringLit(value);
+		return new ExprStringLit(lineNumber, value);
 	}
 
 	@Override
@@ -50,6 +51,11 @@ public class ExprStringLit implements Expr {
 	@Override
 	public int returnType() {
 		return ARETURN;
+	}
+	
+	@Override
+	public int getLineNumber() {
+		return this.lineNumber;
 	}
 
 }

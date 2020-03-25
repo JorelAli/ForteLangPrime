@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.expressions.Expr;
@@ -40,9 +41,14 @@ public class FLPFunction implements CodeableClass {
 		
 		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, name, typeSignature.toString(), null, null);
 		methodVisitor.visitCode();
+		
+		Label lineNumber = new Label();
+		methodVisitor.visitLabel(lineNumber);
+		methodVisitor.visitLineNumber(body.getLineNumber(), lineNumber);
+		
 		body.emit(methodVisitor);
 		methodVisitor.visitInsn(body.returnType());
-		methodVisitor.visitMaxs(1, 0);
+		methodVisitor.visitMaxs(0, 0);
 		methodVisitor.visitEnd();
 	}
 	

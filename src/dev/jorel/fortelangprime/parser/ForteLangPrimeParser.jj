@@ -18,6 +18,7 @@ import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
+import dev.jorel.fortelangprime.ast.expressions.ExprPanic;
 import dev.jorel.fortelangprime.ast.types.Type;
 
 public class ForteLangPrimeParser {
@@ -71,6 +72,7 @@ TOKEN : { < FALSE : "false" > }
 TOKEN : { < IF : "if" > }
 TOKEN : { < THEN : "then" > }
 TOKEN : { < ELSE : "else" > }
+TOKEN : { < PANIC : "panic" > }
 
 //File declaractions
 TOKEN : { < LIBRARY : "Library" > }
@@ -151,24 +153,27 @@ FLPFunction functionDeclaration() : {
 	{ return new FLPFunction(name.image, new Type[0], null, expr); }
 }
 
-ExprIntLit integer() : {
-  	Token t;
-} {
-  	t = < INT_LITERAL >
-  	{ return new ExprIntLit(Integer.parseInt(t.image)); }	
-}
-
 Expr expression() : {
   	Expr expr;
 } {
 	expr = integer() { return expr; }
 	| expr = bool() { return expr; }
 	| expr = string() { return expr; }
+	| expr = panic() { return expr; }
 }
 
-ExprBoolLit bool() : {} {
-	( < TRUE >  { return new ExprBoolLit(true); }
-	| < FALSE > { return new ExprBoolLit(false); }
+ExprIntLit integer() : {
+  	Token t;
+} {
+  	t = < INT_LITERAL >
+  	{ return new ExprIntLit(t.beginLine, Integer.parseInt(t.image)); }	
+}
+
+ExprBoolLit bool() : {
+  	Token t;
+} {
+	( t = < TRUE >  { return new ExprBoolLit(t.beginLine, true); }
+	| t = < FALSE > { return new ExprBoolLit(t.beginLine, false); }
 	)
 }
 
@@ -176,8 +181,15 @@ ExprStringLit string() : {
   	Token t;
 } {
   	t = < STRING >
-	{ return new ExprStringLit(t.image.substring(1, t.image.length() - 1)); }
+	{ return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1)); }
 }
+
+ExprPanic panic() : {
+	Token t;
+} {
+	t = < PANIC >
+	{ return new ExprPanic(t.beginLine); }
+} 
 
 void types() : { } {
 	(< VAR_NAME >)?

@@ -17,11 +17,20 @@ public class Testing {
 		System.out.println(Sample.justTwo());
 		System.out.println(Sample.someBool());
 		System.out.println(Sample.aString());
+		System.out.println(Sample.panicTest());
 
 	}
 	
 	static String str() {
-		return "hello".substring(1, "".length() - 1);
+		/*
+		 * 
+methodVisitor.visitTypeInsn(NEW, "java/lang/RuntimeException");
+methodVisitor.visitInsn(DUP);
+methodVisitor.visitLdcInsn("Undefined");
+methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V", false);
+methodVisitor.visitInsn(ATHROW);
+		 */
+		throw new RuntimeException("Undefined");
 	}
 	
 	

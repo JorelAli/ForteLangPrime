@@ -14,6 +14,7 @@ import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
+import dev.jorel.fortelangprime.ast.expressions.ExprPanic;
 import dev.jorel.fortelangprime.ast.types.Type;
 
 public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
@@ -100,12 +101,6 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public ExprIntLit integer() throws ParseException {Token t;
-    t = jj_consume_token(INT_LITERAL);
-{if ("" != null) return new ExprIntLit(Integer.parseInt(t.image));}
-    throw new Error("Missing return statement in function");
-  }
-
   final public Expr expression() throws ParseException {Expr expr;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INT_LITERAL:{
@@ -124,6 +119,11 @@ functions.add(f);
 {if ("" != null) return expr;}
       break;
       }
+    case PANIC:{
+      expr = panic();
+{if ("" != null) return expr;}
+      break;
+      }
     default:
       jj_la1[2] = jj_gen;
       jj_consume_token(-1);
@@ -132,16 +132,22 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public ExprBoolLit bool() throws ParseException {
+  final public ExprIntLit integer() throws ParseException {Token t;
+    t = jj_consume_token(INT_LITERAL);
+{if ("" != null) return new ExprIntLit(t.beginLine, Integer.parseInt(t.image));}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprBoolLit bool() throws ParseException {Token t;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TRUE:{
-      jj_consume_token(TRUE);
-{if ("" != null) return new ExprBoolLit(true);}
+      t = jj_consume_token(TRUE);
+{if ("" != null) return new ExprBoolLit(t.beginLine, true);}
       break;
       }
     case FALSE:{
-      jj_consume_token(FALSE);
-{if ("" != null) return new ExprBoolLit(false);}
+      t = jj_consume_token(FALSE);
+{if ("" != null) return new ExprBoolLit(t.beginLine, false);}
       break;
       }
     default:
@@ -154,7 +160,13 @@ functions.add(f);
 
   final public ExprStringLit string() throws ParseException {Token t;
     t = jj_consume_token(STRING);
-{if ("" != null) return new ExprStringLit(t.image.substring(1, t.image.length() - 1));}
+{if ("" != null) return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1));}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprPanic panic() throws ParseException {Token t;
+    t = jj_consume_token(PANIC);
+{if ("" != null) return new ExprPanic(t.beginLine);}
     throw new Error("Missing return statement in function");
   }
 
@@ -227,10 +239,10 @@ functions.add(f);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xc000000,0xc000000,0x0,0x200,0x3800020,};
+      jj_la1_0 = new int[] {0x0,0x0,0x8c000000,0xc000000,0x0,0x200,0x3800020,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1,0x4,0x28,0x0,0x4,0x0,0x0,};
+      jj_la1_1 = new int[] {0x2,0x8,0x50,0x0,0x8,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -355,7 +367,7 @@ functions.add(f);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[43];
+    boolean[] la1tokens = new boolean[44];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -372,7 +384,7 @@ functions.add(f);
         }
       }
     }
-    for (int i = 0; i < 43; i++) {
+    for (int i = 0; i < 44; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

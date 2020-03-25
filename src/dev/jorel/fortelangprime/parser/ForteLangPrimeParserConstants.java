@@ -71,19 +71,21 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int ELSE = 30;
   /** RegularExpression Id. */
-  int LIBRARY = 31;
+  int PANIC = 31;
   /** RegularExpression Id. */
-  int EXPORT = 32;
+  int LIBRARY = 32;
   /** RegularExpression Id. */
-  int AS = 33;
+  int EXPORT = 33;
   /** RegularExpression Id. */
-  int VAR_NAME = 34;
+  int AS = 34;
   /** RegularExpression Id. */
-  int INT_LITERAL = 35;
+  int VAR_NAME = 35;
   /** RegularExpression Id. */
-  int NUMBER = 36;
+  int INT_LITERAL = 36;
   /** RegularExpression Id. */
-  int STRING = 37;
+  int NUMBER = 37;
+  /** RegularExpression Id. */
+  int STRING = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -121,6 +123,7 @@ public interface ForteLangPrimeParserConstants {
     "\"if\"",
     "\"then\"",
     "\"else\"",
+    "\"panic\"",
     "\"Library\"",
     "\"export\"",
     "\"as\"",
@@ -132,7 +135,7 @@ public interface ForteLangPrimeParserConstants {
     "\"\\r\"",
     "\" \"",
     "\"\\t\"",
-    "<token of kind 42>",
+    "<token of kind 43>",
   };
 
 }
