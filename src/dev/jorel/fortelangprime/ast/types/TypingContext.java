@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime.abstractsyntaxtree.types;
+package dev.jorel.fortelangprime.ast.types;
 
 import java.util.HashMap;
 

@@ -12,7 +12,7 @@ public class Main {
 		
 		
 		File file = new File("test.flp");
-		new ForteLangPrimeParser(new FileInputStream(file)).main();
+//		new ForteLangPrimeParser(new FileInputStream(file)).main();
 		
 //		String program = new String(Files.readAllBytes(file.toPath()));
 //		ForteLangPrime.parse(program);

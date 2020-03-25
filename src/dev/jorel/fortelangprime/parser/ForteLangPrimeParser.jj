@@ -6,76 +6,26 @@ PARSER_BEGIN(ForteLangPrimeParser)
 
 package dev.jorel.fortelangprime.parser;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.LinkedHashMap;
-import java.util.TreeMap;
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Stack;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.ArrayList;
-
-import java.util.regex.Pattern;
-
-import java.io.FileInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.ByteArrayInputStream;
-
-import java.nio.file.Files;
-
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.objectweb.asm.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import dev.jorel.fortelangprime.parser.exceptions.*;
-import dev.jorel.fortelangprime.abstractsyntaxtree.*;
+import dev.jorel.fortelangprime.ast.FLPFunction;
+import dev.jorel.fortelangprime.ast.FLPLibrary;
+import dev.jorel.fortelangprime.ast.expressions.Expr;
+import dev.jorel.fortelangprime.ast.expressions.ExprBool;
+import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
+import dev.jorel.fortelangprime.ast.types.Type;
 
 public class ForteLangPrimeParser {
 	
-//	public static void parse(String input) {
-//	  	try { 
-//			InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-//			new ForteLangPrime(inputStream).main();
-//		} catch(Exception e) {
-//		  	e.printStackTrace();
-//		  	//return null;
-//		}
-//	}
-
-	public static enum Pragma {
-		IF("IF");
-
-		private String name;
+	public static FLPLibrary parse(String input) throws ParseException {
+		InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
+		return new ForteLangPrimeParser(inputStream).input();
+	}
 	
-		Pragma(String name) {
-			this.name = name;
-		}
-
-		public static Pragma getPragma(String name) throws InvalidPragmaException {
-			for(Pragma pragma : Pragma.values()) {
-				if(pragma.name.equals(name)) {
-					return pragma;
-				}
-			}
-			throw new InvalidPragmaException(name);
-		}
-	}
-
-	public List<Pragma> pragmas;
-
-	public void main() {
-		pragmas = new ArrayList<Pragma>();
-
-		try { 
-			this.input();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
 }
 
 PARSER_END(ForteLangPrimeParser)
@@ -113,8 +63,7 @@ Java's data types:
 - byte, short, int, long, float, double
 - char, boolean
 */
-TOKEN : { < NUM : "Num" > }
-TOKEN : { < INT : "Num@Int" > }
+TOKEN : { < INT : "Int" > }
 TOKEN : { < BOOL : "Bool" > }
 TOKEN : { < STRING : "String" > } //Strings and chars are the same thing, char[]
 //TOKEN : { < LIST : "List" > } //We'll use the [] notation to denote a List
@@ -129,122 +78,139 @@ TOKEN : { < ELSE : "else" > }
 
 //File declaractions
 TOKEN : { < LIBRARY : "Library" > }
-TOKEN : { < SCRIPT : "Script" > }
-TOKEN : { < FILE_TYPE : < LIBRARY > | < SCRIPT > >  }
-TOKEN : { < IMPORT : "import" > }
+//TOKEN : { < SCRIPT : "Script" > }
+//TOKEN : { < FILE_TYPE : < LIBRARY > | < SCRIPT > >  }
+//TOKEN : { < IMPORT : "import" > }
 TOKEN : { < EXPORT : "export" > }
 TOKEN : { < AS : "as" > }
 
 
 //Other
 TOKEN : { < PRAGMA : (["A"-"Z"])+ > }
-TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* (["\'"])* > }
+TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* > }
+TOKEN : { < INT_LITERAL : (["0"-"9"])+ > }
 TOKEN : { < NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > }
 //TOKEN : { < PRAGMA_NUMBER : (["0"-"9", ","])+ (["."])? (["0"-"9"])* > }
 
 //Whitespace
 SKIP : { "\n" | "\r" | " " | "\t" }
+SKIP : { < "#" (~["\r", "\n"])* > }
 
 /** Main endpoint */
-void input() throws Exception : { } {
+FLPLibrary input() : { FLPLibrary lib; } {
 	//expr = expr()
-	program()
+	lib = program()
 	<EOF>
+	{ return lib; }
 	//{ return expr; }
 }
 
-void flpFile() throws Exception : { } {
-	< FILE_TYPE >
-	fileMetadata()
-}
-
-//exports, imports, pragmas?
-void fileMetadata() throws Exception : { } {
-	(	  < IMPORT > /*TODO: String*/ (< AS > < VAR_NAME >)?
-	) | (
-	  < EXPORT > < VAR_NAME >
-	)
-}
-
-void program() throws Exception : { } {
-  	programDeclaration()
-	pragmas()
-	expression()
-}
-
-void programDeclaration() throws Exception : { } {
-	( < LIBRARY > )
+FLPLibrary program() : { Token name; List<String> exports; List<FLPFunction> functions; } {
+  	< LIBRARY >
+	name = < VAR_NAME >
+	
 	< OPENCBRACE >
-	linkingDeclarations()
+	exports = exports()
 	< CLOSECBRACE >
+	
+	functions = functions()
+	{ return new FLPLibrary(name.image, exports, functions); }
 }
 
-void linkingDeclarations() throws Exception : { } {
-	(< IMPORT > | < EXPORT >)?
+List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
+	(
+	  	< EXPORT >
+	  	t = < VAR_NAME >
+	  	< SEMICOLON >
+	  	{ exports.add(t.image); }
+	)*
+	{ return exports; }
 }
 
-void epsilon() throws Exception : { } {
+void epsilon() : { } {
 	{
 	  { }
 	}
 }
 
-void pragmas() throws Exception : { } {
-	(	 	pragma() pragmas()
-	) | epsilon()
-}
-
-void pragma() throws Exception : { Token pragma; } {
-	< AT >
-	pragma = < PRAGMA >
-
-	{
-	  pragmas.add(Pragma.getPragma(pragma.image));
-	  System.out.println(pragmas);
-	}
-}
-
-void number() throws Exception : { } {
-  < NUMBER >	
-}
-
-void expression() throws Exception : { } {
-	variable()
-	| guards()
-	| list()
-	| number()
-	| bool()
-	| set()
-	| LOOKAHEAD(2) < OPENBRACKET > expression() < CLOSEBRACKET >
-	| lambda()
-	| ifExpr()
-}
-
-void ifExpr() throws Exception : { } {
-	< IF >
-	expression()
-	< THEN >
-	expression()
-	< ELSE >
-	expression()
-}
-
-void set() throws Exception : { } {
-	< OPENCBRACE >
-	setDeclarations()
+List<FLPFunction> functions() : { List<FLPFunction> functions = new ArrayList<FLPFunction>(); FLPFunction f; } {
+  	< OPENCBRACE >
+  	( 	  
+		f = functionDeclaration()
+		{ functions.add(f); }
+	)*
 	< CLOSECBRACE >
+	{ return functions; }
+} 
+
+FLPFunction functionDeclaration() : { Token name; Expr expr; } {
+	name = < VAR_NAME > //TODO: functionName
+	types()
+	< EQUALS >
+	expr = expression()
+	< SEMICOLON >
+	{ return new FLPFunction(name.image, new Type[0], null, expr); }
 }
 
-void setDeclarations() throws Exception : { } {
-	setElements() | epsilon()
+
+//void pragmas() : { } {
+//	(
+//	 	pragma() pragmas()
+//	) | epsilon()
+//}
+//
+//void pragma() : { Token pragma; } {
+//	< AT >
+//	pragma = < PRAGMA >
+//
+//	{
+//	  pragmas.add(Pragma.getPragma(pragma.image));
+//	  System.out.println(pragmas);
+//	}
+//}
+
+ExprIntLit integer() : { Token t; } {
+  	t = < INT_LITERAL >
+  	{ return new ExprIntLit(Integer.parseInt(t.image)); }	
 }
 
-void setElements() throws Exception : { } {
-	functionDeclaration() < SEMICOLON > (setElements())?
+Expr expression() : { Expr expr; } {
+//	variable()
+//	| guards()
+//	| list()
+	expr = integer() { return expr; }
+	| expr = bool() { return expr; }
+//	| set()
+//	| LOOKAHEAD(2) < OPENBRACKET > expression() < CLOSEBRACKET >
+//	| lambda()
+//	| ifExpr()
 }
 
-void variable() throws Exception : { } {
-	< VAR_NAME >
+//void ifExpr() : { } {
+//	< IF >
+//	expression()
+//	< THEN >
+//	expression()
+//	< ELSE >
+//	expression()
+//}
+
+//void set() : { } {
+//	< OPENCBRACE >
+//	setDeclarations()
+//	< CLOSECBRACE >
+//}
+//
+//void setDeclarations() : { } {
+//	setElements() | epsilon()
+//}
+//
+//void setElements() : { } {
+//	functionDeclaration() < SEMICOLON > (setElements())?
+//}
+//
+//void variable() : { } {
+//	< VAR_NAME >
 
 //	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
 //	( LOOKAHEAD(2)
@@ -269,17 +235,20 @@ void variable() throws Exception : { } {
 //		}
 //		expression()
 //	)?
+//}
+
+ExprBool bool() : { boolean b;} {
+	( < TRUE > { b = true; }
+	| < FALSE > { b = false;}
+	)
+	{ return new ExprBool(b); }
 }
 
-void bool() throws Exception : { } {
-	< TRUE > | < FALSE >
-}
+//void lambda() : { } {
+//	< OPENBRACKET > functionDeclaration() < CLOSEBRACKET >
+//}
 
-void lambda() throws Exception : { } {
-	< OPENBRACKET > functionDeclaration() < CLOSEBRACKET >
-}
-
-void types() throws Exception : { } {
+void types() : { } {
 	identifier()
 	< LCHEVRON >
 	type()
@@ -289,69 +258,67 @@ void types() throws Exception : { } {
 	)?
 }
 
-void type() throws Exception : { } {
-	"Num"
+void type() : { } {
+	"Int"
 	| "String"
 	| "Bool"
 	| < OPENSBRACKET > type() < CLOSESBRACKET >
-	| < OPENCBRACE > setTypes() < CLOSECBRACE >
+//	| < OPENCBRACE > setTypes() < CLOSECBRACE >
 }
 
-void setTypes() throws Exception : { } {
-	"..." | otherSetTypes()
-}
-
-void otherSetTypes() throws Exception : { } {
-	< VAR_NAME > //TODO: namedIdentifier
-	< LCHEVRON >
-	type()
-	< RCHEVRON >
-	(
-	  < COMMA >
-	  (
-	    "..." | otherSetTypes()	  )	)?
-}
-
-void identifier() throws Exception : { } {
+//void setTypes() : { } {
+//	"..." | otherSetTypes()
+//}
+//
+//void otherSetTypes() : { } {
+//	< VAR_NAME > //TODO: namedIdentifier
+//	< LCHEVRON >
+//	type()
+//	< RCHEVRON >
+//	(
+//	  < COMMA >
+//	  (
+//	    "..." | otherSetTypes()
+//	  )
+//	)?
+//}
+//
+void identifier() : { } {
 	< VAR_NAME > | epsilon()
 }
-
-void functionDeclaration() throws Exception : { } {
-	< VAR_NAME > //TODO: functionName
-	types()
-	< EQUALS >
-	expression()
-}
-
-void list() throws Exception : { } {
-	< OPENSBRACKET >
-	listContents()
-	< CLOSESBRACKET >
-}
-
-void listContents() throws Exception : { } {
-	listElements() | epsilon()
-}
-
-void listElements() throws Exception : { } {
-	expression() (< COMMA > listElements())?
-}
-
-void guards() throws Exception : { } {
-	< GUARD >
-	innerGuards()
-}
-
-void innerGuards() throws Exception : { } {
-   LOOKAHEAD(2)
-	(	  guard() innerGuards()
-	) | (
-		< PIPE >
-		< FAT_ARROW >
-		expression()
-	)//epsilon()
-}
-
-void guard() throws Exception : { } {
-	< PIPE > expression() < FAT_ARROW > expression()
-}
+//
+//
+//
+//void list() : { } {
+//	< OPENSBRACKET >
+//	listContents()
+//	< CLOSESBRACKET >
+//}
+//
+//void listContents() : { } {
+//	listElements() | epsilon()
+//}
+//
+//void listElements() : { } {
+//	expression() (< COMMA > listElements())?
+//}
+//
+//void guards() : { } {
+//	< GUARD >
+//	innerGuards()
+//}
+//
+//void innerGuards() : { } {
+//   LOOKAHEAD(2)
+//	(
+//	  guard() innerGuards()
+//	) | (
+//		< PIPE >
+//		< FAT_ARROW >
+//		expression()
+//	)//epsilon()
+//}
+//
+//void guard() : { } {
+//	< PIPE > expression() < FAT_ARROW > expression()
+//}

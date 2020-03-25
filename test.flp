@@ -1,16 +1,12 @@
-Library {} {
+Library Sample {
+	
+	export justTwo;
+	# export returnOneOrZero;
+	
+} {
 
-	someFunction <Num> = 2;
+	justTwo <Int> = 2;
 	
-	someOtherFunction a<Num> -> b<Num> -> <Num> = 3;
-	
-	someOtherFunction <Num> = 
-		?: 
-		| true => 2
-		| => 3;
-		
-	a <Num> = if 2 then 3 else 4;
-	
-	a <Num> = c;
+	# returnOneOrZero a<Bool> -> <Num> = if a then 1 else 0;
 	
 }
