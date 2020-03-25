@@ -7,4 +7,6 @@ public interface CodeableMethod extends Opcodes {
 
 	public void emit(MethodVisitor methodVisitor);
 	
+	public int returnType();
+	
 }

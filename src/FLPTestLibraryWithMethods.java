@@ -10,17 +10,6 @@ import dev.jorel.fortelangprime.ast.FLPLibrary;
 
 
 public class FLPTestLibraryWithMethods implements Opcodes {
-
-//	Library FLPTestLibrary {
-//		export justTwo
-//		export returnOneOrZero
-//	} {
-//
-//		justTwo <Num> = 2;
-//		
-//		returnOneOrZero a<Bool> -> <Num> = if a then 1 else 0;
-//		
-//	}
 	
 	public static void compileAndWrite(FLPLibrary lib) {
 		byte[] fileData = compile(lib);

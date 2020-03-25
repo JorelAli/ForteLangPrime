@@ -16,6 +16,7 @@ dependencies {
     implementation 'com.google.guava:guava:26.0-jre'
     //implementation 'org.ow2.asm:7.2'
 	compile group: 'org.ow2.asm', name: 'asm', version: '7.2'
+	compile files("classfolder")
 }
 
 repositories {

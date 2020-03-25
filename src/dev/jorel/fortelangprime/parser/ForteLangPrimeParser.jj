@@ -15,8 +15,9 @@ import java.util.List;
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.expressions.ExprBool;
+import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
+import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
 import dev.jorel.fortelangprime.ast.types.Type;
 
 public class ForteLangPrimeParser {
@@ -58,14 +59,9 @@ TOKEN : { < PLUS : "+" >}
 TOKEN : { < ROUGHLY_EQUALS : "~=" > }
 
 //Types
-/*
-Java's data types:
-- byte, short, int, long, float, double
-- char, boolean
-*/
-TOKEN : { < INT : "Int" > }
-TOKEN : { < BOOL : "Bool" > }
-TOKEN : { < STRING : "String" > } //Strings and chars are the same thing, char[]
+TOKEN : { < TYPE_INT : "Int" > }
+TOKEN : { < TYPE_BOOL : "Bool" > }
+TOKEN : { < TYPE_STRING : "String" > }
 //TOKEN : { < LIST : "List" > } //We'll use the [] notation to denote a List
 //TOKEN : { < SET : "Set" >} //We'll use the {} notation to denote a Set
 
@@ -86,11 +82,10 @@ TOKEN : { < AS : "as" > }
 
 
 //Other
-TOKEN : { < PRAGMA : (["A"-"Z"])+ > }
 TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* > }
 TOKEN : { < INT_LITERAL : (["0"-"9"])+ > }
 TOKEN : { < NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > }
-//TOKEN : { < PRAGMA_NUMBER : (["0"-"9", ","])+ (["."])? (["0"-"9"])* > }
+TOKEN : { < STRING : "\"" ("\\" ~[] | ~["\"", "\\"])* "\"" >}
 
 //Whitespace
 SKIP : { "\n" | "\r" | " " | "\t" }
@@ -98,11 +93,9 @@ SKIP : { < "#" (~["\r", "\n"])* > }
 
 /** Main endpoint */
 FLPLibrary input() : { FLPLibrary lib; } {
-	//expr = expr()
 	lib = program()
 	<EOF>
 	{ return lib; }
-	//{ return expr; }
 }
 
 FLPLibrary program() : { Token name; List<String> exports; List<FLPFunction> functions; } {
@@ -133,7 +126,10 @@ void epsilon() : { } {
 	}
 }
 
-List<FLPFunction> functions() : { List<FLPFunction> functions = new ArrayList<FLPFunction>(); FLPFunction f; } {
+List<FLPFunction> functions() : {
+  	List<FLPFunction> functions = new ArrayList<FLPFunction>();
+  	FLPFunction f;
+} {
   	< OPENCBRACE >
   	( 	  
 		f = functionDeclaration()
@@ -143,8 +139,11 @@ List<FLPFunction> functions() : { List<FLPFunction> functions = new ArrayList<FL
 	{ return functions; }
 } 
 
-FLPFunction functionDeclaration() : { Token name; Expr expr; } {
-	name = < VAR_NAME > //TODO: functionName
+FLPFunction functionDeclaration() : {
+  	Token name;
+  	Expr expr;
+} {
+	name = < VAR_NAME >
 	types()
 	< EQUALS >
 	expr = expression()
@@ -152,104 +151,36 @@ FLPFunction functionDeclaration() : { Token name; Expr expr; } {
 	{ return new FLPFunction(name.image, new Type[0], null, expr); }
 }
 
-
-//void pragmas() : { } {
-//	(
-//	 	pragma() pragmas()
-//	) | epsilon()
-//}
-//
-//void pragma() : { Token pragma; } {
-//	< AT >
-//	pragma = < PRAGMA >
-//
-//	{
-//	  pragmas.add(Pragma.getPragma(pragma.image));
-//	  System.out.println(pragmas);
-//	}
-//}
-
-ExprIntLit integer() : { Token t; } {
+ExprIntLit integer() : {
+  	Token t;
+} {
   	t = < INT_LITERAL >
   	{ return new ExprIntLit(Integer.parseInt(t.image)); }	
 }
 
-Expr expression() : { Expr expr; } {
-//	variable()
-//	| guards()
-//	| list()
+Expr expression() : {
+  	Expr expr;
+} {
 	expr = integer() { return expr; }
 	| expr = bool() { return expr; }
-//	| set()
-//	| LOOKAHEAD(2) < OPENBRACKET > expression() < CLOSEBRACKET >
-//	| lambda()
-//	| ifExpr()
+	| expr = string() { return expr; }
 }
 
-//void ifExpr() : { } {
-//	< IF >
-//	expression()
-//	< THEN >
-//	expression()
-//	< ELSE >
-//	expression()
-//}
-
-//void set() : { } {
-//	< OPENCBRACE >
-//	setDeclarations()
-//	< CLOSECBRACE >
-//}
-//
-//void setDeclarations() : { } {
-//	setElements() | epsilon()
-//}
-//
-//void setElements() : { } {
-//	functionDeclaration() < SEMICOLON > (setElements())?
-//}
-//
-//void variable() : { } {
-//	< VAR_NAME >
-
-//	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
-//	( LOOKAHEAD(2)
-//		{
-//			if(!getToken(0).image.equals("if")) {
-//				throw new Exception("Expected if");
-//			}
-//		}
-//		expression()
-//		< VAR_NAME >
-//		{
-//			if(!getToken(0).image.equals("then")) {
-//				throw new Exception("Expected then");
-//			}
-//		}
-//		expression()
-//		< VAR_NAME >
-//		{
-//			if(!getToken(0).image.equals("else")) {
-//				throw new Exception("Expected else");
-//			}
-//		}
-//		expression()
-//	)?
-//}
-
-ExprBool bool() : { boolean b;} {
-	( < TRUE > { b = true; }
-	| < FALSE > { b = false;}
+ExprBoolLit bool() : {} {
+	( < TRUE >  { return new ExprBoolLit(true); }
+	| < FALSE > { return new ExprBoolLit(false); }
 	)
-	{ return new ExprBool(b); }
 }
 
-//void lambda() : { } {
-//	< OPENBRACKET > functionDeclaration() < CLOSEBRACKET >
-//}
+ExprStringLit string() : {
+  	Token t;
+} {
+  	t = < STRING >
+	{ return new ExprStringLit(t.image.substring(1, t.image.length() - 1)); }
+}
 
 void types() : { } {
-	identifier()
+	(< VAR_NAME >)?
 	< LCHEVRON >
 	type()
 	< RCHEVRON >
@@ -259,66 +190,8 @@ void types() : { } {
 }
 
 void type() : { } {
-	"Int"
-	| "String"
-	| "Bool"
+	< TYPE_INT >
+	| < TYPE_STRING >
+	| < TYPE_BOOL >
 	| < OPENSBRACKET > type() < CLOSESBRACKET >
-//	| < OPENCBRACE > setTypes() < CLOSECBRACE >
 }
-
-//void setTypes() : { } {
-//	"..." | otherSetTypes()
-//}
-//
-//void otherSetTypes() : { } {
-//	< VAR_NAME > //TODO: namedIdentifier
-//	< LCHEVRON >
-//	type()
-//	< RCHEVRON >
-//	(
-//	  < COMMA >
-//	  (
-//	    "..." | otherSetTypes()
-//	  )
-//	)?
-//}
-//
-void identifier() : { } {
-	< VAR_NAME > | epsilon()
-}
-//
-//
-//
-//void list() : { } {
-//	< OPENSBRACKET >
-//	listContents()
-//	< CLOSESBRACKET >
-//}
-//
-//void listContents() : { } {
-//	listElements() | epsilon()
-//}
-//
-//void listElements() : { } {
-//	expression() (< COMMA > listElements())?
-//}
-//
-//void guards() : { } {
-//	< GUARD >
-//	innerGuards()
-//}
-//
-//void innerGuards() : { } {
-//   LOOKAHEAD(2)
-//	(
-//	  guard() innerGuards()
-//	) | (
-//		< PIPE >
-//		< FAT_ARROW >
-//		expression()
-//	)//epsilon()
-//}
-//
-//void guard() : { } {
-//	< PIPE > expression() < FAT_ARROW > expression()
-//}

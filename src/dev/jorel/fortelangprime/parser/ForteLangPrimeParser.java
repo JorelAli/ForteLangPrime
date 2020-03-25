@@ -11,8 +11,9 @@ import java.util.List;
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.expressions.ExprBool;
+import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
 import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
+import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
 import dev.jorel.fortelangprime.ast.types.Type;
 
 public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
@@ -24,8 +25,7 @@ public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
 
 /** Main endpoint */
   final public FLPLibrary input() throws ParseException {FLPLibrary lib;
-    //expr = expr()
-            lib = program();
+    lib = program();
     jj_consume_token(0);
 {if ("" != null) return lib;}
     throw new Error("Missing return statement in function");
@@ -67,7 +67,8 @@ exports.add(t.image);
 { }
   }
 
-  final public List<FLPFunction> functions() throws ParseException {List<FLPFunction> functions = new ArrayList<FLPFunction>(); FLPFunction f;
+  final public List<FLPFunction> functions() throws ParseException {List<FLPFunction> functions = new ArrayList<FLPFunction>();
+        FLPFunction f;
     jj_consume_token(OPENCBRACE);
     label_2:
     while (true) {
@@ -88,7 +89,8 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public FLPFunction functionDeclaration() throws ParseException {Token name; Expr expr;
+  final public FLPFunction functionDeclaration() throws ParseException {Token name;
+        Expr expr;
     name = jj_consume_token(VAR_NAME);
     types();
     jj_consume_token(EQUALS);
@@ -98,23 +100,7 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-//void pragmas() : { } {
-//	(
-//	 	pragma() pragmas()
-//	) | epsilon()
-//}
-//
-//void pragma() : { Token pragma; } {
-//	< AT >
-//	pragma = < PRAGMA >
-//
-//	{
-//	  pragmas.add(Pragma.getPragma(pragma.image));
-//	  System.out.println(pragmas);
-//	}
-//}
-  final public 
-ExprIntLit integer() throws ParseException {Token t;
+  final public ExprIntLit integer() throws ParseException {Token t;
     t = jj_consume_token(INT_LITERAL);
 {if ("" != null) return new ExprIntLit(Integer.parseInt(t.image));}
     throw new Error("Missing return statement in function");
@@ -123,16 +109,18 @@ ExprIntLit integer() throws ParseException {Token t;
   final public Expr expression() throws ParseException {Expr expr;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INT_LITERAL:{
-      //	variable()
-      //	| guards()
-      //	| list()
-              expr = integer();
+      expr = integer();
 {if ("" != null) return expr;}
       break;
       }
     case TRUE:
     case FALSE:{
       expr = bool();
+{if ("" != null) return expr;}
+      break;
+      }
+    case STRING:{
+      expr = string();
 {if ("" != null) return expr;}
       break;
       }
@@ -144,67 +132,16 @@ ExprIntLit integer() throws ParseException {Token t;
     throw new Error("Missing return statement in function");
   }
 
-//void ifExpr() : { } {
-//	< IF >
-//	expression()
-//	< THEN >
-//	expression()
-//	< ELSE >
-//	expression()
-//}
-
-//void set() : { } {
-//	< OPENCBRACE >
-//	setDeclarations()
-//	< CLOSECBRACE >
-//}
-//
-//void setDeclarations() : { } {
-//	setElements() | epsilon()
-//}
-//
-//void setElements() : { } {
-//	functionDeclaration() < SEMICOLON > (setElements())?
-//}
-//
-//void variable() : { } {
-//	< VAR_NAME >
-
-//	LOOKAHEAD ( { pragmas.contains(Pragma.IF) } )
-//	( LOOKAHEAD(2)
-//		{
-//			if(!getToken(0).image.equals("if")) {
-//				throw new Exception("Expected if");
-//			}
-//		}
-//		expression()
-//		< VAR_NAME >
-//		{
-//			if(!getToken(0).image.equals("then")) {
-//				throw new Exception("Expected then");
-//			}
-//		}
-//		expression()
-//		< VAR_NAME >
-//		{
-//			if(!getToken(0).image.equals("else")) {
-//				throw new Exception("Expected else");
-//			}
-//		}
-//		expression()
-//	)?
-//}
-  final public 
-ExprBool bool() throws ParseException {boolean b;
+  final public ExprBoolLit bool() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TRUE:{
       jj_consume_token(TRUE);
-b = true;
+{if ("" != null) return new ExprBoolLit(true);}
       break;
       }
     case FALSE:{
       jj_consume_token(FALSE);
-b = false;
+{if ("" != null) return new ExprBoolLit(false);}
       break;
       }
     default:
@@ -212,16 +149,25 @@ b = false;
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return new ExprBool(b);}
     throw new Error("Missing return statement in function");
   }
 
-//void lambda() : { } {
-//	< OPENBRACKET > functionDeclaration() < CLOSEBRACKET >
-//}
-  final public 
-void types() throws ParseException {
-    identifier();
+  final public ExprStringLit string() throws ParseException {Token t;
+    t = jj_consume_token(STRING);
+{if ("" != null) return new ExprStringLit(t.image.substring(1, t.image.length() - 1));}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public void types() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case VAR_NAME:{
+      jj_consume_token(VAR_NAME);
+      break;
+      }
+    default:
+      jj_la1[4] = jj_gen;
+      ;
+    }
     jj_consume_token(LCHEVRON);
     type();
     jj_consume_token(RCHEVRON);
@@ -232,23 +178,23 @@ void types() throws ParseException {
       break;
       }
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       ;
     }
   }
 
   final public void type() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case INT:{
-      jj_consume_token(INT);
+    case TYPE_INT:{
+      jj_consume_token(TYPE_INT);
       break;
       }
-    case STRING:{
-      jj_consume_token(STRING);
+    case TYPE_STRING:{
+      jj_consume_token(TYPE_STRING);
       break;
       }
-    case BOOL:{
-      jj_consume_token(BOOL);
+    case TYPE_BOOL:{
+      jj_consume_token(TYPE_BOOL);
       break;
       }
     case OPENSBRACKET:{
@@ -258,38 +204,9 @@ void types() throws ParseException {
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
-    }
-  }
-
-//void setTypes() : { } {
-//	"..." | otherSetTypes()
-//}
-//
-//void otherSetTypes() : { } {
-//	< VAR_NAME > //TODO: namedIdentifier
-//	< LCHEVRON >
-//	type()
-//	< RCHEVRON >
-//	(
-//	  < COMMA >
-//	  (
-//	    "..." | otherSetTypes()
-//	  )
-//	)?
-//}
-//
-  final public void identifier() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case VAR_NAME:{
-      jj_consume_token(VAR_NAME);
-      break;
-      }
-    default:
-      jj_la1[6] = jj_gen;
-      epsilon();
     }
   }
 
@@ -310,10 +227,10 @@ void types() throws ParseException {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xc000000,0xc000000,0x200,0x3800020,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0xc000000,0xc000000,0x0,0x200,0x3800020,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1,0x8,0x10,0x0,0x0,0x0,0x8,};
+      jj_la1_1 = new int[] {0x1,0x4,0x28,0x0,0x4,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */

@@ -1,10 +1,10 @@
 package dev.jorel.fortelangprime.ast.types;
 
-public class IntType implements Type {
+public class TypeBool implements Type {
 
 	@Override
 	public String toBytecodeString() {
-		return "I";
+		return "Z";
 	}
 
 }

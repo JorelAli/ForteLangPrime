@@ -1,10 +1,10 @@
 package dev.jorel.fortelangprime.ast.types;
 
-public class StringType implements Type {
+public class TypeString implements Type {
 
 	@Override
 	public String toBytecodeString() {
-		return "Ljava/lang/String";
+		return "Ljava/lang/String;";
 	}
 
 }

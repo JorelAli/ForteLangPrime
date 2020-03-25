@@ -41,17 +41,9 @@ public class FLPFunction implements CodeableClass {
 		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, name, typeSignature.toString(), null, null);
 		methodVisitor.visitCode();
 		body.emit(methodVisitor);
-		methodVisitor.visitInsn(IRETURN);
+		methodVisitor.visitInsn(body.returnType());
 		methodVisitor.visitMaxs(1, 0);
 		methodVisitor.visitEnd();
 	}
-	
-	//methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "someFunc", "(Ljava/util/List;I)V", "(Ljava/util/List<Ljava/lang/String;>;I)V", null);
-//methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "someFunc", "(Ljava/lang/String;I)V", null, null);
-
-	
-//	public static void someFunc(String str, int i) {
-//		//"(Ljava/lang/String;I)V"
-//	}
 	
 }

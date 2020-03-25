@@ -7,6 +7,10 @@ Library Sample {
 
 	justTwo <Int> = 2;
 	
+	aString <String> = "hello";
+	
+	someBool <Bool> = false;
+	
 	# returnOneOrZero a<Bool> -> <Num> = if a then 1 else 0;
 	
 }

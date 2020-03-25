@@ -3,22 +3,22 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
-import dev.jorel.fortelangprime.ast.types.BoolType;
+import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
-public class ExprBool implements Expr {
+public class ExprBoolLit implements Expr {
 	
 	private boolean value;
 	
-	public ExprBool(boolean value) {
+	public ExprBoolLit(boolean value) {
 		this.value = value;
 	}
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		return new BoolType();
+		return new TypeBool();
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ExprBool implements Expr {
 
 	@Override
 	public Expr deepCopy() {
-		return new ExprBool(value);
+		return new ExprBoolLit(value);
 	}
 
 	@Override
@@ -48,6 +48,11 @@ public class ExprBool implements Expr {
 		} else {
 			methodVisitor.visitInsn(ICONST_0);
 		}
+	}
+
+	@Override
+	public int returnType() {
+		return IRETURN;
 	}
 
 }
