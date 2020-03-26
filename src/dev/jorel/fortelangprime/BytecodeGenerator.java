@@ -10,6 +10,7 @@ import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
+import dev.jorel.fortelangprime.ast.types.TypingContext;
 
 public class BytecodeGenerator implements Opcodes {
 	
@@ -25,10 +26,12 @@ public class BytecodeGenerator implements Opcodes {
 	}
 	
 	private FLPLibrary lib;
+	private TypingContext context; 
 	private int javaVersion;
 	private byte[] compiledData;
 	
-	public BytecodeGenerator(FLPLibrary lib, JavaVersion version) {
+	public BytecodeGenerator(TypingContext context, FLPLibrary lib, JavaVersion version) {
+		this.context = context;
 		this.lib = lib;
 		this.javaVersion = version.version;
 	}
@@ -46,7 +49,7 @@ public class BytecodeGenerator implements Opcodes {
 		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
 		for(FLPFunction f : functions) {
-			f.emit(classWriter);
+			f.emit(classWriter, context);
 		}
 		classWriter.visitEnd();
 		return classWriter.toByteArray();

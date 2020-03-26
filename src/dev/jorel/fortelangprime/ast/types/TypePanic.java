@@ -6,5 +6,10 @@ public class TypePanic implements Type {
 	public String toBytecodeString() {
 		return "?";
 	}
+	
+	@Override
+	public int loadInstruction() {
+		return -1;
+	}
 
 }

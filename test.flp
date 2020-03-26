@@ -16,7 +16,7 @@ Library Sample {
 
 	paramFunction <Int> -> <Int> = 2;
 
-	## identity a<Int> -> <Int> = a;
+	identity a<Int> -> <Int> = a;
 	
 	##someFunctionCall <String> = aString;
 

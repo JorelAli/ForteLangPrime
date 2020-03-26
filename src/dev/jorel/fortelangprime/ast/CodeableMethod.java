@@ -4,9 +4,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public interface CodeableMethod extends Opcodes {
+import dev.jorel.fortelangprime.ast.types.TypingContext;
 
-	public void emit(MethodVisitor methodVisitor);
+public interface CodeableMethod extends Opcodes {
 	
 	public int returnType();
 	
@@ -17,5 +17,7 @@ public interface CodeableMethod extends Opcodes {
 		methodVisitor.visitLabel(lineNumber);
 		methodVisitor.visitLineNumber(getLineNumber(), lineNumber);
 	}
+
+	void emit(MethodVisitor methodVisitor, TypingContext context);
 	
 }

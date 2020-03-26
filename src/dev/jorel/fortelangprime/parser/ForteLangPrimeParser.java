@@ -19,6 +19,7 @@ import dev.jorel.fortelangprime.parser.util.*;
 public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
 
         private static TypingContext typingContext;
+        private static String currentFunctionName;
 
         public static FLPLibrary parse(String input) throws ParseException {
                 typingContext = new TypingContext();
@@ -104,12 +105,16 @@ functions.add(f);
   final public FLPFunction functionDeclaration() throws ParseException {Token name;
         Expr expr;
         List<Pair<String, Type>> functionTypes;
+        TypeFunction tf;
     name = jj_consume_token(VAR_NAME);
+ForteLangPrimeParser.currentFunctionName = name.image;
     functionTypes = functionTypes();
+tf = Converter.functionTypesToTypeFunction(functionTypes);
+                typingContext.addFunction(name.image, tf);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-{if ("" != null) return new FLPFunction(name.image, Converter.functionTypesToTypeFunction(functionTypes), expr);}
+{if ("" != null) return new FLPFunction(name.image, tf, expr);}
     throw new Error("Missing return statement in function");
   }
 
@@ -136,11 +141,22 @@ functions.add(f);
 {if ("" != null) return expr;}
       break;
       }
+    case VAR_NAME:{
+      expr = variable();
+{if ("" != null) return expr;}
+      break;
+      }
     default:
       jj_la1[2] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprVariable variable() throws ParseException {Token t;
+    t = jj_consume_token(VAR_NAME);
+{if ("" != null) return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName);}
     throw new Error("Missing return statement in function");
   }
 
@@ -264,7 +280,7 @@ types.addAll(otherTypes);
       jj_la1_0 = new int[] {0x0,0x0,0xe0000000,0x60000000,0x0,0x200,0x3800000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x4,0x20,0x140,0x0,0x20,0x0,0x0,};
+      jj_la1_1 = new int[] {0x4,0x20,0x160,0x0,0x20,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */

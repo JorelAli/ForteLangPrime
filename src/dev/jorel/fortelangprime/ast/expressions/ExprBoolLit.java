@@ -44,7 +44,7 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor) {
+	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		if(value) {
 			methodVisitor.visitInsn(ICONST_1);
 		} else {

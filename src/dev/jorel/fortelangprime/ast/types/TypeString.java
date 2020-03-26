@@ -6,5 +6,10 @@ public class TypeString implements Type {
 	public String toBytecodeString() {
 		return "Ljava/lang/String;";
 	}
+	
+	@Override
+	public int loadInstruction() {
+		return ALOAD;
+	}
 
 }

@@ -28,6 +28,12 @@ public class TypeFunction implements Type {
 	public LinkedHashMap<String, Type> getParams() {
 		return params;
 	}
+
+	@Override
+	public int loadInstruction() {
+		// TODO Auto-generated method stub
+		return -1;
+	}
 	
 
 }

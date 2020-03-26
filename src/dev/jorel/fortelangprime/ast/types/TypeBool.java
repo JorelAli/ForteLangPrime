@@ -7,4 +7,9 @@ public class TypeBool implements Type {
 		return "Z";
 	}
 
+	@Override
+	public int loadInstruction() {
+		return ILOAD;
+	}
+
 }

@@ -44,7 +44,7 @@ public class ExprIntLit implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor) {
+	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		switch(value) {
 			case -1:
 				methodVisitor.visitInsn(ICONST_M1);

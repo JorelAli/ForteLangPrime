@@ -44,7 +44,7 @@ public class ExprStringLit implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor) {
+	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		methodVisitor.visitLdcInsn(value);
 	}
 

@@ -23,6 +23,7 @@ import dev.jorel.fortelangprime.parser.util.*;
 public class ForteLangPrimeParser {
 
   	private static TypingContext typingContext;
+  	private static String currentFunctionName;
 	
 	public static FLPLibrary parse(String input) throws ParseException {
 		typingContext = new TypingContext();
@@ -197,13 +198,19 @@ FLPFunction functionDeclaration() : {
   	Token name;
   	Expr expr;
   	List<Pair<String, Type>> functionTypes;
+  	TypeFunction tf;
 } {
 	name = < VAR_NAME >
+	{ ForteLangPrimeParser.currentFunctionName = name.image; }
 	functionTypes = functionTypes()
+	{
+	  	tf = Converter.functionTypesToTypeFunction(functionTypes);
+	  	typingContext.addFunction(name.image, tf);
+	}
 	< EQUALS >
 	expr = expression()
 	< SEMICOLON >
-	{ return new FLPFunction(name.image, Converter.functionTypesToTypeFunction(functionTypes), expr); }
+	{ return new FLPFunction(name.image, tf, expr); }
 }
 
 Expr expression() : {
@@ -213,6 +220,14 @@ Expr expression() : {
 	| expr = bool() { return expr; }
 	| expr = string() { return expr; }
 	| expr = panic() { return expr; }
+	| expr = variable() { return expr; }
+}
+
+ExprVariable variable() : {
+  	Token t;
+} {
+  	t = < VAR_NAME >
+  	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName); }
 }
 
 ExprIntLit integer() : {

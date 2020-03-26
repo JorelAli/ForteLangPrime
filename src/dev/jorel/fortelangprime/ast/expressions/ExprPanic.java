@@ -3,7 +3,6 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
-import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
@@ -18,7 +17,7 @@ public class ExprPanic implements Expr {
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		return new TypeBool();
+		throw new TypeException();
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class ExprPanic implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor) {
+	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		methodVisitor.visitTypeInsn(NEW, "java/lang/RuntimeException");
 		methodVisitor.visitInsn(DUP);
 		methodVisitor.visitLdcInsn("Panic operator reached");

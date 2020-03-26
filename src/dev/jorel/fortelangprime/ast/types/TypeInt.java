@@ -6,5 +6,10 @@ public class TypeInt implements Type {
 	public String toBytecodeString() {
 		return "I";
 	}
+	
+	@Override
+	public int loadInstruction() {
+		return ILOAD;
+	}
 
 }

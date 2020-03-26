@@ -1,7 +1,11 @@
 package dev.jorel.fortelangprime.ast.types;
 
-public interface Type {
+import org.objectweb.asm.Opcodes;
+
+public interface Type extends Opcodes {
 
 	public String toBytecodeString();
+	
+	public int loadInstruction();
 	
 }
