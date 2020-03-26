@@ -2,12 +2,20 @@ package dev.jorel.fortelangprime.parser.util;
 
 public class Pair<A, B> {
 
-	public A first;
-	public B second;
+	private A first;
+	private B second;
 
 	public Pair(A first, B second) {
 		this.first = first;
 		this.second = second;
+	}
+	
+	public A first() {
+		return this.first;
+	}
+	
+	public B second() {
+		return this.second;
 	}
 	
 	public static <A, B> Pair<A, B> of(A a, B b) {

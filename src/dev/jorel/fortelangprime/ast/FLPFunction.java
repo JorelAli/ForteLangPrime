@@ -1,7 +1,5 @@
 package dev.jorel.fortelangprime.ast;
 
-import java.util.Map.Entry;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -10,6 +8,7 @@ import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class FLPFunction implements CodeableClass {
 
@@ -38,11 +37,11 @@ public class FLPFunction implements CodeableClass {
 		Label variableTypes = new Label();
 		methodVisitor.visitLabel(variableTypes);
 		int index = 0;
-		for(Entry<String, Type> e : typeFunction.getParams().entrySet()) {
-			if(e.getKey() == null) {
+		for(Pair<String, Type> e : typeFunction.getParams()) {
+			if(e.first() == null) {
 				continue;
 			}
-			methodVisitor.visitLocalVariable(e.getKey(), e.getValue().toBytecodeString(), null, lineNumber, variableTypes, index++);
+			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), null, lineNumber, variableTypes, index++);
 		}
 		
 		methodVisitor.visitMaxs(0, 0);

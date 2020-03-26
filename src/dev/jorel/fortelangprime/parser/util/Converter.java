@@ -12,9 +12,9 @@ public class Converter {
 		TypeFunctionBuilder builder = new TypeFunctionBuilder();
 		for(int i = 0; i < functionTypes.size() - 1; i++) {
 			Pair<String, Type> pair = functionTypes.get(i);
-			builder.withParam(pair.first, pair.second);
+			builder.withParam(pair.first(), pair.second());
 		}
-		builder.returning(functionTypes.get(functionTypes.size() - 1).second);
+		builder.returning(functionTypes.get(functionTypes.size() - 1).second());
 		return builder.build();
 	}
 	

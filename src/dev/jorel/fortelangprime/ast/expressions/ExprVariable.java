@@ -6,6 +6,7 @@ import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
+import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class ExprVariable implements Expr {
 	
@@ -21,7 +22,9 @@ public class ExprVariable implements Expr {
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		return context.getFunction(parentFunctionName).getParams().get(name);
+		return context.getFunction(parentFunctionName).getParams().stream()
+			.filter(p -> p.first().equals(name))
+			.findFirst().get().second();
 	}
 
 	@Override
@@ -47,14 +50,17 @@ public class ExprVariable implements Expr {
 	@Override
 	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		int index = 0;
-		for(String key : context.getFunction(parentFunctionName).getParams().keySet()) {
-			if(key.equals(name)) {
+		for(Pair<String, Type> pair : context.getFunction(parentFunctionName).getParams()) {
+			if(pair.first().equals(name)) {
 				break;
 			} else {
 				index++;
 			}
 		}
-		methodVisitor.visitVarInsn(context.getFunction(parentFunctionName).getParams().get(name).loadInstruction(), index);
+		Type paramType = context.getFunction(parentFunctionName).getParams().stream()
+				.filter(p -> p.first().equals(name))
+				.findFirst().get().second();
+		methodVisitor.visitVarInsn(paramType.loadInstruction(), index);
 	}
 
 	@Override

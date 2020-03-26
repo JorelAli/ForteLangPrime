@@ -1,18 +1,21 @@
 package dev.jorel.fortelangprime.ast.types;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class TypeFunctionBuilder {
 
 	Type returnType;
-	LinkedHashMap<String, Type> params;
+	List<Pair<String, Type>> params;
 	
 	public TypeFunctionBuilder() {
-		params = new LinkedHashMap<>();
+		params = new ArrayList<>();
 	}
 	
 	public TypeFunctionBuilder withParam(String name, Type paramType) {
-		params.put(name, paramType);
+		params.add(Pair.of(name, paramType));
 		return this;
 	}
 	
