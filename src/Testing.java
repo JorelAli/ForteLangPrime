@@ -20,20 +20,7 @@ public class Testing {
 		System.out.println(Sample.alwaysFalse());
 		System.out.println(Sample.generic(true));
 		
-		
-//		Sample.panicTest();
-//		Sample.
-//		Sample.panicTest'();
-//		System.out.println(Sample.justTwo'());
-//		System.out.println(Sample.someBool());
-//		System.out.println(Sample.aString());
-//		System.out.println(Sample.panicTest());
 
-	}
-	
-	static <ype, K> ype identity(ype a, K t) {
-//		.Testing. "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", "<T:Ljava/lang/Object;K:Ljava/lang/Object;>(TT;TK;)TT;",
-		return a;
 	}
 	
 }

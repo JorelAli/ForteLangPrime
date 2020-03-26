@@ -16,4 +16,14 @@ public class TypePanic implements Type {
 	public int returnType() {
 		return ATHROW;
 	}
+	
+	@Override
+	public String toGenericBytecodeString() {
+		return null;
+	}
+
+	@Override
+	public boolean isGeneric() {
+		return false;
+	}
 }

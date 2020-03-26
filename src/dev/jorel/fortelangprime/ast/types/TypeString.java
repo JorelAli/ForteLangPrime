@@ -16,5 +16,15 @@ public class TypeString implements Type {
 	public int returnType() {
 		return ARETURN;
 	}
+	
+	@Override
+	public String toGenericBytecodeString() {
+		return null;
+	}
+
+	@Override
+	public boolean isGeneric() {
+		return false;
+	}
 
 }

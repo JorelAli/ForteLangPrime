@@ -16,4 +16,14 @@ public class TypeInt implements Type {
 	public int returnType() {
 		return IRETURN;
 	}
+	
+	@Override
+	public String toGenericBytecodeString() {
+		return null;
+	}
+
+	@Override
+	public boolean isGeneric() {
+		return false;
+	}
 }

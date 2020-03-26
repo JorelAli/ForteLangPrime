@@ -1,6 +1,6 @@
 package dev.jorel.fortelangprime.ast.types;
 
-public class TypeNamedGeneric implements Type, GenericType {
+public class TypeNamedGeneric implements Type {
 	
 	private String name;
 	
@@ -30,6 +30,11 @@ public class TypeNamedGeneric implements Type, GenericType {
 	@Override
 	public String toGenericBytecodeString() {
 		return "T" + name + ";";
+	}
+
+	@Override
+	public boolean isGeneric() {
+		return true;
 	}
 
 }

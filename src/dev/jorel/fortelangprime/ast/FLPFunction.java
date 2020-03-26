@@ -7,7 +7,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.types.GenericType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
@@ -56,8 +55,6 @@ public class FLPFunction implements CodeableClass {
 			genericSignature = builder.toString();
 		}
 		
-		System.out.println(typeFunction.toBytecodeString());
-		System.out.println(genericSignature);
 		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, typeFunction.toBytecodeString(), genericSignature, null);
 		methodVisitor.visitCode();
 		
@@ -73,13 +70,10 @@ public class FLPFunction implements CodeableClass {
 		int index = 0;
 		for(Pair<String, Type> e : typeFunction.getParams()) {
 			if(e.first() == null) {
+				index++;
 				continue;
 			}
-			String genericSignatureVar = null;
-			if(e.second() instanceof GenericType) {
-				genericSignatureVar = ((GenericType) e.second()).toGenericBytecodeString();
-			}
-			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), genericSignatureVar, lineNumber, variableTypes, index++);
+			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), e.second().toGenericBytecodeString(), lineNumber, variableTypes, index++);
 		}
 		
 		methodVisitor.visitMaxs(0, 0);

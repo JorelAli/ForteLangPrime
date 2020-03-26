@@ -17,4 +17,14 @@ public class TypeBool implements Type {
 		return IRETURN;
 	}
 
+	@Override
+	public String toGenericBytecodeString() {
+		return null;
+	}
+
+	@Override
+	public boolean isGeneric() {
+		return false;
+	}
+
 }
