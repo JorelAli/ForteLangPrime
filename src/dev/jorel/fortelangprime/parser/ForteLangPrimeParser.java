@@ -3,25 +3,36 @@
 package dev.jorel.fortelangprime.parser;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.jorel.fortelangprime.ast.FLPFunction;
-import dev.jorel.fortelangprime.ast.FLPLibrary;
-import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprPanic;
-import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.*;
+import dev.jorel.fortelangprime.ast.expressions.*;
+import dev.jorel.fortelangprime.ast.types.*;
+import dev.jorel.fortelangprime.parser.util.*;
 
 public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
 
+        private static TypingContext typingContext;
+
         public static FLPLibrary parse(String input) throws ParseException {
+                typingContext = new TypingContext();
                 InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
                 return new ForteLangPrimeParser(inputStream).input();
+        }
+
+        public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException {
+                typingContext = new TypingContext();
+                return new ForteLangPrimeParser(new FileInputStream(input)).input();
+        }
+
+        public static TypingContext getTypingContext() {
+                return ForteLangPrimeParser.typingContext;
         }
 
 /** Main endpoint */
@@ -92,12 +103,13 @@ functions.add(f);
 
   final public FLPFunction functionDeclaration() throws ParseException {Token name;
         Expr expr;
+        List<Pair<String, Type>> functionTypes;
     name = jj_consume_token(VAR_NAME);
-    types();
+    functionTypes = functionTypes();
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-{if ("" != null) return new FLPFunction(name.image, new Type[0], null, expr);}
+{if ("" != null) return new FLPFunction(name.image, Converter.functionTypesToTypeFunction(functionTypes), expr);}
     throw new Error("Missing return statement in function");
   }
 
@@ -170,10 +182,14 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public void types() throws ParseException {
+  final public List<Pair<String, Type>> functionTypes() throws ParseException {List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
+        List<Pair<String, Type>> otherTypes = new ArrayList<Pair<String, Type>>();
+        Type t;
+        Token varName;
+varName = null;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VAR_NAME:{
-      jj_consume_token(VAR_NAME);
+      varName = jj_consume_token(VAR_NAME);
       break;
       }
     default:
@@ -181,38 +197,43 @@ functions.add(f);
       ;
     }
     jj_consume_token(LCHEVRON);
-    type();
+    t = type();
+if(varName == null) {
+                        types.add(Pair.of(null, t));
+                } else {
+                        types.add(Pair.of(varName.image, t));
+                }
     jj_consume_token(RCHEVRON);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ARROW:{
       jj_consume_token(ARROW);
-      types();
+      otherTypes = functionTypes();
+types.addAll(otherTypes);
       break;
       }
     default:
       jj_la1[5] = jj_gen;
       ;
     }
+{if ("" != null) return types;}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void type() throws ParseException {
+  final public Type type() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TYPE_INT:{
       jj_consume_token(TYPE_INT);
+{if ("" != null) return new TypeInt();}
       break;
       }
     case TYPE_STRING:{
       jj_consume_token(TYPE_STRING);
+{if ("" != null) return new TypeString();}
       break;
       }
     case TYPE_BOOL:{
       jj_consume_token(TYPE_BOOL);
-      break;
-      }
-    case OPENSBRACKET:{
-      jj_consume_token(OPENSBRACKET);
-      type();
-      jj_consume_token(CLOSESBRACKET);
+{if ("" != null) return new TypeBool();}
       break;
       }
     default:
@@ -220,6 +241,7 @@ functions.add(f);
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
   }
 
   /** Generated Token Manager. */
@@ -239,10 +261,10 @@ functions.add(f);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x8c000000,0xc000000,0x0,0x200,0x3800020,};
+      jj_la1_0 = new int[] {0x0,0x0,0xe0000000,0x60000000,0x0,0x200,0x3800000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x2,0x8,0x50,0x0,0x8,0x0,0x0,};
+      jj_la1_1 = new int[] {0x4,0x20,0x140,0x0,0x20,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -367,7 +389,7 @@ functions.add(f);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[44];
+    boolean[] la1tokens = new boolean[51];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -384,7 +406,7 @@ functions.add(f);
         }
       }
     }
-    for (int i = 0; i < 44; i++) {
+    for (int i = 0; i < 51; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -7,91 +7,143 @@ PARSER_BEGIN(ForteLangPrimeParser)
 package dev.jorel.fortelangprime.parser;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.jorel.fortelangprime.ast.FLPFunction;
-import dev.jorel.fortelangprime.ast.FLPLibrary;
-import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.expressions.ExprBoolLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprIntLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprStringLit;
-import dev.jorel.fortelangprime.ast.expressions.ExprPanic;
-import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.*;
+import dev.jorel.fortelangprime.ast.expressions.*;
+import dev.jorel.fortelangprime.ast.types.*;
+import dev.jorel.fortelangprime.parser.util.*;
 
 public class ForteLangPrimeParser {
+
+  	private static TypingContext typingContext;
 	
 	public static FLPLibrary parse(String input) throws ParseException {
+		typingContext = new TypingContext();
 		InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
 		return new ForteLangPrimeParser(inputStream).input();
+	}
+
+	public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException {
+		typingContext = new TypingContext();
+	  	return new ForteLangPrimeParser(new FileInputStream(input)).input();
+	}
+
+	public static TypingContext getTypingContext() {
+		return ForteLangPrimeParser.typingContext;
 	}
 	
 }
 
 PARSER_END(ForteLangPrimeParser)
 
-//Symbols
-TOKEN : { < OPENBRACKET : "(" > }
-TOKEN : { < CLOSEBRACKET : ")" > }
-TOKEN : { < OPENCBRACE : "{" > }
-TOKEN : { < CLOSECBRACE : "}" > }
-TOKEN : { < OPENSBRACKET : "[" > }
-TOKEN : { < CLOSESBRACKET : "]" > }
-TOKEN : { < COLON : ":" > }
-TOKEN : { < SEMICOLON : ";" > }
-TOKEN : { < ARROW : "->" > }
-TOKEN : { < COMMA : "," > }
-TOKEN : { < FAT_ARROW : "=>" > }
-TOKEN : { < DOUBLE_ARROW : "->>" > }
-TOKEN : { < PLAY_BUTTON : "|>" > }
-TOKEN : { < AT : "@" > }
-TOKEN : { < GUARD : "?:" > }
-TOKEN : { < PIPE : "|" > }
-TOKEN : { < EQUALS : "=" > }
-TOKEN : { < LCHEVRON : "<" > }
-TOKEN : { < RCHEVRON : ">" > }
+TOKEN_MGR_DECLS : {
+    static int commentNesting = 0;
+}
 
+// Symbols
+TOKEN : {
+		< OPENBRACKET : "(" >
+	|	< CLOSEBRACKET : ")" >
+	|	< OPENCBRACE : "{" > 
+	|	< CLOSECBRACE : "}" > 
+	|	< OPENSBRACKET : "[" > 
+	|	< CLOSESBRACKET : "]" > 
+	|	< COLON : ":" > 
+	|	< SEMICOLON : ";" > 
+	|	< ARROW : "->" > 
+	|	< COMMA : "," > 
+	|	< FAT_ARROW : "=>" > 
+	|	< DOUBLE_ARROW : "->>" > 
+	|	< PLAY_BUTTON : "|>" > 
+	|	< AT : "@" > 
+	|	< GUARD : "?:" > 
+	|	< PIPE : "|" > 
+	|	< EQUALS : "=" > 
+	|	< LCHEVRON : "<" > 
+	|	< RCHEVRON : ">" >
+}
 
-//Operators
-TOKEN : { < CONCAT : "++" > }
-TOKEN : { < PLUS : "+" >}
-TOKEN : { < ROUGHLY_EQUALS : "~=" > }
+// Operators
+TOKEN : { 
+		< CONCAT : "++" > 
+	|	< PLUS : "+" >
+	|	< ROUGHLY_EQUALS : "~=" > 
+}
 
-//Types
-TOKEN : { < TYPE_INT : "Int" > }
-TOKEN : { < TYPE_BOOL : "Bool" > }
-TOKEN : { < TYPE_STRING : "String" > }
-//TOKEN : { < LIST : "List" > } //We'll use the [] notation to denote a List
-//TOKEN : { < SET : "Set" >} //We'll use the {} notation to denote a Set
+// Types
+TOKEN : { 
+		< TYPE_INT : "Int" > 
+	|	< TYPE_BOOL : "Bool" > 
+	|	< TYPE_STRING : "String" > 
+}
 
-//Keywords
-TOKEN : { < TRUE : "true" > }
-TOKEN : { < FALSE : "false" > }
-TOKEN : { < IF : "if" > }
-TOKEN : { < THEN : "then" > }
-TOKEN : { < ELSE : "else" > }
-TOKEN : { < PANIC : "panic" > }
+// Keywords (used in programming)
+TOKEN : { 
+		< IF : "if" > 
+	|	< THEN : "then" > 
+	|	< ELSE : "else" > 
+}
 
-//File declaractions
-TOKEN : { < LIBRARY : "Library" > }
-//TOKEN : { < SCRIPT : "Script" > }
-//TOKEN : { < FILE_TYPE : < LIBRARY > | < SCRIPT > >  }
-//TOKEN : { < IMPORT : "import" > }
-TOKEN : { < EXPORT : "export" > }
-TOKEN : { < AS : "as" > }
+// Constants
+TOKEN : {
+		< TRUE : "true" > 
+	| 	< FALSE : "false" > 
+	| 	< PANIC : "panic" >
+}
 
+// File Meta Keywords
+TOKEN : {
+		< LIBRARY : "Library" >
+	|	< SCRIPT : "Script" >
+	|	< EXPORT : "export" >
+	|	< IMPORT : "import" >  
+	|	< AS : "as" >
+}
 
-//Other
-TOKEN : { < VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* > }
-TOKEN : { < INT_LITERAL : (["0"-"9"])+ > }
-TOKEN : { < NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > }
-TOKEN : { < STRING : "\"" ("\\" ~[] | ~["\"", "\\"])* "\"" >}
+// Other
+TOKEN : { 
+		< VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* > 
+	|	< INT_LITERAL : (["0"-"9"])+ > 
+	|	< NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > 
+	|	< STRING : "\"" ("\\" ~[] | ~["\"", "\\"])* "\"" >
+}
 
-//Whitespace
-SKIP : { "\n" | "\r" | " " | "\t" }
-SKIP : { < "#" (~["\r", "\n"])* > }
+// Whitespace
+SKIP : {
+  		"\n"
+  	| 	"\r"
+  	| 	" "
+  	| 	"\t"
+  	| 	"\f"
+}
+
+// Comments
+SKIP : {
+  		// Single-line comments
+		< "##" (~["\n", "\r"])* ("\n" | "\r" | "\r\n")>
+	| 	"#[" { commentNesting++; } : InsideMLC
+}
+
+<InsideMLC> SKIP : {
+		"#[" { commentNesting++; }
+    |	"]#" {
+				commentNesting--;
+				if (commentNesting == 0) {
+					SwitchTo(DEFAULT);
+				}
+			 }
+}
+
+<InsideMLC> MORE : {
+	<~[]>
+}
 
 /** Main endpoint */
 FLPLibrary input() : { FLPLibrary lib; } {
@@ -144,13 +196,14 @@ List<FLPFunction> functions() : {
 FLPFunction functionDeclaration() : {
   	Token name;
   	Expr expr;
+  	List<Pair<String, Type>> functionTypes;
 } {
 	name = < VAR_NAME >
-	types()
+	functionTypes = functionTypes()
 	< EQUALS >
 	expr = expression()
 	< SEMICOLON >
-	{ return new FLPFunction(name.image, new Type[0], null, expr); }
+	{ return new FLPFunction(name.image, Converter.functionTypesToTypeFunction(functionTypes), expr); }
 }
 
 Expr expression() : {
@@ -191,19 +244,36 @@ ExprPanic panic() : {
 	{ return new ExprPanic(t.beginLine); }
 } 
 
-void types() : { } {
-	(< VAR_NAME >)?
-	< LCHEVRON >
-	type()
-	< RCHEVRON >
-	(		< ARROW >
-		types()
+List<Pair<String, Type>> functionTypes() : {
+  	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
+  	List<Pair<String, Type>> otherTypes = new ArrayList<Pair<String, Type>>();
+	Type t;
+	Token varName;
+} {
+  	{ varName = null; }
+	(
+	  	varName = < VAR_NAME >
 	)?
+	< LCHEVRON >
+	t = type()
+	{
+	  	if(varName == null) {
+			types.add(Pair.of(null, t));
+	  	} else {
+			types.add(Pair.of(varName.image, t));
+	  	}
+	}
+	< RCHEVRON >
+	(
+		< ARROW >
+		otherTypes = functionTypes()
+		{ types.addAll(otherTypes); }
+	)?
+	{ return types; }
 }
 
-void type() : { } {
-	< TYPE_INT >
-	| < TYPE_STRING >
-	| < TYPE_BOOL >
-	| < OPENSBRACKET > type() < CLOSESBRACKET >
+Type type() : { } {
+	< TYPE_INT > { return new TypeInt(); }
+	| < TYPE_STRING > { return new TypeString(); }
+	| < TYPE_BOOL > { return new TypeBool(); }
 }

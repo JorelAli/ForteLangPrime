@@ -1,0 +1,82 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "ForteLang",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#regexstrs"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "constant.character.fortelang",
+				"match": "(\\|\\|)|(&&)"
+			}, {
+				"name": "keyword.control.fortelang",
+				"match": "->>|->|\\|>|\\||\\b(match)\\b"
+			}, {
+				"name": "constant.character.fortelang",
+				"match": "==|\\+|-|\\*|%|/|<|>|(<=)|(>=)"
+			}, {
+				"name": "invalid.illegal.fortelang",
+				"match": "impure|@[a-zA-Z0-9'_]+"
+			}, {
+				"name": "storage.type.fortelang",
+				"match": "\\b(include|in|num|list|set|func|bool|str)\\b"
+			}, {
+				"name": "entity.name.function.fortelang",
+				"match": "[a-zA-Z0-9'_]+(?=\\s+\\=)"
+			}, {
+				"name": "constant.language.fortelang",
+				"match": "true|false"
+			}, {
+				"name": "constant.numeric.fortelang",
+				"match": "\\b([0-9]+(\\.[0-9]+)*)\\b"
+			}, {
+				"name": "support.function.fortelang",
+				"match": "\\b(head|tail|@import|@exec|@print|std)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.fortelang",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.fortelang",
+					"match": "\\\\."
+				}
+			]
+		},
+		"regexstrs": {
+			"name": "string.regexp.fortelang",
+			"begin": "[^a-zA-Z0-9_]'",
+			"end": "'"
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.block.fortelang",
+					"begin": "#\\[",
+					"end": "\\]#"
+				},
+				{
+					"name": "comment.line.number-sign.fortelang",
+					"begin": "##",
+					"end": "\n"
+				}
+
+			]
+		}
+	},
+	"scopeName": "source.fortelang"
+}

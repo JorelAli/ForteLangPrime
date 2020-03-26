@@ -1,18 +1,22 @@
 package dev.jorel.fortelangprime.ast.types;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import dev.jorel.fortelangprime.parser.exceptions.TypeException;
-
-public class TypingContext extends HashMap<String, Type> {
+public class TypingContext {
 	
-	public Type get(String key) throws TypeException {
-		Type result = super.get(key);
-		if(result == null) {
-			throw new TypeException();
-		} else {
-			return result;
-		}
+	Map<String, TypeFunction> functions;
+	
+	public TypingContext() {
+		this.functions = new HashMap<>();
+	}
+	
+	public void addFunction(String functionName, TypeFunction typeFunction) {
+		functions.put(functionName, typeFunction);
+	}
+
+	public TypeFunction getFunction(String functionName) {
+		return functions.get(functionName);
 	}
 
 }

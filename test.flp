@@ -1,9 +1,10 @@
 Library Sample {
 	
 	export justTwo;
-	# export returnOneOrZero;
+	## export returnOneOrZero;
 	
 } {
+
 
 	justTwo <Int> = 2;
 	
@@ -12,7 +13,19 @@ Library Sample {
 	someBool <Bool> = false;
 	
 	panicTest <Bool> = panic;
+
+	paramFunction <Int> -> <Int> = 2;
+
+	## identity a<Int> -> <Int> = a;
 	
-	# returnOneOrZero a<Bool> -> <Num> = if a then 1 else 0;
+	##someFunctionCall <String> = aString;
+
 	
+	
+	## returnOneOrZero a<Bool> -> <Num> = if a then 1 else 0;
+	
+	#[
+		
+	]#
+
 }

@@ -1,45 +1,27 @@
 package dev.jorel.fortelangprime.ast;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.expressions.Expr;
-import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.parser.exceptions.TypeException;
+import dev.jorel.fortelangprime.ast.types.TypeFunction;
 
 public class FLPFunction implements CodeableClass {
 
 	final String name;
-	final Type returnType;
-	final Type[] parameters;
+	final TypeFunction typeFunction;
 	final Expr body;
 	
-	public FLPFunction(String name, Type[] paramTypes, Type returnType, Expr body) {
+	public FLPFunction(String name, TypeFunction typeFunction, Expr body) {
 		this.name = name;
-		this.parameters = paramTypes;
-		this.returnType = returnType;
+		this.typeFunction = typeFunction;
 		this.body = body;
 	}
 	
 	@Override
 	public void emit(ClassWriter classWriter) {
-		StringBuilder typeSignature = new StringBuilder("(");
-		typeSignature.append(Arrays.stream(parameters).map(Type::toBytecodeString).collect(Collectors.joining(";")));
-		typeSignature.append(")");
-		
-		try {
-			//This is just temporary, trust me:
-			typeSignature.append(body.getType(null).toBytecodeString());
-		} catch (TypeException e) {
-			e.printStackTrace();
-		}
-//		typeSignature.append(returnType.toBytecodeString());
-		
-		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, name, typeSignature.toString(), null, null);
+		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();
@@ -48,6 +30,14 @@ public class FLPFunction implements CodeableClass {
 		
 		body.emit(methodVisitor);
 		methodVisitor.visitInsn(body.returnType());
+		
+//		Label variableTypes = new Label();
+//		methodVisitor.visitLabel(variableTypes);
+//		methodVisitor.visitLocalVariable("this", "Ldev/jorel/fortelangprime/ast/FLPFunction;", null, lineNumber, variableTypes, 0);
+//		methodVisitor.visitLocalVariable("classWriter", "Lorg/objectweb/asm/ClassWriter;", null, label0, label10, 1);
+//		methodVisitor.visitLocalVariable("methodVisitor", "Lorg/objectweb/asm/MethodVisitor;", null, label1, label10, 2);
+//		methodVisitor.visitLocalVariable("lineNumber", "Lorg/objectweb/asm/Label;", null, label3, label10, 3);
+		
 		methodVisitor.visitMaxs(0, 0);
 		methodVisitor.visitEnd();
 	}
