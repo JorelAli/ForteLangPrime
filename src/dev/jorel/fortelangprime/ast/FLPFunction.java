@@ -12,19 +12,29 @@ import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class FLPFunction implements CodeableClass {
 
-	final String name;
-	final TypeFunction typeFunction;
-	final Expr body;
+	final private String name;
+	final private TypeFunction typeFunction;
+	final private Expr body;
+	private boolean _private;
 	
 	public FLPFunction(String name, TypeFunction typeFunction, Expr body) {
 		this.name = name;
 		this.typeFunction = typeFunction;
 		this.body = body;
+		this._private = true;
+	}
+	
+	public void setPublic() {
+		this._private = false;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	@Override
 	public void emit(ClassWriter classWriter, TypingContext context) {
-		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
+		MethodVisitor methodVisitor = classWriter.visitMethod((_private ? ACC_PRIVATE : ACC_PUBLIC) | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();

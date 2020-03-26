@@ -37,6 +37,13 @@ public class BytecodeGenerator implements Opcodes {
 	}
 	
 	public void compile() {
+		
+		for(FLPFunction f : lib.functions) {
+			if(lib.exports.contains(f.getName())) {
+				f.setPublic();
+			}
+		}
+		
 		this.compiledData = generateBytecode(lib.name + ".flp", null, lib.name, lib.functions);
 	}
 	
