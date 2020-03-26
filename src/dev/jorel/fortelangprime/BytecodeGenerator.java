@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -36,11 +38,24 @@ public class BytecodeGenerator implements Opcodes {
 		this.javaVersion = version.version;
 	}
 	
-	public void compile() {
+	/**
+	 * The main compilation endpoint
+	 * @throws CompilationException 
+	 */
+	public void compile() throws CompilationException {
 		
+		//Applies the exports list
 		for(FLPFunction f : lib.functions) {
 			if(lib.exports.contains(f.getName())) {
 				f.setPublic();
+			}
+		}
+		
+		//Checks the exports list for invalid exported functions
+		Set<String> declaredFunctionNames = lib.functions.parallelStream().map(FLPFunction::getName).collect(Collectors.toSet());
+		for(String str : lib.exports) {
+			if(!declaredFunctionNames.contains(str)) {
+				throw new CompilationException("Cannot export undeclared function " + str);
 			}
 		}
 		

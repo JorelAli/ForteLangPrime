@@ -195,11 +195,13 @@ List<FLPFunction> functions() : {
 } 
 
 FLPFunction functionDeclaration() : {
+	List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
   	Token name;
   	Expr expr;
   	List<Pair<String, Type>> functionTypes;
   	TypeFunction tf;
 } {
+  	(genericTypeDeclaration = genericTypeDeclaration())?
 	name = < VAR_NAME >
 	{ ForteLangPrimeParser.currentFunctionName = name.image; }
 	functionTypes = functionTypes()
@@ -210,7 +212,22 @@ FLPFunction functionDeclaration() : {
 	< EQUALS >
 	expr = expression()
 	< SEMICOLON >
-	{ return new FLPFunction(name.image, tf, expr); }
+	{ return new FLPFunction(name.image, tf, genericTypeDeclaration, expr); }
+}
+
+List<TypeNamedGeneric> genericTypeDeclaration() : {
+	Token t;
+	List<TypeNamedGeneric> genericNames = new ArrayList<TypeNamedGeneric>();
+} {
+	< LCHEVRON >
+	t = < VAR_NAME >
+	{ genericNames.add(new TypeNamedGeneric(t.image)); }
+	(		< COMMA >
+		t = < VAR_NAME >
+		{ genericNames.add(new TypeNamedGeneric(t.image)); }
+	)*
+	< RCHEVRON >
+	{ return genericNames; }
 }
 
 Expr expression() : {
@@ -303,8 +320,11 @@ List<Pair<String, Type>> functionTypes() : {
 	{ return types; }
 }
 
-Type type() : { } {
+Type type() : {
+	Token t;
+} {
 	< TYPE_INT > { return new TypeInt(); }
 	| < TYPE_STRING > { return new TypeString(); }
 	| < TYPE_BOOL > { return new TypeBool(); }
+	| t = < VAR_NAME > { return new TypeNamedGeneric(t.image); }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import dev.jorel.fortelangprime.parser.util.Pair;
 
-public class TypeFunction implements Type {
+public class TypeFunction implements Type, GenericType {
 	
 	private Type returnType;
 	private List<Pair<String, Type>> params;
@@ -20,6 +20,24 @@ public class TypeFunction implements Type {
 		params.stream().map(Pair::second).map(Type::toBytecodeString).forEach(result::append);
 		result.append(")");
 		result.append(returnType.toBytecodeString());
+		return result.toString();
+	}
+	
+	public String toGenericBytecodeString() {
+		StringBuilder result = new StringBuilder("(");
+		for(Pair<String, Type> param : params) {
+			if(param.second() instanceof TypeNamedGeneric) {
+				result.append(((TypeNamedGeneric) param.second()).toGenericBytecodeString());
+			} else {
+				result.append(param.second().toBytecodeString());
+			}
+		}
+		result.append(")");
+		if(returnType instanceof TypeNamedGeneric) {
+			result.append(((TypeNamedGeneric) returnType).toGenericBytecodeString());
+		} else {
+			result.append(returnType.toBytecodeString());
+		}
 		return result.toString();
 	}
 	

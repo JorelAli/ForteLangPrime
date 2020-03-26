@@ -77,6 +77,7 @@ public class ExprIfStatement implements Expr {
 				
 				Label ifTrueLabel = new Label();
 				methodVisitor.visitJumpInsn(GOTO, ifTrueLabel);
+				
 				methodVisitor.visitLabel(ifFalseLabel);
 				ifFalse.emit(methodVisitor, context);
 				

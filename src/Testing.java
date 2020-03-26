@@ -18,6 +18,8 @@ public class Testing {
 		System.out.println(Sample.not(true));
 		System.out.println(Sample.not(false));
 		System.out.println(Sample.alwaysFalse());
+		System.out.println(Sample.generic(true));
+		
 		
 //		Sample.panicTest();
 //		Sample.
@@ -29,8 +31,9 @@ public class Testing {
 
 	}
 	
-	static boolean identity(boolean a) {
-		return a ? true : false;
+	static <ype, K> ype identity(ype a, K t) {
+//		.Testing. "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", "<T:Ljava/lang/Object;K:Ljava/lang/Object;>(TT;TK;)TT;",
+		return a;
 	}
 	
 }

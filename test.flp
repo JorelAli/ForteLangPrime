@@ -4,6 +4,7 @@ Library Sample {
 	export identity1;
 	export not;
 	export alwaysFalse;
+	export generic;
 	
 } {
 
@@ -26,7 +27,9 @@ Library Sample {
 
 	not input<Bool> -> <Bool> = if input then false else true;
 
-	alwaysFalse <Bool> = if true then false else true;
+	alwaysFalse <Bool> = if true then if true then false else true else true;
+
+	<T> generic a<T> -> <T> = a;
 	
 	##someFunctionCall <String> = aString;
 

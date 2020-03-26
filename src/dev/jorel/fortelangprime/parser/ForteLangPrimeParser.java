@@ -86,6 +86,7 @@ exports.add(t.image);
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case LCHEVRON:
       case VAR_NAME:{
         ;
         break;
@@ -102,10 +103,20 @@ functions.add(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public FLPFunction functionDeclaration() throws ParseException {Token name;
+  final public FLPFunction functionDeclaration() throws ParseException {List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
+        Token name;
         Expr expr;
         List<Pair<String, Type>> functionTypes;
         TypeFunction tf;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case LCHEVRON:{
+      genericTypeDeclaration = genericTypeDeclaration();
+      break;
+      }
+    default:
+      jj_la1[2] = jj_gen;
+      ;
+    }
     name = jj_consume_token(VAR_NAME);
 ForteLangPrimeParser.currentFunctionName = name.image;
     functionTypes = functionTypes();
@@ -114,7 +125,32 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-{if ("" != null) return new FLPFunction(name.image, tf, expr);}
+{if ("" != null) return new FLPFunction(name.image, tf, genericTypeDeclaration, expr);}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public List<TypeNamedGeneric> genericTypeDeclaration() throws ParseException {Token t;
+        List<TypeNamedGeneric> genericNames = new ArrayList<TypeNamedGeneric>();
+    jj_consume_token(LCHEVRON);
+    t = jj_consume_token(VAR_NAME);
+genericNames.add(new TypeNamedGeneric(t.image));
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[3] = jj_gen;
+        break label_3;
+      }
+      jj_consume_token(COMMA);
+      t = jj_consume_token(VAR_NAME);
+genericNames.add(new TypeNamedGeneric(t.image));
+    }
+    jj_consume_token(RCHEVRON);
+{if ("" != null) return genericNames;}
     throw new Error("Missing return statement in function");
   }
 
@@ -152,7 +188,7 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
       break;
       }
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -198,7 +234,7 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
       break;
       }
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -228,7 +264,7 @@ varName = null;
       break;
       }
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[6] = jj_gen;
       ;
     }
     jj_consume_token(LCHEVRON);
@@ -247,14 +283,14 @@ types.addAll(otherTypes);
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[7] = jj_gen;
       ;
     }
 {if ("" != null) return types;}
     throw new Error("Missing return statement in function");
   }
 
-  final public Type type() throws ParseException {
+  final public Type type() throws ParseException {Token t;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TYPE_INT:{
       jj_consume_token(TYPE_INT);
@@ -271,8 +307,13 @@ types.addAll(otherTypes);
 {if ("" != null) return new TypeBool();}
       break;
       }
+    case VAR_NAME:{
+      t = jj_consume_token(VAR_NAME);
+{if ("" != null) return new TypeNamedGeneric(t.image);}
+      break;
+      }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -288,7 +329,7 @@ types.addAll(otherTypes);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[7];
+  final private int[] jj_la1 = new int[9];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -296,10 +337,10 @@ types.addAll(otherTypes);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xe4000000,0x60000000,0x0,0x200,0x3800000,};
+      jj_la1_0 = new int[] {0x0,0x40000,0x40000,0x400,0xe4000000,0x60000000,0x0,0x200,0x3800000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x4,0x20,0x160,0x0,0x20,0x0,0x0,};
+      jj_la1_1 = new int[] {0x4,0x20,0x0,0x0,0x160,0x0,0x20,0x0,0x20,};
    }
 
   /** Constructor with InputStream. */
@@ -313,7 +354,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -327,7 +368,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -337,7 +378,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -355,7 +396,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -364,7 +405,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -373,7 +414,7 @@ types.addAll(otherTypes);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -429,7 +470,7 @@ types.addAll(otherTypes);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 9; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

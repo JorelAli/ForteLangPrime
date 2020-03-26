@@ -1,12 +1,16 @@
 package dev.jorel.fortelangprime.ast;
 
+import java.util.List;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.expressions.Expr;
+import dev.jorel.fortelangprime.ast.types.GenericType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
+import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
@@ -14,12 +18,14 @@ public class FLPFunction implements CodeableClass {
 
 	final private String name;
 	final private TypeFunction typeFunction;
+	final private List<TypeNamedGeneric> genericDeclarations;
 	final private Expr body;
 	private boolean exported;
 	
-	public FLPFunction(String name, TypeFunction typeFunction, Expr body) {
+	public FLPFunction(String name, TypeFunction typeFunction, List<TypeNamedGeneric> genericDeclarations, Expr body) {
 		this.name = name;
 		this.typeFunction = typeFunction;
+		this.genericDeclarations = genericDeclarations;
 		this.body = body;
 		this.exported = false;
 	}
@@ -34,7 +40,25 @@ public class FLPFunction implements CodeableClass {
 	
 	@Override
 	public void emit(ClassWriter classWriter, TypingContext context) {
-		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
+		
+		String genericSignature;
+		if(genericDeclarations.size() == 0) {
+			genericSignature = null;
+		} else {
+			StringBuilder builder = new StringBuilder("<");
+			for(TypeNamedGeneric generic : genericDeclarations) {
+				builder.append(generic.getName());
+				builder.append(":");
+				builder.append(generic.toBytecodeString());
+			}
+			builder.append(">");
+			builder.append(typeFunction.toGenericBytecodeString());
+			genericSignature = builder.toString();
+		}
+		
+		System.out.println(typeFunction.toBytecodeString());
+		System.out.println(genericSignature);
+		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, typeFunction.toBytecodeString(), genericSignature, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();
@@ -51,7 +75,11 @@ public class FLPFunction implements CodeableClass {
 			if(e.first() == null) {
 				continue;
 			}
-			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), null, lineNumber, variableTypes, index++);
+			String genericSignatureVar = null;
+			if(e.second() instanceof GenericType) {
+				genericSignatureVar = ((GenericType) e.second()).toGenericBytecodeString();
+			}
+			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), genericSignatureVar, lineNumber, variableTypes, index++);
 		}
 		
 		methodVisitor.visitMaxs(0, 0);
