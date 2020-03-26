@@ -3,6 +3,7 @@ package dev.jorel.fortelangprime.ast.types;
 import java.util.List;
 
 import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 public class TypeFunction implements Type {
 	
@@ -25,13 +26,9 @@ public class TypeFunction implements Type {
 	
 	public String toGenericBytecodeString() {
 		StringBuilder result = new StringBuilder("(");
-		for(Pair<String, Type> param : params) {
-			if(param.second().isGeneric()) {
-				result.append(param.second().toGenericBytecodeString());
-			} else {
-				result.append(param.second().toBytecodeString());
-			}
-		}
+		params.stream().map(Pair::second)
+			.map(StreamUtils.conditioning(Type::isGeneric, Type::toGenericBytecodeString, Type::toBytecodeString))
+			.forEach(result::append);
 		result.append(")");
 		
 		if(returnType.isGeneric()) {
