@@ -54,16 +54,7 @@ public class ExprVariable implements Expr {
 				index++;
 			}
 		}
-		
 		methodVisitor.visitVarInsn(context.getFunction(parentFunctionName).getParams().get(name).loadInstruction(), index);
-//		Label label1 = new Label();
-//		methodVisitor.visitLabel(label1);
-//		methodVisitor.visitLocalVariable("a", "I", null, label0, label1, 0);
-//		if(value) {
-//			methodVisitor.visitInsn(ICONST_1);
-//		} else {
-//			methodVisitor.visitInsn(ICONST_0);
-//		}
 	}
 
 	@Override

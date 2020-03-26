@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class TypingContext {
 	
+	/*
+	 * TODO: A string is not sufficient to uniquely
+	 * identify a function. Functions have overloading!
+	 */
 	Map<String, TypeFunction> functions;
 	
 	public TypingContext() {

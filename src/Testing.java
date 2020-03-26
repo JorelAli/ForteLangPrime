@@ -23,7 +23,7 @@ public class Testing {
 
 	}
 	
-	static String identity(String a) {
+	static boolean identity(boolean a) {
 //		methodVisitor.visitVarInsn(ILOAD, 0);
 //		methodVisitor.visitInsn(IRETURN);
 //		Label label1 = new Label();
