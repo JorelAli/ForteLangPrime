@@ -11,5 +11,10 @@ public class TypeString implements Type {
 	public int loadInstruction() {
 		return ALOAD;
 	}
+	
+	@Override
+	public int returnType() {
+		return ARETURN;
+	}
 
 }

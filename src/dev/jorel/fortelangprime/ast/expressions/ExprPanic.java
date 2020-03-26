@@ -49,7 +49,7 @@ public class ExprPanic implements Expr {
 	}
 
 	@Override
-	public int returnType() {
+	public int returnType(TypingContext context) {
 		return ATHROW;
 	}
 

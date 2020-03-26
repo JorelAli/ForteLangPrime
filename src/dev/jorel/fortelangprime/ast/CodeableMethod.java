@@ -8,8 +8,6 @@ import dev.jorel.fortelangprime.ast.types.TypingContext;
 
 public interface CodeableMethod extends Opcodes {
 	
-	public int returnType();
-	
 	public int getLineNumber();
 	
 	public default void emitLineNumber(MethodVisitor methodVisitor) {
@@ -19,5 +17,7 @@ public interface CodeableMethod extends Opcodes {
 	}
 
 	void emit(MethodVisitor methodVisitor, TypingContext context);
+
+	int returnType(TypingContext context);
 	
 }

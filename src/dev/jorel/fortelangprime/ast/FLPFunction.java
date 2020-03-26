@@ -15,17 +15,17 @@ public class FLPFunction implements CodeableClass {
 	final private String name;
 	final private TypeFunction typeFunction;
 	final private Expr body;
-	private boolean _private;
+	private boolean exported;
 	
 	public FLPFunction(String name, TypeFunction typeFunction, Expr body) {
 		this.name = name;
 		this.typeFunction = typeFunction;
 		this.body = body;
-		this._private = true;
+		this.exported = false;
 	}
 	
 	public void setPublic() {
-		this._private = false;
+		this.exported = true;
 	}
 	
 	public String getName() {
@@ -34,7 +34,7 @@ public class FLPFunction implements CodeableClass {
 	
 	@Override
 	public void emit(ClassWriter classWriter, TypingContext context) {
-		MethodVisitor methodVisitor = classWriter.visitMethod((_private ? ACC_PRIVATE : ACC_PUBLIC) | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
+		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, typeFunction.toBytecodeString(), null, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();
@@ -42,7 +42,7 @@ public class FLPFunction implements CodeableClass {
 		methodVisitor.visitLineNumber(body.getLineNumber(), lineNumber);
 		
 		body.emit(methodVisitor, context);
-		methodVisitor.visitInsn(body.returnType());
+		methodVisitor.visitInsn(body.returnType(context));
 		
 		Label variableTypes = new Label();
 		methodVisitor.visitLabel(variableTypes);

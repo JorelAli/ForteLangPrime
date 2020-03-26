@@ -1,6 +1,7 @@
 Library Sample {
 	
 	export justTwo;
+	export identity1;
 	## export returnOneOrZero;
 	
 } {

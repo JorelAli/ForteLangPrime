@@ -57,15 +57,19 @@ public class ExprVariable implements Expr {
 				index++;
 			}
 		}
-		Type paramType = context.getFunction(parentFunctionName).getParams().stream()
+		Type paramType = getTypeUnsafe(context);
+		methodVisitor.visitVarInsn(paramType.loadInstruction(), index);
+	}
+	
+	private Type getTypeUnsafe(TypingContext context) {
+		return context.getFunction(parentFunctionName).getParams().stream()
 				.filter(p -> p.first().equals(name))
 				.findFirst().get().second();
-		methodVisitor.visitVarInsn(paramType.loadInstruction(), index);
 	}
 
 	@Override
-	public int returnType() {
-		return ARETURN;
+	public int returnType(TypingContext context) {
+		return getTypeUnsafe(context).returnType();
 	}
 
 	@Override

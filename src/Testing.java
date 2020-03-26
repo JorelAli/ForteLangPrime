@@ -13,6 +13,9 @@ public class Testing {
 		BytecodeGenerator generator = new BytecodeGenerator(ForteLangPrimeParser.getTypingContext(), lib, JavaVersion.V_8);
 		generator.compile();
 		generator.writeToFile(new File("classfolder"));
+		
+		System.out.println(Sample.identity1(true));
+		
 //		Sample.panicTest();
 //		Sample.
 //		Sample.panicTest'();
@@ -24,15 +27,7 @@ public class Testing {
 	}
 	
 	static boolean identity(boolean a) {
-		
-		
-		
-//		methodVisitor.visitVarInsn(ILOAD, 0);
-//		methodVisitor.visitInsn(IRETURN);
-//		Label label1 = new Label();
-//		methodVisitor.visitLabel(label1);
-//		methodVisitor.visitLocalVariable("a", "I", null, label0, label1, 0);
-		return a;
+		return a ? true : false;
 	}
 	
 }

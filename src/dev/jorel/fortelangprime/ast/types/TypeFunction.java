@@ -37,5 +37,10 @@ public class TypeFunction implements Type {
 		return -1;
 	}
 	
+	@Override
+	public int returnType() {
+		return returnType.returnType();
+	}
+	
 
 }

@@ -12,4 +12,8 @@ public class TypePanic implements Type {
 		return -1;
 	}
 
+	@Override
+	public int returnType() {
+		return ATHROW;
+	}
 }

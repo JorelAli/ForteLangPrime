@@ -12,4 +12,8 @@ public class TypeInt implements Type {
 		return ILOAD;
 	}
 
+	@Override
+	public int returnType() {
+		return IRETURN;
+	}
 }

@@ -8,4 +8,6 @@ public interface Type extends Opcodes {
 	
 	public int loadInstruction();
 	
+	public int returnType();
+	
 }

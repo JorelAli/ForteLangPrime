@@ -49,7 +49,7 @@ public class ExprStringLit implements Expr {
 	}
 
 	@Override
-	public int returnType() {
+	public int returnType(TypingContext context) {
 		return ARETURN;
 	}
 	

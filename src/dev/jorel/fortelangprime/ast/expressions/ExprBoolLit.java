@@ -53,7 +53,7 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public int returnType() {
+	public int returnType(TypingContext context) {
 		return IRETURN;
 	}
 

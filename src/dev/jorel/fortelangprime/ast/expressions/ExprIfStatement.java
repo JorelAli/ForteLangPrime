@@ -3,25 +3,28 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
+import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
-public class ExprFunctionCall implements Expr {
+public class ExprIfStatement implements Expr {
 	
 	private int lineNumber;
-	private String functionName;
-	private String fileName;
-	private Type functionType;
+	private Expr condition;
+	private Expr ifTrue;
+	private Expr ifFalse;
 	
-	public ExprFunctionCall(int lineNumber, String functionName) {
+	public ExprIfStatement(int lineNumber, Expr condition, Expr ifTrue, Expr ifFalse) {
 		this.lineNumber = lineNumber;
-		this.functionName = functionName;
+		this.condition = condition;
+		this.ifTrue = ifTrue;
+		this.ifFalse = ifFalse;
 	}
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		throw new TypeException();
+		return new TypeBool();
 	}
 
 	@Override
@@ -36,22 +39,26 @@ public class ExprFunctionCall implements Expr {
 
 	@Override
 	public Expr deepCopy() {
-		return new ExprFunctionCall(lineNumber, functionName);
+		return new ExprIfStatement(lineNumber, condition, ifTrue, ifFalse);
 	}
 
 	@Override
 	public ExpressionType getInternalType() {
-		return ExpressionType.FUNCTION_CALL;
+		return ExpressionType.IF_STATEMENT;
 	}
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, TypingContext context) {
-		methodVisitor.visitMethodInsn(INVOKESTATIC, fileName, functionName, functionType.toBytecodeString(), true);
+//		if(value) {
+//			methodVisitor.visitInsn(ICONST_1);
+//		} else {
+//			methodVisitor.visitInsn(ICONST_0);
+//		}
 	}
 
 	@Override
-	public int returnType() {
-		return ARETURN;
+	public int returnType(TypingContext context) {
+		return IRETURN;
 	}
 
 	@Override

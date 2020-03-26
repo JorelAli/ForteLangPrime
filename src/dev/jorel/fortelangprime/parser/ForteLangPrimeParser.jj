@@ -230,6 +230,20 @@ ExprVariable variable() : {
   	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName); }
 }
 
+ExprIfStatement ifStatement() : {
+  	Expr a;
+  	Expr b;
+  	Expr c;
+} {
+  	< IF >
+  	a = expr()
+  	< THEN >
+  	b = expr()
+  	< ELSE >
+  	c = expr()
+  	{ return new ExprIfStatement(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName); }
+}
+
 ExprIntLit integer() : {
   	Token t;
 } {

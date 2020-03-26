@@ -12,4 +12,9 @@ public class TypeBool implements Type {
 		return ILOAD;
 	}
 
+	@Override
+	public int returnType() {
+		return IRETURN;
+	}
+
 }
