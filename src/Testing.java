@@ -15,6 +15,9 @@ public class Testing {
 		generator.writeToFile(new File("classfolder"));
 		
 		System.out.println(Sample.identity1(true));
+		System.out.println(Sample.not(true));
+		System.out.println(Sample.not(false));
+		System.out.println(Sample.alwaysFalse());
 		
 //		Sample.panicTest();
 //		Sample.

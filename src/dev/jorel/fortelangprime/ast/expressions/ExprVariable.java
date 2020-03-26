@@ -46,9 +46,8 @@ public class ExprVariable implements Expr {
 	public ExpressionType getInternalType() {
 		return ExpressionType.VARIABLE;
 	}
-
-	@Override
-	public void emit(MethodVisitor methodVisitor, TypingContext context) {
+	
+	public int getIndex(TypingContext context) {
 		int index = 0;
 		for(Pair<String, Type> pair : context.getFunction(parentFunctionName).getParams()) {
 			if(pair.first().equals(name)) {
@@ -57,8 +56,13 @@ public class ExprVariable implements Expr {
 				index++;
 			}
 		}
+		return index;
+	}
+
+	@Override
+	public void emit(MethodVisitor methodVisitor, TypingContext context) {
 		Type paramType = getTypeUnsafe(context);
-		methodVisitor.visitVarInsn(paramType.loadInstruction(), index);
+		methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
 	}
 	
 	private Type getTypeUnsafe(TypingContext context) {

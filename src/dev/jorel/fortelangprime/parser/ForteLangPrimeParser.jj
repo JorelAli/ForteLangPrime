@@ -221,6 +221,7 @@ Expr expression() : {
 	| expr = string() { return expr; }
 	| expr = panic() { return expr; }
 	| expr = variable() { return expr; }
+	| expr = ifStatement() { return expr; }
 }
 
 ExprVariable variable() : {
@@ -231,17 +232,18 @@ ExprVariable variable() : {
 }
 
 ExprIfStatement ifStatement() : {
+	Token t;
   	Expr a;
   	Expr b;
   	Expr c;
 } {
-  	< IF >
-  	a = expr()
+  	t = < IF >
+  	a = expression()
   	< THEN >
-  	b = expr()
+  	b = expression()
   	< ELSE >
-  	c = expr()
-  	{ return new ExprIfStatement(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName); }
+  	c = expression()
+  	{ return new ExprIfStatement(t.beginLine, a, b, c); }
 }
 
 ExprIntLit integer() : {

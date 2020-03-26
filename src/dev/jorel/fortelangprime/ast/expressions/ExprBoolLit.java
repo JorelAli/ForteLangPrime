@@ -17,6 +17,10 @@ public class ExprBoolLit implements Expr {
 		this.lineNumber = lineNumber;
 		this.value = value;
 	}
+	
+	public boolean getValue() {
+		return this.value;
+	}
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {

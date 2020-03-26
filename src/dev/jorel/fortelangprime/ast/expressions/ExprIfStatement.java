@@ -1,9 +1,9 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
-import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
@@ -24,12 +24,15 @@ public class ExprIfStatement implements Expr {
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {
-		return new TypeBool();
+		//TODO: Type checking occurs here - need to check if condition is 
+		//'well typed' (integer) and if the ifTrue and ifFalse are of
+		//the same type
+		return ifTrue.getType(context);
 	}
 
 	@Override
 	public boolean isReducable() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -49,16 +52,48 @@ public class ExprIfStatement implements Expr {
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, TypingContext context) {
-//		if(value) {
-//			methodVisitor.visitInsn(ICONST_1);
-//		} else {
-//			methodVisitor.visitInsn(ICONST_0);
-//		}
+	
+		switch(condition.getInternalType()) {
+			case BOOL_LITERAL: {
+				ExprBoolLit bool = (ExprBoolLit) condition;
+				if(bool.getValue()) {
+					ifTrue.emitLineNumber(methodVisitor);
+					ifTrue.emit(methodVisitor, context);
+				} else {
+					ifFalse.emitLineNumber(methodVisitor);
+					ifFalse.emit(methodVisitor, context);
+				}
+				return;
+			}
+				
+			case VARIABLE: {
+				ExprVariable variable = (ExprVariable) condition;
+				methodVisitor.visitVarInsn(ILOAD, variable.getIndex(context));
+				
+				Label ifFalseLabel = new Label();
+				methodVisitor.visitJumpInsn(IFEQ, ifFalseLabel);
+				
+				ifTrue.emit(methodVisitor, context);
+				
+				Label ifTrueLabel = new Label();
+				methodVisitor.visitJumpInsn(GOTO, ifTrueLabel);
+				methodVisitor.visitLabel(ifFalseLabel);
+				ifFalse.emit(methodVisitor, context);
+				
+				methodVisitor.visitLabel(ifTrueLabel);				
+				return;
+			}
+			default:
+				System.out.println("Can't perform condition on a " + condition.getInternalType());
+				//Panic ??
+				return;
+		}
+
 	}
 
 	@Override
 	public int returnType(TypingContext context) {
-		return IRETURN;
+		return ifTrue.returnType(context);
 	}
 
 	@Override

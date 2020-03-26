@@ -2,10 +2,10 @@ Library Sample {
 	
 	export justTwo;
 	export identity1;
-	## export returnOneOrZero;
+	export not;
+	export alwaysFalse;
 	
 } {
-
 
 	justTwo <Int> = 2;
 	
@@ -23,6 +23,10 @@ Library Sample {
 	identity2 a2<String> -> <String> = a2;
 
 	multiParam a1<Int> -> a2<String> -> <String> = a2;
+
+	not input<Bool> -> <Bool> = if input then false else true;
+
+	alwaysFalse <Bool> = if true then false else true;
 	
 	##someFunctionCall <String> = aString;
 

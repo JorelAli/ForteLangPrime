@@ -146,6 +146,11 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
 {if ("" != null) return expr;}
       break;
       }
+    case IF:{
+      expr = ifStatement();
+{if ("" != null) return expr;}
+      break;
+      }
     default:
       jj_la1[2] = jj_gen;
       jj_consume_token(-1);
@@ -157,6 +162,20 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
   final public ExprVariable variable() throws ParseException {Token t;
     t = jj_consume_token(VAR_NAME);
 {if ("" != null) return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName);}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprIfStatement ifStatement() throws ParseException {Token t;
+        Expr a;
+        Expr b;
+        Expr c;
+    t = jj_consume_token(IF);
+    a = expression();
+    jj_consume_token(THEN);
+    b = expression();
+    jj_consume_token(ELSE);
+    c = expression();
+{if ("" != null) return new ExprIfStatement(t.beginLine, a, b, c);}
     throw new Error("Missing return statement in function");
   }
 
@@ -277,7 +296,7 @@ types.addAll(otherTypes);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xe0000000,0x60000000,0x0,0x200,0x3800000,};
+      jj_la1_0 = new int[] {0x0,0x0,0xe4000000,0x60000000,0x0,0x200,0x3800000,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x4,0x20,0x160,0x0,0x20,0x0,0x0,};
