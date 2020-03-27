@@ -78,11 +78,12 @@ TOKEN : {
 	|	< ROUGHLY_EQUALS : "~=" > 
 }
 
-// Types
+// Types (and type-related keywords)
 TOKEN : { 
 		< TYPE_INT : "Int" > 
 	|	< TYPE_BOOL : "Bool" > 
-	|	< TYPE_STRING : "String" > 
+	|	< TYPE_STRING : "String" >
+	|	< TYPE : "type" >
 }
 
 // Keywords (used in programming)
@@ -153,15 +154,24 @@ FLPLibrary input() : { FLPLibrary lib; } {
 	{ return lib; }
 }
 
-FLPLibrary program() : { Token name; List<String> exports; List<FLPFunction> functions; } {
+FLPLibrary program() : {
+	Token name; List<String> exports;
+	List<TypeDeclaration> typeDeclarations;
+	List<FLPFunction> functions;
+} {
   	< LIBRARY >
 	name = < VAR_NAME >
 	
 	< OPENCBRACE >
 	exports = exports()
 	< CLOSECBRACE >
-	
+
+	< OPENCBRACE >
+
+	typeDeclarations = typeDeclarations()
 	functions = functions()
+
+	< CLOSECBRACE >
 	{ return new FLPLibrary(name.image, exports, functions); }
 }
 
@@ -181,16 +191,24 @@ void epsilon() : { } {
 	}
 }
 
+List<TypeDeclaration> typeDeclarations() : {
+	List<TypeDeclaration> list = new ArrayList<TypeDeclaration>();
+} {
+	< TYPE >
+	< VAR_NAME >
+	< EQUALS >
+	recordType()
+	{ return list; }
+}
+
 List<FLPFunction> functions() : {
   	List<FLPFunction> functions = new ArrayList<FLPFunction>();
   	FLPFunction f;
 } {
-  	< OPENCBRACE >
   	( 	  
 		f = functionDeclaration()
 		{ functions.add(f); }
 	)*
-	< CLOSECBRACE >
 	{ return functions; }
 } 
 
@@ -322,9 +340,26 @@ List<Pair<String, Type>> functionTypes() : {
 
 Type type() : {
 	Token t;
+	Type type;
 } {
 	< TYPE_INT > { return new TypeInt(); }
 	| < TYPE_STRING > { return new TypeString(); }
 	| < TYPE_BOOL > { return new TypeBool(); }
-	| t = < VAR_NAME > { return new TypeNamedGeneric(t.image); }
+	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { return new TypeNamedGeneric(t.image); }
+	| type = recordType() { return type; }
+}
+
+Type recordType() : {
+
+} {
+  	< OPENCBRACE >
+	(
+		< VAR_NAME >
+		< LCHEVRON >
+		type()
+		< RCHEVRON >
+		< SEMICOLON >
+	)*
+	< CLOSECBRACE >
+	{ return null; }
 }

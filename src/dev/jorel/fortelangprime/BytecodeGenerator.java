@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.ast.FLPFunction;
@@ -70,11 +73,100 @@ public class BytecodeGenerator implements Opcodes {
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
+		
+//		inject(classWriter); //TODO: Remove this
+		
 		for(FLPFunction f : functions) {
 			f.emit(classWriter, context);
 		}
 		classWriter.visitEnd();
 		return classWriter.toByteArray();
+	}
+	
+	private void inject(ClassWriter classWriter) {
+		MethodVisitor methodVisitor;
+		FieldVisitor fieldVisitor = classWriter.visitField(ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "a", "I", null, null);
+		fieldVisitor.visitEnd();
+		
+//		classWriter.visitNestMember("Sample$1");
+//		classWriter.visitInnerClass("Sample$1", null, null, 0);
+
+//		{
+//			methodVisitor = classWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+//			methodVisitor.visitCode();
+//			Label label0 = new Label();
+//			methodVisitor.visitLabel(label0);
+//			methodVisitor.visitVarInsn(ALOAD, 0);
+//			methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+//			methodVisitor.visitInsn(RETURN);
+//			Label label1 = new Label();
+//			methodVisitor.visitLabel(label1);
+//			methodVisitor.visitLocalVariable("this", "LAa;", null, label0, label1, 0);
+//			methodVisitor.visitMaxs(1, 1);
+//			methodVisitor.visitEnd();
+//		}
+		{
+			methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "gen", "()LSample;", null, null);
+			methodVisitor.visitCode();
+			methodVisitor.visitInsn(ICONST_2);
+			methodVisitor.visitFieldInsn(PUTSTATIC, "Sample", "a", "I");
+//			methodVisitor.visitTypeInsn(CHECKCAST, "Sample");
+
+			methodVisitor.visitTypeInsn(NEW, "java/lang/Object");
+			methodVisitor.visitInsn(DUP);
+			methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+			methodVisitor.visitInsn(ARETURN);
+			methodVisitor.visitMaxs(2, 0);
+			methodVisitor.visitEnd();
+		}
+		
+//		ClassWriter innerClassWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+//		innerClassWriter.visit(javaVersion, ACC_PUBLIC, "Sample$1", null, "java/lang/Object", null);
+//		{
+//			methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+//			methodVisitor.visitCode();
+//			methodVisitor.visitVarInsn(ALOAD, 0);
+//			methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+////			methodVisitor.visitInsn(ICONST_2);
+////			methodVisitor.visitFieldInsn(PUTSTATIC, "Sample$1", "a", "I");
+//			methodVisitor.visitInsn(RETURN);
+//			methodVisitor.visitMaxs(1, 1);
+//			methodVisitor.visitEnd();
+//		}
+//		innerClassWriter.visitEnd();
+//		try {
+//			Files.write(new File("classfolder", "Sample$1.class").toPath(), innerClassWriter.toByteArray());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		
+//		classWriter.visitNestHost("Aa");
+//
+//		classWriter.visitOuterClass("Aa", "a", "()LAa;");
+//
+//		classWriter.visitInnerClass("Aa$1", null, null, 0);
+//
+//		{
+//			methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
+//			methodVisitor.visitCode();
+//			Label label0 = new Label();
+//			methodVisitor.visitLabel(label0);
+//			methodVisitor.visitVarInsn(ALOAD, 0);
+//			methodVisitor.visitMethodInsn(INVOKESPECIAL, "Aa", "<init>", "()V", false);
+//			Label label1 = new Label();
+//			methodVisitor.visitLabel(label1);
+//			methodVisitor.visitInsn(ICONST_2);
+//			methodVisitor.visitFieldInsn(PUTSTATIC, "Aa$1", "a", "I");
+//			Label label2 = new Label();
+//			methodVisitor.visitLabel(label2);
+//			methodVisitor.visitInsn(RETURN);
+//			Label label3 = new Label();
+//			methodVisitor.visitLabel(label3);
+//			methodVisitor.visitLocalVariable("this", "LAa$1;", null, label0, label3, 0);
+//			methodVisitor.visitMaxs(1, 1);
+//			methodVisitor.visitEnd();
+//		}
+		classWriter.visitEnd();
 	}
 	
 }

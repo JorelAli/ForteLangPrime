@@ -19,9 +19,22 @@ In addition to these projects, inspiration was also taken from:
 - [Elm](https://elm-lang.org), a purely functional language primarily used in web-development
 - [Haskell](https://www.haskell.org/), an advanced, purely functional programming language
 
+And finally, ForteLangPrime's design is also heavily worked around trying to surpass current similar solutions, namely:
+
+- Scala - Currently an impure functional language 
+- Kotlin - Unnecessary bloat with standard functions
+
 ### Why Java?
 
 Java is compatible with all operating systems. You write code once and can run it anywhere. So far, I've not found any programming language that also has this feature (I'm dismissing things that also run on the JVM, like Scala) that works as reliably as Java does. Since I have a very strong understanding of Java, my main aims are to create some well-optimised bytecode such that it's fully compatible with Java (as opposed to say, Kotlin or Groovy, which requires additional libraries (e.g. Kotlin Runtime/Standard Library)).
+
+### Goals
+
+- A purely functional Java-compatible programming language
+  The main aim is to write a 'library' language that is compatible with Java, but also maintaining purity. In order to do so, ForteLangPrime only allows functions to be called from other ForteLangPrime files and not from regular Java files.
+- Less bloat
+  Current implementations of functional languages that run on the JVM require absurd amounts of additional standard libraries and extra code added to classes (such as metadata, getters/setters etc.). ForteLangPrime is designed to require an incredibly small (if possible non-existent) standard library and aims not to add any unnecessary bloatiness to the compiled class files
+- 
 
 ### Core concepts/features
 
@@ -30,8 +43,7 @@ Java is compatible with all operating systems. You write code once and can run i
 - [ ] Lazily evaluated
 - [ ] Set data structure (like Nix)
 - [ ] Doesn't require indentation to declare scope (like Java)
-- [ ] Arbitrary precision numbers (like Python)
-- [ ] Pragmas (like C)
+- [ ] Purely functional (like Haskell)
 
 ### Other sneaky features
 
@@ -45,10 +57,8 @@ Java is compatible with all operating systems. You write code once and can run i
   newPoint = { point | x = 3; } ## {x=3, y=3}
   ```
   
-### Features that won't be added
 
-- Custom operators
-- Custom types (only type aliases)
+
 
 -----
 

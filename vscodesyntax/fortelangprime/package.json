@@ -1,0 +1,25 @@
+{
+    "name": "fortelangprime",
+    "displayName": "ForteLangPrime",
+    "description": "Syntax highlighting for ForteLangPrime",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.37.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "fortelangprime",
+            "aliases": ["ForteLangPrime", "fortelangprime"],
+            "extensions": [".flp"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "fortelangprime",
+            "scopeName": "source.fortelangprime",
+            "path": "./syntaxes/fortelangprime.tmLanguage.json"
+        }]
+    }
+}
