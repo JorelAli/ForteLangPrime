@@ -168,6 +168,8 @@ FLPLibrary program() : {
 
 	< OPENCBRACE >
 
+	//TODO: Implement type declarations
+	//TODO: Make it so you can put type declarations anywhere, not just at the start of the file
 	typeDeclarations = typeDeclarations()
 	functions = functions()
 
@@ -345,7 +347,9 @@ Type type() : {
 	< TYPE_INT > { return new TypeInt(); }
 	| < TYPE_STRING > { return new TypeString(); }
 	| < TYPE_BOOL > { return new TypeBool(); }
+	//TODO: Add generic to this constructor
 	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { return new TypeNamedGeneric(t.image); }
+	//TODO: Implement record types
 	| type = recordType() { return type; }
 }
 
