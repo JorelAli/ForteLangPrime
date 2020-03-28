@@ -1,13 +1,13 @@
-# ForteLangPrime
-A functionally pure typed programming language, that runs on the JVM. The successor to [ForteLang](https://github.com/JorelAli/ForteLang).
+# ForteLang′
+A functionally pure statically-typed programming language, that runs on the JVM. The successor to [ForteLang](https://github.com/JorelAli/ForteLang).
 
 ## Elymology
 
-Helper functions in functional programming languages are normally denoted with the `'` (pronounced "prime") symbol. For example, if you have a function `factorial`, a helper function that is used by the factorial function would be named `factorial'`. ForteLangPrime is the successor to ForteLang, hence I decided to call it ForteLangPrime (Since `ForteLang'` isn't very name friendly on websites/files/directories).
+Helper functions in functional programming languages are normally denoted with the `′` (pronounced "prime") symbol. For example, if you have a function `factorial`, a helper function that is used by the factorial function would be named `factorial′`. ForteLang′ is the successor to ForteLang, hence I decided to call it ForteLang′. _(However, since the name uses a symbol that nobody can type, it's easier to refer to it as ForteLangPrime)_.
 
-## Design choices
+## Inspiration & Design
 
-ForteLangPrime builds on a number of personal projects and university-based coursework assignments. In particular:
+ForteLang′ builds on a number of personal projects and university-based coursework assignments. In particular:
 
 - Compiler Design coursework, which involved creating a compiler in C++.
 - My third year project, which involves creating various programming languages and interpreters.
@@ -19,46 +19,34 @@ In addition to these projects, inspiration was also taken from:
 - [Elm](https://elm-lang.org), a purely functional language primarily used in web-development
 - [Haskell](https://www.haskell.org/), an advanced, purely functional programming language
 
-And finally, ForteLangPrime's design is also heavily worked around trying to surpass current similar solutions, namely:
-
-- Scala - Currently an impure functional language 
-- Kotlin - Unnecessary bloat with standard functions
-
-### Why Java?
-
-Java is compatible with all operating systems. You write code once and can run it anywhere. So far, I've not found any programming language that also has this feature (I'm dismissing things that also run on the JVM, like Scala) that works as reliably as Java does. Since I have a very strong understanding of Java, my main aims are to create some well-optimised bytecode such that it's fully compatible with Java (as opposed to say, Kotlin or Groovy, which requires additional libraries (e.g. Kotlin Runtime/Standard Library)).
-
 ### Goals
 
-- A purely functional Java-compatible programming language
-  The main aim is to write a 'library' language that is compatible with Java, but also maintaining purity. In order to do so, ForteLangPrime only allows functions to be called from other ForteLangPrime files and not from regular Java files.
-- Less bloat
-  Current implementations of functional languages that run on the JVM require absurd amounts of additional standard libraries and extra code added to classes (such as metadata, getters/setters etc.). ForteLangPrime is designed to require an incredibly small (if possible non-existent) standard library and aims not to add any unnecessary bloatiness to the compiled class files
-- 
+The goals for ForteLang′ is better described in my [blog post](https://www.jorel.dev/blog/Making-A-Better-Programming-Language/#a-new-language-design), but the summary is as follows:
+
+- **A purely functional Java-compatible programming language.** The main aim is to write a 'library' language that is compatible with Java, but also maintaining purity. In order to do so, ForteLang′ only allows functions to be called from other ForteLang′ files and not from regular Java files.
+- **Less bloat.** Current implementations of functional languages that run on the JVM require absurd amounts of additional standard libraries and extra code added to classes (such as metadata, getters/setters etc.). ForteLang′ is designed to require an incredibly small (if possible non-existent) standard library and aims not to add any unnecessary bloatiness to the compiled class files
+- **Lazy evaluation**
+- **A compiled language.** Compiling directly to Java bytecode gives it the best interoperability with Java. Also, I want to apply the stuff I've learnt into actually making a compiled language instead of an interpreted language
 
 ### Core concepts/features
 
-- [ ] Compiles down to Java Bytecode
-- [ ] Statically typed
-- [ ] Lazily evaluated
-- [ ] Set data structure (like Nix)
-- [ ] Doesn't require indentation to declare scope (like Java)
-- [ ] Purely functional (like Haskell)
+- Compiles down to Java Bytecode
+- Statically typed
+- Lazily evaluated
+- Purely functional
 
 ### Other sneaky features
 
-- Ability to nest comment blocks within comment blocks (like Haskell)
-- Pattern matching (like Haskell)
-- Type aliases (like Elm)
+ForteLang′ also plans on having the following features:
+
+- Nested comments
+- Algebraic data types
 - Function pipes AKA the `|>` operator (like Elm)
 - Record updating (like Elm). For example:
   ```python
   point = { x = 2; y = 3; }    ## {x=2, y=3}
   newPoint = { point | x = 3; } ## {x=3, y=3}
   ```
-  
-
-
 
 -----
 
@@ -66,190 +54,117 @@ Java is compatible with all operating systems. You write code once and can run i
 
 ## Library declaration
 
-Libraries are the 'main type' of a ForteLangPrime file. The main aim is to declare a list of functions which can be used by other JVM languages.
+Libraries are the 'main type' of a ForteLang′ file. The main aim is to declare a list of functions which can be used by other JVM languages.
 
 ```haskell
-Library {
+Library LibraryName {
 
-    import "someFile.flp" as Blah
-    export addOne 
+    import "someFile.flp" as Blah;
+    export addOne; 
+	export identity;
 
 } {
 
-    addOne a<Num> -> <Num> = a + 1;
-
-    somePrivateFunction 3<Num> -> <Num> = 2;
+    addOne i<Num> -> <Num> = i + 1;
+	<T> identity input<T> -> <T> = input;
 
 }
 ```
 
-## Script declaration
-
-```haskell
-Script {} {
-    main input<String> -> <String> =
-	  ## Your code here;
-}
-```
-
-In script declarations, the metadata is used to declare which functions can be used in the scope, for example when imported using a repl.
-
-For example, opening the repl with an imported script, say:
-
-```haskell
-Script {
-    export hello
-} {
-    hello <String> = "hello";
-	bye <String> = "bye";
-}
-```
-
-will import the function `hello` into the scope of the repl, but the function `bye` will not be available for use in the repl.
-
-## File declaration
-
-This is basically what the main structure of a FLP file will look like:
-
-```haskell
-TYPE {
-    METADATA
-} {
-    FUNCTIONS
-}
-```
-
-There are three main sections:
-
-- `TYPE` is the 'type' of the file. This can consist of `Library` or `Script`. `Library` is used for interop with Java-based languages (so, functions can be called from Java programs). `Script` is used for lightweight scripting or for a repl.
-- `METADATA` provides information about the file. This normally consists of what imports are required and what functions are exported (made public). The access modifiers in FLP are different to those in Java, it's either public (exported) or private (not exported). There is no sort of 'protected' or 'package private'. This is also the part where pragmas are declared.
-- `FUNCTIONS` is where functions are declared.
-
-## Type inheritance
-
-ForteLangPrime will include some basic level of type-level inheritance. For example:
-
-```haskell
-Num       ## Any number
-Num@Int   ## An integer
-Num@Float ## A floating point number
-```
-
-Types (`Num`, `String` etc.) and type aliases can be extended:
-
-```haskell
-Num@Digit val<Num> = val <= 9 && val >= 0;
-```
-
-And can be pattern matched:
-
-```haskell
-isInteger val<Num> =
-    ?= val
-    | Num@Int => true
-    | Num@Digit => true
-    | => false;
-```
+> ## Script declaration
+>
+> Scripts are still a concept for ForteLang′, but the general idea is that they can be run from tools such as `jshell`.
+>
+> ```haskell
+> Script {} {
+>  main input<String> -> <String> =
+> 	  ## Your code here;
+> }
+> ```
+>
+> In script declarations, the metadata is used to declare which functions can be used in the scope, for example when imported using a repl.
+>
+> For example, opening the repl with an imported script, say:
+>
+> ```haskell
+> Script {
+>  export hello
+> } {
+>  hello <String> = "hello";
+> 	bye <String> = "bye";
+> }
+> ```
+>
+> will import the function `hello` into the scope of the repl, but the function `bye` will not be available for use in the repl.
 
 ## Algebraic Data Types & Type Generics
 
-ForteLangPrime will include algebraic data types and support for generics.
+ForteLang′ will include algebraic data types and support for generics.
 
 ```haskell
 {
-
-    ## Example of a binary tree using sets
+    ## Example of a binary tree using records
     type <T> Tree<T> = Node<{
         lhs<Tree<T>>;
         rhs<Tree<T>>;
     }> || Leaf<T>;
     
-    ## Example of a binary tree without using sets
+    ## Example of a binary tree without using records
     type <T> Tree<T> = Node<Tree<T>, Tree<T>> || Leaf<T>;
 }
 ```
 
 
-## Sets (records)
+## Record types
 
-ForteLangPrime's main data types are "sets", which are similar to records in Haskell and Elm. Expressions declared in a set must be followed with a `;`. For example, a set that contains some maths helper functions would look like:
+ForteLang′ will also include record types, which are basically structs in C/C++. Expressions declared in a set must be followed with a `;`. 
+
+For example, say we want to represent RGB colors:
 
 ```haskell
-{
-  add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
-  mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
-  pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
+type Color = {
+    red<Int>;
+    green<Int>;
+    blue<Int>;
 }
 ```
 
-Some set declaration
+Records can be constructed:
+
 ```haskell
-{
-  mathLib <{
-     add i1<Num> -> i2<Num> -> <Num>;
-     mul i1<Num> -> i2<Num> -> <Num>;
-     pow i1<Num> -> i2<Num> -> <Num>;
-     advanceMath <{
-       sin i1<Num> -> <Num>;
-       cos i1<Num> -> <Num>;
-       tan i1<Num> -> <Num>;
-     }>;
-  }> = {
-    add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
-    mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
-    pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
-    advanceMath <{
-      sin i1<Num> -> <Num>;
-      cos i1<Num> -> <Num>;
-      tan i1<Num> -> <Num>;
-    }> = {
-      sin i1<Num> -> <Num> = #[Sine implementation here]#;
-      cos i1<Num> -> <Num> = #[Cosine implementation here]#;
-      tan i1<Num> -> <Num> = #[Tangent implementation here]#;
-    }
-  };
+getRed <Color> = {
+    red = 255;
+    green = 0;
+    blue = 0;
+};
+```
+
+and used as a base for other records:
+
+```haskell
+getYellow <Color> = { getRed | green = 255; }
+```
+
+### Anonymous record types
+
+Record types _**have**_ to be declared before usage, unlike a language like Elm where you can have "anonymous record types" so to speak. In other words, you **can't** do something like this:
+
+```haskell
+getComplexNumber <{ re<Int>; im<Int>; }> = {
+    re = 0;
+    im = 1;
 }
-```
-
-The same set declaration, using the `infer` keyword. The `infer` keyword can be used to infer the types of a set. This can only be used within a set's type declaration
-```haskell
-{
-  mathLib <{infer}> = {
-    add i1<Num> -> i2<Num> -> <Num> = i1 + i2;
-    mul i1<Num> -> i2<Num> -> <Num> = i1 * i2;
-    pow i1<Num> -> i2<Num> -> <Num> = i1 ^ i2;
-    advanceMath <{infer}> = {
-      sin i1<Num> -> <Num> = #[Sine implementation here]#;
-      cos i1<Num> -> <Num> = #[Cosine implementation here]#;
-      tan i1<Num> -> <Num> = #[Tangent implementation here]#;
-    }
-  };
-}
-```
-
-## Record updating
-
-ForteLangPrime's record updating will primarily be inspired using ForteLang's set operators. ForteLang provides the following extra operators that perform set operations:
-
-```haskell
-x /+ y ## Set union
-x /- y ## Set intersection
-x // y ## Set difference
-```
-
-Hence, updating a record is simply performing a union of a set with a set of certain elements, and replacing any common attributes. Since "sets" in ForteLang are more like "key-value pairs", the set operators will replace similar keys on the left set with the ones on the right. For example:
-```python
-{ x = 3; } /+ { x = 4; } ## { x = 4; }
 ```
 
 ## Pattern matching
 
-Pattern matching is performed using the `?=` operator. `?= expression | case => result | ... | => result`
+Pattern matching is performed using the `switch` operator. `switch expression | case => result | ... | => result`
 
 For example, to check if a list is empty, we pattern match on the variable `list` (which is of type "List of `a`s"). If the list is `[]` (an empty list), then we return `true`. Otherwise, we return `false`.
+
 ```
-isEmpty list<[a]> -> <Bool> =
-  ?= list 
+<a> isEmpty list<[<a>]> -> <Bool> =
+  switch list 
   | [] => true 
   | => false
 ```
@@ -263,168 +178,4 @@ max num1<Num> -> num2<Num> -> <Num> =
   ?: 
   | num1 > num2 => num1
   | => num2
-```
-
-## Type aliases
-
-Type aliases let you refer to sets easily. They have to start with a capital letter.
-
-```haskell
-Color = {
-  red<Num>;
-  green<Num>;
-  blue<Num>;
-}
-
-Person = {
-  name<String>;
-  age<Num>;
-  eyeColor<Color>;
-}
-```
-
-## Enums
-
-Enums are basically sets, which use the following syntax:
-
-```haskell
-Fruit = {| BANANA, APPLE, PEAR, ORANGE, STRAWBERRY |};
-```
-
-They can be referred to using the same syntax as sets, and _have_ to be fully qualified:
-
-```haskell
-fruitToString fruit<Fruit> -> <String> =
-  ?= fruit
-  | Fruit.BANANA => "banana"
-  | Fruit.APPLE => "apple"
-  | Fruit.PEAR => "pear"
-  | Fruit.ORANGE => "orange"
-  | Fruit.STRAWBERRY => "strawberry"
-```
-
-As enums are similar to type declarations, they _must_ be named with a capital letter
-
-## Pragmas
-
-At the moment, pragmas are extra settings to pass to the compiler, similar to say Haskell extensions or something.
-
-Currently (as of time of writing), I only plan to have a few hardcoded pragmas in ForteLangPrime. In the end, I'm thinking of creating an API which lets you write pragmas in Java, which can be added to the compiler at compile time.
-
-The following pragmas have been planned:
-
-- `@NUMBER_COMMAS` - lets you declare numbers with commas in them. For example: `1,000,000`
-- `@ABORT` - an Easter egg that allows you to declare `a@bort` anywhere in your code for 
-
------
-
-# Grammar
-
-```haskell
-program -> pragmas expression
-pragmas -> 
-  | pragma pragmas
-  | EPSILON
-pragma -> @PRAGMA_IDENT
-```
-
-Function application & expressions
-```haskell
-application ->
-  | '(' guards ')' params
-  | '(' match ')' params
-  | '(' lambda ')' params
-  | variable params
-params -> 
-  | EPSILON
-  | expression params
-
-expression ->
-  | guards
-  | match
-  | set
-  | list
-  | string
-  | number
-  | lambda
-  | variable
-  | if
-  | '(' expression ')'
-  | application
-  | application '|>' expression
-```
-
-```haskell
-lambda -> '(' functionDeclaration ')'
-number -> [0-9]+(.[0-9]+)?
-string -> '"' STRING '"'  
-```
-
-Types
-```haskell
-types -> 
-  | identifier '<' type '>'
-  | identifier '<' type '>' '->' types
-identifier -> 
-  | [a-zA-Z_'@-?!]+
-  | EPSILON
-type ->
-  | 'Num'
-  | 'String'
-  | 'Bool'
-  | '[' type ']'
-  | '{' setTypes '}'
-setTypes ->
-  | otherSetTypes
-  | 'infer'
-otherSetTypes ->
-  | namedIdentifier '<' type '>'
-  | namedIdentifier '<' type '>' ',' otherSetTypes
-namedIdentifier -> [a-zA-Z_'@-?!]+
-```
-
-Sets
-```haskell
-functionDeclaration -> functionName types '=' expression
-functionName -> [a-zA-Z_'@-?!]+
-
-set -> '{' setDeclarations '}'
-setDeclarations ->
-  | setElements
-  | EPSILON
-setElements ->
-  | functionDeclaration ';' setElements
-  | functionDeclaration ';'
-```
-
-Lists
-```haskell
-list -> '[' listContents ']'
-listContents -> 
-  | listElements
-  | EPSILON
-listElements -> 
-  | expression ',' listElements
-  | expression
-```
-
-Matching & Guards
-```haskell
-match -> '?=' expression matchStatements '|' '=>' expression
-matchExpressions -> matchExpression matchExpressions | EPSILON
-matchExpression -> '|' expression '=>' expression
-  
-guards -> '?:' innerGuards '|' '=>' expression
-innerGuards -> guard innerGuards | EPSILON
-guard -> '|' expression '=>' expression
-```
-
-Enums
-```haskell
-enum -> `{|` enumElements `|}`
-```
-
-If statements
-```haskell
-if -> 'if' expression 'then' expression 'else' expression
 ```
