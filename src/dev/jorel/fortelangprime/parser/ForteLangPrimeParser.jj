@@ -1,5 +1,6 @@
 options {
 	STATIC = false;
+	JAVA_TEMPLATE_TYPE = "modern";
 }
 
 PARSER_BEGIN(ForteLangPrimeParser)
@@ -11,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +27,15 @@ public class ForteLangPrimeParser {
   	private static TypingContext typingContext;
   	private static String currentFunctionName;
 	
-	public static FLPLibrary parse(String input) throws ParseException {
+	public static FLPLibrary parse(String input) throws ParseException, IOException {
 		typingContext = new TypingContext();
 		InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-		return new ForteLangPrimeParser(inputStream).input();
+		return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
 	}
 
-	public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException {
+	public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException {
 		typingContext = new TypingContext();
-	  	return new ForteLangPrimeParser(new FileInputStream(input)).input();
+	  	return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
 	}
 
 	public static TypingContext getTypingContext() {
@@ -253,12 +255,14 @@ List<TypeNamedGeneric> genericTypeDeclaration() : {
 Expr expression() : {
   	Expr expr;
 } {
-	expr = integer() { return expr; }
-	| expr = bool() { return expr; }
-	| expr = string() { return expr; }
-	| expr = panic() { return expr; }
-	| expr = variable() { return expr; }
-	| expr = ifStatement() { return expr; }
+	( expr = integer()
+	| expr = bool()
+	| expr = string()
+	| expr = panic()
+	| expr = variable()
+	| expr = ifStatement()
+	)
+	{ return expr; }
 }
 
 ExprVariable variable() : {
@@ -291,11 +295,13 @@ ExprIntLit integer() : {
 }
 
 ExprBoolLit bool() : {
-  	Token t;
+	Token t;
+	boolean value;
 } {
-	( t = < TRUE >  { return new ExprBoolLit(t.beginLine, true); }
-	| t = < FALSE > { return new ExprBoolLit(t.beginLine, false); }
-	)
+	( t = < TRUE > { value = true; }
+	| t = < FALSE > { value = false; }
+	) 
+	{ return new ExprBoolLit(t.beginLine, value); }
 }
 
 ExprStringLit string() : {
@@ -344,13 +350,15 @@ Type type() : {
 	Token t;
 	Type type;
 } {
-	< TYPE_INT > { return new TypeInt(); }
-	| < TYPE_STRING > { return new TypeString(); }
-	| < TYPE_BOOL > { return new TypeBool(); }
+	( < TYPE_INT > { type = new TypeInt(); }
+	| < TYPE_STRING > { type = new TypeString(); }
+	| < TYPE_BOOL > { type = new TypeBool(); }
 	//TODO: Add generic to this constructor
-	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { return new TypeNamedGeneric(t.image); }
+	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
 	//TODO: Implement record types
-	| type = recordType() { return type; }
+	| type = recordType()
+	)
+	{ return type; }
 }
 
 Type recordType() : {

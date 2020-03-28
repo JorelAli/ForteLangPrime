@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -764,7 +765,7 @@ public Token getNextToken()
         input_stream.backup(1);
         error_after = curPos <= 1 ? "" : input_stream.GetImage();
      }
-     throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);
+     throw new TokenMgrException(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrException.LEXICAL_ERROR);
    }
   }
 }
@@ -823,7 +824,7 @@ private void jjCheckNAddStates(int start, int end)
     public ForteLangPrimeParserTokenManager(SimpleCharStream stream){
 
       if (SimpleCharStream.staticFlag)
-            throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
+            throw new RuntimeException("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
 
     input_stream = stream;
   }
@@ -864,7 +865,7 @@ private void jjCheckNAddStates(int start, int end)
   public void SwitchTo(int lexState)
   {
     if (lexState >= 2 || lexState < 0)
-      throw new TokenMgrError("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.", TokenMgrError.INVALID_LEXICAL_STATE);
+      throw new TokenMgrException("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.", TokenMgrException.INVALID_LEXICAL_STATE);
     else
       curLexState = lexState;
   }

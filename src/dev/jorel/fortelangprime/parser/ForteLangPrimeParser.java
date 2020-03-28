@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,15 @@ public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
         private static TypingContext typingContext;
         private static String currentFunctionName;
 
-        public static FLPLibrary parse(String input) throws ParseException {
+        public static FLPLibrary parse(String input) throws ParseException, IOException {
                 typingContext = new TypingContext();
                 InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-                return new ForteLangPrimeParser(inputStream).input();
+                return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
         }
 
-        public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException {
+        public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException {
                 typingContext = new TypingContext();
-                return new ForteLangPrimeParser(new FileInputStream(input)).input();
+                return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
         }
 
         public static TypingContext getTypingContext() {
@@ -40,8 +41,7 @@ public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
   final public FLPLibrary input() throws ParseException {FLPLibrary lib;
     lib = program();
     jj_consume_token(0);
-{if ("" != null) return lib;}
-    throw new Error("Missing return statement in function");
+return lib;
   }
 
   final public FLPLibrary program() throws ParseException {Token name; List<String> exports;
@@ -53,11 +53,12 @@ public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
     exports = exports();
     jj_consume_token(CLOSECBRACE);
     jj_consume_token(OPENCBRACE);
-    typeDeclarations = typeDeclarations();
+    //TODO: Implement type declarations
+            //TODO: Make it so you can put type declarations anywhere, not just at the start of the file
+            typeDeclarations = typeDeclarations();
     functions = functions();
     jj_consume_token(CLOSECBRACE);
-{if ("" != null) return new FLPLibrary(name.image, exports, functions);}
-    throw new Error("Missing return statement in function");
+return new FLPLibrary(name.image, exports, functions);
   }
 
   final public List<String> exports() throws ParseException {List<String> exports = new ArrayList<String>(); Token t;
@@ -77,8 +78,7 @@ public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
       jj_consume_token(SEMICOLON);
 exports.add(t.image);
     }
-{if ("" != null) return exports;}
-    throw new Error("Missing return statement in function");
+return exports;
   }
 
   final public void epsilon() throws ParseException {
@@ -90,8 +90,7 @@ exports.add(t.image);
     jj_consume_token(VAR_NAME);
     jj_consume_token(EQUALS);
     recordType();
-{if ("" != null) return list;}
-    throw new Error("Missing return statement in function");
+return list;
   }
 
   final public List<FLPFunction> functions() throws ParseException {List<FLPFunction> functions = new ArrayList<FLPFunction>();
@@ -111,8 +110,7 @@ exports.add(t.image);
       f = functionDeclaration();
 functions.add(f);
     }
-{if ("" != null) return functions;}
-    throw new Error("Missing return statement in function");
+return functions;
   }
 
   final public FLPFunction functionDeclaration() throws ParseException {List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
@@ -137,8 +135,7 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-{if ("" != null) return new FLPFunction(name.image, tf, genericTypeDeclaration, expr);}
-    throw new Error("Missing return statement in function");
+return new FLPFunction(name.image, tf, genericTypeDeclaration, expr);
   }
 
   final public List<TypeNamedGeneric> genericTypeDeclaration() throws ParseException {Token t;
@@ -162,41 +159,34 @@ genericNames.add(new TypeNamedGeneric(t.image));
 genericNames.add(new TypeNamedGeneric(t.image));
     }
     jj_consume_token(RCHEVRON);
-{if ("" != null) return genericNames;}
-    throw new Error("Missing return statement in function");
+return genericNames;
   }
 
   final public Expr expression() throws ParseException {Expr expr;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INT_LITERAL:{
       expr = integer();
-{if ("" != null) return expr;}
       break;
       }
     case TRUE:
     case FALSE:{
       expr = bool();
-{if ("" != null) return expr;}
       break;
       }
     case STRING:{
       expr = string();
-{if ("" != null) return expr;}
       break;
       }
     case PANIC:{
       expr = panic();
-{if ("" != null) return expr;}
       break;
       }
     case VAR_NAME:{
       expr = variable();
-{if ("" != null) return expr;}
       break;
       }
     case IF:{
       expr = ifStatement();
-{if ("" != null) return expr;}
       break;
       }
     default:
@@ -204,13 +194,12 @@ genericNames.add(new TypeNamedGeneric(t.image));
       jj_consume_token(-1);
       throw new ParseException();
     }
-    throw new Error("Missing return statement in function");
+return expr;
   }
 
   final public ExprVariable variable() throws ParseException {Token t;
     t = jj_consume_token(VAR_NAME);
-{if ("" != null) return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName);}
-    throw new Error("Missing return statement in function");
+return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName);
   }
 
   final public ExprIfStatement ifStatement() throws ParseException {Token t;
@@ -223,26 +212,25 @@ genericNames.add(new TypeNamedGeneric(t.image));
     b = expression();
     jj_consume_token(ELSE);
     c = expression();
-{if ("" != null) return new ExprIfStatement(t.beginLine, a, b, c);}
-    throw new Error("Missing return statement in function");
+return new ExprIfStatement(t.beginLine, a, b, c);
   }
 
   final public ExprIntLit integer() throws ParseException {Token t;
     t = jj_consume_token(INT_LITERAL);
-{if ("" != null) return new ExprIntLit(t.beginLine, Integer.parseInt(t.image));}
-    throw new Error("Missing return statement in function");
+return new ExprIntLit(t.beginLine, Integer.parseInt(t.image));
   }
 
   final public ExprBoolLit bool() throws ParseException {Token t;
+        boolean value;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TRUE:{
       t = jj_consume_token(TRUE);
-{if ("" != null) return new ExprBoolLit(t.beginLine, true);}
+value = true;
       break;
       }
     case FALSE:{
       t = jj_consume_token(FALSE);
-{if ("" != null) return new ExprBoolLit(t.beginLine, false);}
+value = false;
       break;
       }
     default:
@@ -250,19 +238,17 @@ genericNames.add(new TypeNamedGeneric(t.image));
       jj_consume_token(-1);
       throw new ParseException();
     }
-    throw new Error("Missing return statement in function");
+return new ExprBoolLit(t.beginLine, value);
   }
 
   final public ExprStringLit string() throws ParseException {Token t;
     t = jj_consume_token(STRING);
-{if ("" != null) return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1));}
-    throw new Error("Missing return statement in function");
+return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1));
   }
 
   final public ExprPanic panic() throws ParseException {Token t;
     t = jj_consume_token(PANIC);
-{if ("" != null) return new ExprPanic(t.beginLine);}
-    throw new Error("Missing return statement in function");
+return new ExprPanic(t.beginLine);
   }
 
   final public List<Pair<String, Type>> functionTypes() throws ParseException {List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
@@ -298,8 +284,7 @@ types.addAll(otherTypes);
       jj_la1[7] = jj_gen;
       ;
     }
-{if ("" != null) return types;}
-    throw new Error("Missing return statement in function");
+return types;
   }
 
   final public Type type() throws ParseException {Token t;
@@ -307,17 +292,17 @@ types.addAll(otherTypes);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TYPE_INT:{
       jj_consume_token(TYPE_INT);
-{if ("" != null) return new TypeInt();}
+type = new TypeInt();
       break;
       }
     case TYPE_STRING:{
       jj_consume_token(TYPE_STRING);
-{if ("" != null) return new TypeString();}
+type = new TypeString();
       break;
       }
     case TYPE_BOOL:{
       jj_consume_token(TYPE_BOOL);
-{if ("" != null) return new TypeBool();}
+type = new TypeBool();
       break;
       }
     case VAR_NAME:{
@@ -333,12 +318,11 @@ types.addAll(otherTypes);
         jj_la1[8] = jj_gen;
         ;
       }
-{if ("" != null) return new TypeNamedGeneric(t.image);}
+type = new TypeNamedGeneric(t.image);
       break;
       }
     case OPENCBRACE:{
       type = recordType();
-{if ("" != null) return type;}
       break;
       }
     default:
@@ -346,7 +330,7 @@ types.addAll(otherTypes);
       jj_consume_token(-1);
       throw new ParseException();
     }
-    throw new Error("Missing return statement in function");
+return type;
   }
 
   final public Type recordType() throws ParseException {
@@ -369,8 +353,7 @@ types.addAll(otherTypes);
       jj_consume_token(SEMICOLON);
     }
     jj_consume_token(CLOSECBRACE);
-{if ("" != null) return null;}
-    throw new Error("Missing return statement in function");
+return null;
   }
 
   /** Generated Token Manager. */
@@ -396,36 +379,8 @@ types.addAll(otherTypes);
       jj_la1_1 = new int[] {0x8,0x40,0x0,0x0,0x2c1,0x0,0x40,0x0,0x0,0x40,0x40,};
    }
 
-  /** Constructor with InputStream. */
-  public ForteLangPrimeParser(java.io.InputStream stream) {
-     this(stream, null);
-  }
-  /** Constructor with InputStream and supplied encoding */
-  public ForteLangPrimeParser(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    token_source = new ForteLangPrimeParserTokenManager(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
-  }
-
-  /** Reinitialise. */
-  public void ReInit(java.io.InputStream stream) {
-     ReInit(stream, null);
-  }
-  /** Reinitialise. */
-  public void ReInit(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    token_source.ReInit(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
-  }
-
   /** Constructor. */
-  public ForteLangPrimeParser(java.io.Reader stream) {
+  public ForteLangPrimeParser(Provider stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new ForteLangPrimeParserTokenManager(jj_input_stream);
     token = new Token();
@@ -434,8 +389,16 @@ types.addAll(otherTypes);
     for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
+  /** Constructor. */
+  public ForteLangPrimeParser(String dsl) throws ParseException, TokenMgrException {
+      this(new StringProvider(dsl));
+  }
+
+  public void ReInit(String s) {
+     ReInit(new StringProvider(s));
+  }
   /** Reinitialise. */
-  public void ReInit(java.io.Reader stream) {
+  public void ReInit(Provider stream) {
 	if (jj_input_stream == null) {
       jj_input_stream = new SimpleCharStream(stream, 1, 1);
    } else {
@@ -546,7 +509,7 @@ types.addAll(otherTypes);
     for (int i = 0; i < jj_expentries.size(); i++) {
       exptokseq[i] = jj_expentries.get(i);
     }
-    return new ParseException(token, exptokseq, tokenImage);
+    return new ParseException(token, exptokseq, tokenImage, token_source == null ? null : ForteLangPrimeParserTokenManager.lexStateNames[token_source.curLexState]);
   }
 
   /** Enable tracing. */
