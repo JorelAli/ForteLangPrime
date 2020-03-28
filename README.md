@@ -158,11 +158,14 @@ ForteLangPrime will include algebraic data types and support for generics.
 ```haskell
 {
 
-    ## Example of a binary tree
-    Tree<T> = Node<{
+    ## Example of a binary tree using sets
+    type <T> Tree<T> = Node<{
         lhs<Tree<T>>;
         rhs<Tree<T>>;
     }> || Leaf<T>;
+    
+    ## Example of a binary tree without using sets
+    type <T> Tree<T> = Node<Tree<T>, Tree<T>> || Leaf<T>;
 }
 ```
 
