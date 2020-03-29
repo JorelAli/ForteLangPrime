@@ -1,5 +1,4 @@
 import java.io.File;
-import java.lang.reflect.Field;
 
 import dev.jorel.fortelangprime.BytecodeGenerator;
 import dev.jorel.fortelangprime.BytecodeGenerator.JavaVersion;
@@ -30,29 +29,15 @@ public class Testing {
 		generator.compile();
 		generator.writeToFile(new File("classfolder"));
 		
-//		System.out.println(Sample.a);
+		System.out.println("Sample.id(true) = " + Sample.id(true));
+		System.out.println("Sample.id(\"hello\") = " + Sample.id("hello"));
+		System.out.println("Sample.id(Pair.of(\"hello\", 4)) = " + Sample.id(Pair.of("hello", 4)));
 		
-//		System.out.println(Sample.gen().a);
-//		System.out.println(Sample.a);
-		
-		System.out.println(Sample.id(true));
-		System.out.println(Sample.id("hello"));
-		System.out.println(Sample.id(Pair.of("hello", 4)));
-//		Sample.Sample$Color
-//		Class s = Color.class;
-//		new Sample.Color();
-//		new Sample.Color(2);
-		
-		
-		
-//		for(Field f : Sample.mk().getClass().getDeclaredFields()) {
-//			System.out.println(f.getName());
-//		}
-//		System.out.println(Sample.mk().red);
-		System.out.println(Sample.red().red);
-//		for(Field f : Sample.red().getClass().getFields()) {
-//			System.out.println(f.getName() + " = " + f.get(Sample.red()));
-//		}
+		System.out.println();
+		Sample.Color color = Sample.red();
+		System.out.println("red: " + color.red);
+		System.out.println("green: " + color.green);
+		System.out.println("blue: " + color.blue);
 	}
 	
 	public void a() {

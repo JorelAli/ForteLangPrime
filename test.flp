@@ -6,21 +6,12 @@ Library Sample {
 	
 } {
 
+	## Record type declaration
 	type Color = {
 		red<Int>;
 		green<Int>;
 		blue<Int>;
 	}
-
-	## Example of a binary tree
-    ## Tree<T> = Node<{
-    ##     lhs<Tree<T>>;
-    ##     rhs<Tree<T>>;
-    ## }> || Leaf<T>;
-
-	## type IntPair = Pair<<Int>, <Int>>
-
-	#[ A comment block ]#
 
 	## Basic functions (returning simple parameters)
 	justTwo <Int> = 2;
@@ -43,6 +34,8 @@ Library Sample {
 
 	## If statements
 	alwaysFalse <Bool> = if true then if true then false else true else true;
+
+	## Example of a fully defined record 
 	red <Color> = {
 		red = 255;
 		green = 0;
