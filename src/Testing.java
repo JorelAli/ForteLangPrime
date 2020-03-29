@@ -1,4 +1,5 @@
 import java.io.File;
+import java.lang.reflect.Field;
 
 import dev.jorel.fortelangprime.BytecodeGenerator;
 import dev.jorel.fortelangprime.BytecodeGenerator.JavaVersion;
@@ -23,7 +24,15 @@ public class Testing {
 		System.out.println(Sample.id(true));
 		System.out.println(Sample.id("hello"));
 		System.out.println(Sample.id(Pair.of("hello", 4)));
+//		Sample.Sample$Color
+//		Class s = Color.class;
+//		new Sample.Color();
+//		new Sample.Color(2);
 		
+		
+//		for(Field f : Sample.mk().getClass().getDeclaredFields()) {
+//			System.out.println(f.getName());
+//		}
 		System.out.println(Sample.mk().red);
 	}
 	

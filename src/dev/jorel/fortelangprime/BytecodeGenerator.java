@@ -98,7 +98,13 @@ public class BytecodeGenerator implements Opcodes {
 			methodVisitor.visitCode();
 			methodVisitor.visitTypeInsn(NEW, "Sample$Color");
 			methodVisitor.visitInsn(DUP);
-			methodVisitor.visitMethodInsn(INVOKESPECIAL, "Sample$Color", "<init>", "()V", false);
+			methodVisitor.visitInsn(ICONST_2);
+			methodVisitor.visitInsn(ICONST_3);
+			methodVisitor.visitInsn(ICONST_4);
+			methodVisitor.visitMethodInsn(INVOKESPECIAL, "Sample$Color", "<init>", "(III)V", false);
+//			methodVisitor.visitInsn(DUP);
+//			methodVisitor.visitInsn(ICONST_2);
+//			methodVisitor.visitFieldInsn(PUTFIELD, "Sample$Color", "red", "I");
 			methodVisitor.visitInsn(ARETURN);
 			methodVisitor.visitMaxs(0, 0);
 			methodVisitor.visitEnd();
