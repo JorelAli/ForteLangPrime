@@ -15,6 +15,7 @@ import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
+import dev.jorel.fortelangprime.ast.RecordTypeDeclaration;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 
 public class BytecodeGenerator implements Opcodes {
@@ -62,14 +63,14 @@ public class BytecodeGenerator implements Opcodes {
 			}
 		}
 		
-		this.compiledData = generateBytecode(lib.name + ".flp", null, lib.name, lib.functions);
+		this.compiledData = generateBytecode(lib.name + ".flp", null, lib.name, lib.functions, lib.typeDeclarations);
 	}
 	
 	public void writeToFile(File parentFolder) throws IOException {
 		Files.write(new File(parentFolder, lib.name + ".class").toPath(), compiledData);
 	}
 	
-	private byte[] generateBytecode(String fileName, String metadata, String libName, List<FLPFunction> functions) {
+	private byte[] generateBytecode(String fileName, String metadata, String libName, List<FLPFunction> functions, List<RecordTypeDeclaration> typeDecls) {
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
@@ -79,8 +80,29 @@ public class BytecodeGenerator implements Opcodes {
 		for(FLPFunction f : functions) {
 			f.emit(classWriter, context);
 		}
+		
+		for(RecordTypeDeclaration r : typeDecls) {
+			r.emit(classWriter, context);
+		}		
+		
+		inject2(classWriter);
+		
 		classWriter.visitEnd();
 		return classWriter.toByteArray();
+	}
+	
+	private void inject2(ClassWriter classWriter) {
+		MethodVisitor methodVisitor;
+		{
+			methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "mk", "()LSample$Color;", null, null);
+			methodVisitor.visitCode();
+			methodVisitor.visitTypeInsn(NEW, "Sample$Color");
+			methodVisitor.visitInsn(DUP);
+			methodVisitor.visitMethodInsn(INVOKESPECIAL, "Sample$Color", "<init>", "()V", false);
+			methodVisitor.visitInsn(ARETURN);
+			methodVisitor.visitMaxs(0, 0);
+			methodVisitor.visitEnd();
+		}
 	}
 	
 	private void inject(ClassWriter classWriter) {

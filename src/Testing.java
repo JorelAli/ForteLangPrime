@@ -23,6 +23,8 @@ public class Testing {
 		System.out.println(Sample.id(true));
 		System.out.println(Sample.id("hello"));
 		System.out.println(Sample.id(Pair.of("hello", 4)));
+		
+		System.out.println(Sample.mk().red);
 	}
 	
 	public void a() {

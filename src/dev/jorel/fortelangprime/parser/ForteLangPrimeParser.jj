@@ -158,7 +158,7 @@ FLPLibrary input() : { FLPLibrary lib; } {
 
 FLPLibrary program() : {
 	Token name; List<String> exports;
-	List<TypeDeclaration> typeDeclarations;
+	List<RecordTypeDeclaration> typeDeclarations;
 	List<FLPFunction> functions;
 } {
   	< LIBRARY >
@@ -170,13 +170,12 @@ FLPLibrary program() : {
 
 	< OPENCBRACE >
 
-	//TODO: Implement type declarations
 	//TODO: Make it so you can put type declarations anywhere, not just at the start of the file
 	typeDeclarations = typeDeclarations()
 	functions = functions()
 
 	< CLOSECBRACE >
-	{ return new FLPLibrary(name.image, exports, functions); }
+	{ return new FLPLibrary(name.image, exports, functions, typeDeclarations); }
 }
 
 List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
@@ -195,13 +194,21 @@ void epsilon() : { } {
 	}
 }
 
-List<TypeDeclaration> typeDeclarations() : {
-	List<TypeDeclaration> list = new ArrayList<TypeDeclaration>();
+List<RecordTypeDeclaration> typeDeclarations() : {
+	List<RecordTypeDeclaration> list = new ArrayList<RecordTypeDeclaration>();
+	Token name;
+	TypeRecord type;
 } {
-	< TYPE >
-	< VAR_NAME >
-	< EQUALS >
-	recordType()
+  	(
+		< TYPE >
+		name = < VAR_NAME >
+		< EQUALS >
+		type = recordType()
+		{
+			typingContext.addRecordType(name.image, type); 
+			list.add(new RecordTypeDeclaration(name.image, type));
+		}
+	)*
 	{ return list; }
 }
 
@@ -361,17 +368,20 @@ Type type() : {
 	{ return type; }
 }
 
-Type recordType() : {
-
+TypeRecord recordType() : {
+	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
+	Token t;
+	Type type;
 } {
   	< OPENCBRACE >
 	(
-		< VAR_NAME >
+		t = < VAR_NAME >
 		< LCHEVRON >
-		type()
+		type = type()
 		< RCHEVRON >
 		< SEMICOLON >
+		{ types.add(Pair.of(t.image, type)); }
 	)*
 	< CLOSECBRACE >
-	{ return null; }
+	{ return new TypeRecord(types); }
 }

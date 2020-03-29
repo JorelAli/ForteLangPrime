@@ -5,14 +5,12 @@ import java.util.Map;
 
 public class TypingContext {
 	
-	/*
-	 * TODO: A string is not sufficient to uniquely
-	 * identify a function. Functions have overloading!
-	 */
 	Map<String, TypeFunction> functions;
+	Map<String, TypeRecord> recordTypes;
 	
 	public TypingContext() {
 		this.functions = new HashMap<>();
+		this.recordTypes = new HashMap<>();
 	}
 	
 	public void addFunction(String functionName, TypeFunction typeFunction) {
@@ -21,6 +19,10 @@ public class TypingContext {
 
 	public TypeFunction getFunction(String functionName) {
 		return functions.get(functionName);
+	}
+	
+	public void addRecordType(String recordName, TypeRecord type) {
+		this.recordTypes.put(recordName, type);
 	}
 
 }

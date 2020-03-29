@@ -2,15 +2,14 @@ Library Sample {
 	
 	export not;
 	export id;
+	##	export red;
 	
 } {
 
 	type Color = {
-		red<{
-			a<Int>;
-		}>;
+		red<Int>;
 		green<Int>;
-		blue<a<b>>;
+		blue<Int>;
 	}
 
 	## Example of a binary tree
@@ -44,5 +43,10 @@ Library Sample {
 
 	## If statements
 	alwaysFalse <Bool> = if true then if true then false else true else true;
+	#[red <Color> = {
+		red = 255;
+		green = 0;
+		blue = 0;
+	}]#
 
 }
