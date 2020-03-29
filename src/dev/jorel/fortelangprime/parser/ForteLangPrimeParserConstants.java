@@ -49,7 +49,7 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int PRINTABLE = 19;
   /** RegularExpression Id. */
-  int EQUALABLE = 20;
+  int EQUATABLE = 20;
   /** RegularExpression Id. */
   int CONCAT = 21;
   /** RegularExpression Id. */
@@ -122,7 +122,7 @@ public interface ForteLangPrimeParserConstants {
     "\"<\"",
     "\">\"",
     "\"@Printable\"",
-    "\"@Equalable\"",
+    "\"@Equatable\"",
     "\"++\"",
     "\"+\"",
     "\"~=\"",

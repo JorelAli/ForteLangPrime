@@ -20,6 +20,7 @@ public class Testing {
 		System.out.println("Sample.id(Pair.of(\"hello\", 4)) = " + Sample.id(Pair.of("hello", 4)));
 		
 		System.out.println(Sample.red());
+		System.out.println(Sample.yellow());
 		
 //		System.out.println();
 //		Sample.Color color = Sample.red();

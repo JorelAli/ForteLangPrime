@@ -20,6 +20,14 @@ public class ExprVariable implements Expr {
 		this.name = name;
 		this.parentFunctionName = parentFunctionName;
 	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public String getParentFunctionName() {
+		return this.parentFunctionName;
+	}
 
 	@Override
 	public Type getType(TypingContext context) throws TypeException {

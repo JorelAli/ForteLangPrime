@@ -1,12 +1,17 @@
 
-public class A {
+public interface A {
 
-	int x;
-	String y;
+	class s {
+		int a;
+	}
 	
-	@Override
-	public String toString() {
-		return "A(" + x + ", " + y + ")";
+	public static int a() {
+		return 2;
+	}
+	
+	public static int b() {
+		s z = new s();
+		return z.a;
 	}
 	
 }

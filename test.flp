@@ -4,11 +4,12 @@ Library Sample {
 	export id;
 	export red;
 	export green;
+	export yellow;
 	
 } {
 
 	## Record type declaration
-##	@Printable
+	@Printable
 	type Color = {
 		red<Int>;
 		green<Int>;
@@ -49,5 +50,7 @@ Library Sample {
 		red = 0;
 		blue = 0;
 	};
+
+	yellow <Color> = { red | green = 255; };
 
 }

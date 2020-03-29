@@ -75,7 +75,7 @@ TOKEN : {
 // Generators
 TOKEN : {
 		< PRINTABLE : "@Printable" >
-	|	< EQUALABLE : "@Equalable" >
+	|	< EQUATABLE : "@Equatable" >
 }
 
 // Operators
@@ -287,10 +287,14 @@ ExprRecordConstruction recordExpr() : {
   
 	List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
 	Token startingToken;
+	Expr base = null;
 	Token t;
 	Expr expr;
 } {
   	startingToken = < OPENCBRACE >
+  	( LOOKAHEAD(2)
+  	  	base = variable()
+  	 	< PIPE >  	  	)?
 	(
 		t = < VAR_NAME >
 		< EQUALS >
@@ -299,7 +303,7 @@ ExprRecordConstruction recordExpr() : {
 		{ values.add(Pair.of(t.image, expr)); }
 	)*
 	< CLOSECBRACE >
-	{ return new ExprRecordConstruction(startingToken.beginLine, values); }
+	{ return new ExprRecordConstruction(startingToken.beginLine, base, values); }
 }
 
 ExprVariable variable() : {
