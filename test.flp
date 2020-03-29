@@ -8,6 +8,7 @@ Library Sample {
 } {
 
 	## Record type declaration
+##	@Printable
 	type Color = {
 		red<Int>;
 		green<Int>;

@@ -65,12 +65,17 @@ TOKEN : {
 	|	< FAT_ARROW : "=>" > 
 	|	< DOUBLE_ARROW : "->>" > 
 	|	< PLAY_BUTTON : "|>" > 
-	|	< AT : "@" > 
 	|	< GUARD : "?:" > 
 	|	< PIPE : "|" > 
 	|	< EQUALS : "=" > 
 	|	< LCHEVRON : "<" > 
 	|	< RCHEVRON : ">" >
+}
+
+// Generators
+TOKEN : {
+		< PRINTABLE : "@Printable" >
+	|	< EQUALABLE : "@Equalable" >
 }
 
 // Operators
@@ -198,15 +203,19 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 	List<RecordTypeDeclaration> list = new ArrayList<RecordTypeDeclaration>();
 	Token name;
 	TypeRecord type;
+	boolean printable = false;
 } {
   	(
+  	  	(			< PRINTABLE >
+			{ printable = true; }
+  	  	)?
 		< TYPE >
 		name = < VAR_NAME >
 		< EQUALS >
 		type = recordType(name.image)
 		{
 			typingContext.addRecordType(name.image, type); 
-			list.add(new RecordTypeDeclaration(name.image, type));
+			list.add(new RecordTypeDeclaration(name.image, type, printable));
 		}
 	)*
 	{ return list; }
