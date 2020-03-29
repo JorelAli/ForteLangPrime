@@ -9,6 +9,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
@@ -33,22 +34,23 @@ public class RecordTypeDeclaration implements CodeableClass {
 	}
 	
 	@Override
-	public void emit(ClassWriter parentClassWriter, TypingContext context) {
-		String innerClassName = "Sample$" + name;
+	public void emit(EmitterContext proj, ClassWriter parentClassWriter, TypingContext context) {
+		String innerClassName = proj.getLibraryName() + "$" + name;
 
-		parentClassWriter.visitInnerClass(innerClassName, "Sample", name, ACC_PUBLIC | ACC_STATIC);
+		parentClassWriter.visitInnerClass(innerClassName, proj.getLibraryName(), name, ACC_PUBLIC | ACC_STATIC);
 		
 		ClassWriter innerClassWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-		innerClassWriter.visitInnerClass(innerClassName, "Sample", name, ACC_PUBLIC | ACC_STATIC);
+		innerClassWriter.visitInnerClass(innerClassName, proj.getLibraryName(), name, ACC_PUBLIC | ACC_STATIC);
 		innerClassWriter.visit(V1_8, ACC_PUBLIC, innerClassName, null, "java/lang/Object", null);
 		
+		// Write public final fields
 		FieldVisitor fieldVisitor;
-		
 		for(Pair<String, Type> pair : recordType.getTypes()) {
 			fieldVisitor = innerClassWriter.visitField(ACC_PUBLIC | ACC_FINAL | ACC_SYNTHETIC, pair.first(), pair.second().toBytecodeString(), null, null);
 			fieldVisitor.visitEnd();
 		}
 		
+		//Create default constructor
 		{
 			String signature = recordType.getTypes().stream().map(Pair::second).map(Type::toBytecodeString).collect(Collectors.joining());
 			MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC | ACC_SYNTHETIC, "<init>", "(" + signature + ")V", null, null);
@@ -62,18 +64,13 @@ public class RecordTypeDeclaration implements CodeableClass {
 				methodVisitor.visitVarInsn(pair.second().loadInstruction(), index++);
 				methodVisitor.visitFieldInsn(PUTFIELD, innerClassName, pair.first(), pair.second().toBytecodeString());
 			}
-			
-			
-//			methodVisitor.visitVarInsn(ILOAD, 1);
-//			methodVisitor.visitFieldInsn(PUTFIELD, "Sample$" + name, "red", "I");
-//			methodVisitor.visitVarInsn(ALOAD, 0);
 			methodVisitor.visitInsn(RETURN);
 			methodVisitor.visitMaxs(1, 1);
 			methodVisitor.visitEnd();
 		}
 		innerClassWriter.visitEnd();
 		try {
-			Files.write(new File("classfolder", "Sample$" + name +".class").toPath(), innerClassWriter.toByteArray());
+			Files.write(new File("classfolder", innerClassName + ".class").toPath(), innerClassWriter.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -2,7 +2,7 @@ Library Sample {
 	
 	export not;
 	export id;
-	##	export red;
+	export red;
 	
 } {
 
@@ -43,10 +43,10 @@ Library Sample {
 
 	## If statements
 	alwaysFalse <Bool> = if true then if true then false else true else true;
-	#[red <Color> = {
+	red <Color> = {
 		red = 255;
 		green = 0;
 		blue = 0;
-	}]#
+	};
 
 }

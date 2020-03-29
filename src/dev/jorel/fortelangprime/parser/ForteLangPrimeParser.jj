@@ -273,6 +273,26 @@ Expr expression() : {
 	{ return expr; }
 }
 
+ExprRecordConstruction recordExpr() : {
+  //	public ExprRecordConstruction(int lineNumber, List<Pair<String, Expr>> values) {
+  
+	List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
+	Token startingToken;
+	Token t;
+	Expr expr;
+} {
+  	startingToken = < OPENCBRACE >
+	(
+		t = < VAR_NAME >
+		< EQUALS >
+		expr = expression()
+		< SEMICOLON >
+		{ values.add(Pair.of(t.image, expr)); }
+	)*
+	< CLOSECBRACE >
+	{ return new ExprRecordConstruction(startingToken.beginLine, values); }
+}
+
 ExprVariable variable() : {
   	Token t;
 } {

@@ -204,12 +204,44 @@ return genericNames;
       expr = ifStatement();
       break;
       }
+    case OPENCBRACE:{
+      expr = recordExpr();
+      break;
+      }
     default:
       jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
 return expr;
+  }
+
+  final public ExprRecordConstruction recordExpr() throws ParseException {//	public ExprRecordConstruction(int lineNumber, List<Pair<String, Expr>> values) {
+
+        List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
+        Token startingToken;
+        Token t;
+        Expr expr;
+    startingToken = jj_consume_token(OPENCBRACE);
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case VAR_NAME:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[6] = jj_gen;
+        break label_5;
+      }
+      t = jj_consume_token(VAR_NAME);
+      jj_consume_token(EQUALS);
+      expr = expression();
+      jj_consume_token(SEMICOLON);
+values.add(Pair.of(t.image, expr));
+    }
+    jj_consume_token(CLOSECBRACE);
+return new ExprRecordConstruction(startingToken.beginLine, values);
   }
 
   final public ExprVariable variable() throws ParseException {Token t;
@@ -249,7 +281,7 @@ value = false;
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[7] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -277,7 +309,7 @@ varName = null;
       break;
       }
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[8] = jj_gen;
       ;
     }
     jj_consume_token(LCHEVRON);
@@ -296,7 +328,7 @@ types.addAll(otherTypes);
       break;
       }
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[9] = jj_gen;
       ;
     }
 return types;
@@ -330,7 +362,7 @@ type = new TypeBool();
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         ;
       }
 type = new TypeNamedGeneric(t.image);
@@ -341,7 +373,7 @@ type = new TypeNamedGeneric(t.image);
       break;
       }
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -352,7 +384,7 @@ return type;
         Token t;
         Type type;
     jj_consume_token(OPENCBRACE);
-    label_5:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case VAR_NAME:{
@@ -360,8 +392,8 @@ return type;
         break;
         }
       default:
-        jj_la1[11] = jj_gen;
-        break label_5;
+        jj_la1[12] = jj_gen;
+        break label_6;
       }
       t = jj_consume_token(VAR_NAME);
       jj_consume_token(LCHEVRON);
@@ -383,7 +415,7 @@ return new TypeRecord(types);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[12];
+  final private int[] jj_la1 = new int[13];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -391,10 +423,10 @@ return new TypeRecord(types);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x4000000,0x40000,0x40000,0x400,0xc8000000,0xc0000000,0x0,0x200,0x40000,0x3800008,0x0,};
+      jj_la1_0 = new int[] {0x0,0x4000000,0x40000,0x40000,0x400,0xc8000008,0x0,0xc0000000,0x0,0x200,0x40000,0x3800008,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x8,0x0,0x40,0x0,0x0,0x2c1,0x0,0x40,0x0,0x0,0x40,0x40,};
+      jj_la1_1 = new int[] {0x8,0x0,0x40,0x0,0x0,0x2c1,0x40,0x0,0x40,0x0,0x0,0x40,0x40,};
    }
 
   /** Constructor. */
@@ -404,7 +436,7 @@ return new TypeRecord(types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -430,7 +462,7 @@ return new TypeRecord(types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -439,7 +471,7 @@ return new TypeRecord(types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -448,7 +480,7 @@ return new TypeRecord(types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -504,7 +536,7 @@ return new TypeRecord(types);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 13; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

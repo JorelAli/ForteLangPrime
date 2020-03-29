@@ -6,6 +6,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
@@ -38,7 +39,7 @@ public class FLPFunction implements CodeableClass {
 	}
 	
 	@Override
-	public void emit(ClassWriter classWriter, TypingContext context) {
+	public void emit(EmitterContext proj, ClassWriter classWriter, TypingContext context) {
 		
 		String genericSignature;
 		if(genericDeclarations.size() == 0) {

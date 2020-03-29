@@ -68,7 +68,14 @@ public class ExprIntLit implements Expr {
 				methodVisitor.visitInsn(ICONST_5);
 				break;
 			default:
-				methodVisitor.visitIntInsn(BIPUSH, value);
+				if((byte) value == value) {
+					methodVisitor.visitIntInsn(BIPUSH, value);
+				} else if((short) value == value) {
+					methodVisitor.visitIntInsn(SIPUSH, value);
+				} else {
+					methodVisitor.visitLdcInsn(Integer.valueOf(value));
+				}
+				
 				break;
 		}
 	}

@@ -9,7 +9,21 @@ import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class Testing {
 	
+	static class AAA {
+		public AAA(int i) {
+			System.out.println(i);
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {		
+		
+//		new AAA(2);
+//		new AAA(20);
+//		new AAA(127);
+//		new AAA(128);
+//		new AAA(256);
+//		new AAA(1000);
+//		new AAA(256000);
 		
 		FLPLibrary lib = ForteLangPrimeParser.parse(new File("test.flp"));
 		BytecodeGenerator generator = new BytecodeGenerator(ForteLangPrimeParser.getTypingContext(), lib, JavaVersion.V_8);
@@ -30,10 +44,15 @@ public class Testing {
 //		new Sample.Color(2);
 		
 		
+		
 //		for(Field f : Sample.mk().getClass().getDeclaredFields()) {
 //			System.out.println(f.getName());
 //		}
 		System.out.println(Sample.mk().red);
+		System.out.println(Sample.red());
+		for(Field f : Sample.red().getClass().getFields()) {
+			System.out.println(f.getName() + " = " + f.get(Sample.red()));
+		}
 	}
 	
 	public void a() {
