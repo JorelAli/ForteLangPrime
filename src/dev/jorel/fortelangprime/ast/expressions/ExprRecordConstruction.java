@@ -66,9 +66,25 @@ public class ExprRecordConstruction implements Expr {
 		return ExpressionType.INT_LITERAL;
 	}
 
+	private List<Pair<String, Expr>> reorderParams(TypingContext context, List<Pair<String, Expr>> oldValues) {
+		TypeRecord recordType = (TypeRecord) getTypeUnsafe(context);
+		List<String> orderedNames = recordType.getTypes().stream().map(Pair::first).collect(Collectors.toList()); 
+		List<Pair<String, Expr>> newExprs = new ArrayList<>();
+		naming: for(String str : orderedNames) {
+			for(Pair<String, Expr> value : oldValues) {
+				if(value.first().equals(str)) {
+					newExprs.add(value);
+					continue naming;
+				}
+			}
+		}
+		
+		return newExprs;
+	}
+	
 	@Override
 	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
-		
+		this.values = reorderParams(context, this.values);
 		TypeRecord recordType = (TypeRecord) getTypeUnsafe(context);
 		String name; {
 			List<Pair<String, Type>> types = new ArrayList<>();

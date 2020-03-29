@@ -24,6 +24,11 @@ public class Testing {
 		System.out.println("red: " + color.red);
 		System.out.println("green: " + color.green);
 		System.out.println("blue: " + color.blue);
+		
+		color = Sample.green();
+		System.out.println("red: " + color.red);
+		System.out.println("green: " + color.green);
+		System.out.println("blue: " + color.blue);
 	}
 	
 }
