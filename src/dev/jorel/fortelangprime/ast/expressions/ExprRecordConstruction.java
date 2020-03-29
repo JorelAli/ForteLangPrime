@@ -2,9 +2,11 @@ package dev.jorel.fortelangprime.ast.expressions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
@@ -65,9 +67,9 @@ public class ExprRecordConstruction implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
 		
-		TypeRecord rt = (TypeRecord) getTypeUnsafe(context);
+		TypeRecord recordType = (TypeRecord) getTypeUnsafe(context);
 		String name; {
 			List<Pair<String, Type>> types = new ArrayList<>();
 			for(Pair<String, Expr> pair : values) {
@@ -80,19 +82,13 @@ public class ExprRecordConstruction implements Expr {
 			name = context.getNameOfRecordTypeMatching(types);
 		}
 		
-		System.out.println(name + "<<");
-		
-		//TODO
-		methodVisitor.visitTypeInsn(NEW, "Sample$Color");
+		methodVisitor.visitTypeInsn(NEW, prog.getLibraryName() + "$" + name);
 		methodVisitor.visitInsn(DUP);
-		values.forEach(a -> {
-			System.out.println(a);
-			a.second().emit(methodVisitor, context);
+		values.forEach(exprPair -> {
+			exprPair.second().emit(prog, methodVisitor, context);
 		});
-//		methodVisitor.visitInsn(ICONST_2);
-//		methodVisitor.visitInsn(ICONST_3);
-//		methodVisitor.visitInsn(ICONST_4);
-		methodVisitor.visitMethodInsn(INVOKESPECIAL, "Sample$Color", "<init>", "(III)V", false);
+		String paramSignature = recordType.getTypes().stream().map(Pair::second).map(Type::toBytecodeString).collect(Collectors.joining());
+		methodVisitor.visitMethodInsn(INVOKESPECIAL, prog.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
 		methodVisitor.visitInsn(ARETURN);
 		methodVisitor.visitMaxs(0, 0);
 		methodVisitor.visitEnd();

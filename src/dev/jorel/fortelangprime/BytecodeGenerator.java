@@ -86,27 +86,8 @@ public class BytecodeGenerator implements Opcodes {
 		for(RecordTypeDeclaration r : typeDecls) {
 			r.emit(proj, classWriter, context);
 		}		
-		
-		inject2(classWriter);
-		
+			
 		classWriter.visitEnd();
 		return classWriter.toByteArray();
-	}
-	
-	private void inject2(ClassWriter classWriter) {
-		MethodVisitor methodVisitor;
-		{
-			methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "mk", "()LSample$Color;", null, null);
-			methodVisitor.visitCode();
-			methodVisitor.visitTypeInsn(NEW, "Sample$Color");
-			methodVisitor.visitInsn(DUP);
-			methodVisitor.visitInsn(ICONST_2);
-			methodVisitor.visitInsn(ICONST_3);
-			methodVisitor.visitInsn(ICONST_4);
-			methodVisitor.visitMethodInsn(INVOKESPECIAL, "Sample$Color", "<init>", "(III)V", false);
-			methodVisitor.visitInsn(ARETURN);
-			methodVisitor.visitMaxs(0, 0);
-			methodVisitor.visitEnd();
-		}
 	}
 }

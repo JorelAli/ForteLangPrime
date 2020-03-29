@@ -3,6 +3,7 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
@@ -51,17 +52,17 @@ public class ExprIfStatement implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
 	
 		switch(condition.getInternalType()) {
 			case BOOL_LITERAL: {
 				ExprBoolLit bool = (ExprBoolLit) condition;
 				if(bool.getValue()) {
 					ifTrue.emitLineNumber(methodVisitor);
-					ifTrue.emit(methodVisitor, context);
+					ifTrue.emit(prog, methodVisitor, context);
 				} else {
 					ifFalse.emitLineNumber(methodVisitor);
-					ifFalse.emit(methodVisitor, context);
+					ifFalse.emit(prog, methodVisitor, context);
 				}
 				return;
 			}
@@ -73,13 +74,13 @@ public class ExprIfStatement implements Expr {
 				Label ifFalseLabel = new Label();
 				methodVisitor.visitJumpInsn(IFEQ, ifFalseLabel);
 				
-				ifTrue.emit(methodVisitor, context);
+				ifTrue.emit(prog, methodVisitor, context);
 				
 				Label ifTrueLabel = new Label();
 				methodVisitor.visitJumpInsn(GOTO, ifTrueLabel);
 				
 				methodVisitor.visitLabel(ifFalseLabel);
-				ifFalse.emit(methodVisitor, context);
+				ifFalse.emit(prog, methodVisitor, context);
 				
 				methodVisitor.visitLabel(ifTrueLabel);				
 				return;

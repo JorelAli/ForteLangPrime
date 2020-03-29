@@ -203,7 +203,7 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 		< TYPE >
 		name = < VAR_NAME >
 		< EQUALS >
-		type = recordType()
+		type = recordType(name.image)
 		{
 			typingContext.addRecordType(name.image, type); 
 			list.add(new RecordTypeDeclaration(name.image, type));
@@ -384,12 +384,12 @@ Type type() : {
 	//TODO: Add generic to this constructor
 	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
 	//TODO: Implement record types
-	| type = recordType()
+//	| type = recordType("")
 	)
 	{ return type; }
 }
 
-TypeRecord recordType() : {
+TypeRecord recordType(String name) : {
 	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
 	Token t;
 	Type type;
@@ -404,5 +404,5 @@ TypeRecord recordType() : {
 		{ types.add(Pair.of(t.image, type)); }
 	)*
 	< CLOSECBRACE >
-	{ return new TypeRecord(types); }
+	{ return new TypeRecord(name, types); }
 }

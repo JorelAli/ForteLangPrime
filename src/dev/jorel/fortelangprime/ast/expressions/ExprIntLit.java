@@ -2,9 +2,10 @@ package dev.jorel.fortelangprime.ast.expressions;
 
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
-import dev.jorel.fortelangprime.ast.types.TypeInt;
 import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.types.TypeInt;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
@@ -44,7 +45,7 @@ public class ExprIntLit implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
 		switch(value) {
 			case -1:
 				methodVisitor.visitInsn(ICONST_M1);
@@ -75,7 +76,6 @@ public class ExprIntLit implements Expr {
 				} else {
 					methodVisitor.visitLdcInsn(Integer.valueOf(value));
 				}
-				
 				break;
 		}
 	}

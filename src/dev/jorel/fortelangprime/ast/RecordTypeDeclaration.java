@@ -46,7 +46,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 		// Write public final fields
 		FieldVisitor fieldVisitor;
 		for(Pair<String, Type> pair : recordType.getTypes()) {
-			fieldVisitor = innerClassWriter.visitField(ACC_PUBLIC | ACC_FINAL | ACC_SYNTHETIC, pair.first(), pair.second().toBytecodeString(), null, null);
+			fieldVisitor = innerClassWriter.visitField(ACC_PUBLIC | ACC_FINAL, pair.first(), pair.second().toBytecodeString(), null, null);
 			fieldVisitor.visitEnd();
 		}
 		

@@ -48,11 +48,11 @@ public class Testing {
 //		for(Field f : Sample.mk().getClass().getDeclaredFields()) {
 //			System.out.println(f.getName());
 //		}
-		System.out.println(Sample.mk().red);
-		System.out.println(Sample.red());
-		for(Field f : Sample.red().getClass().getFields()) {
-			System.out.println(f.getName() + " = " + f.get(Sample.red()));
-		}
+//		System.out.println(Sample.mk().red);
+		System.out.println(Sample.red().red);
+//		for(Field f : Sample.red().getClass().getFields()) {
+//			System.out.println(f.getName() + " = " + f.get(Sample.red()));
+//		}
 	}
 	
 	public void a() {

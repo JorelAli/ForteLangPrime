@@ -31,6 +31,10 @@ public class TypingContext {
 		this.recordTypes.put(recordName, type);
 	}
 	
+	public Type getRecordType(String recordName) {
+		return this.recordTypes.get(recordName);
+	}
+	
 	public Type getRecordTypeMatching(List<Pair<String, Type>> types) {
 		//TODO: This is currently a trash implementation just for testing for now
 		for(Entry<String, TypeRecord> entry : recordTypes.entrySet()) {

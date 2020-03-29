@@ -101,7 +101,7 @@ return exports;
       jj_consume_token(TYPE);
       name = jj_consume_token(VAR_NAME);
       jj_consume_token(EQUALS);
-      type = recordType();
+      type = recordType(name.image);
 typingContext.addRecordType(name.image, type);
                         list.add(new RecordTypeDeclaration(name.image, type));
     }
@@ -368,10 +368,6 @@ type = new TypeBool();
 type = new TypeNamedGeneric(t.image);
       break;
       }
-    case OPENCBRACE:{
-      type = recordType();
-      break;
-      }
     default:
       jj_la1[11] = jj_gen;
       jj_consume_token(-1);
@@ -380,7 +376,7 @@ type = new TypeNamedGeneric(t.image);
 return type;
   }
 
-  final public TypeRecord recordType() throws ParseException {List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
+  final public TypeRecord recordType(String name) throws ParseException {List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
         Token t;
         Type type;
     jj_consume_token(OPENCBRACE);
@@ -403,7 +399,7 @@ return type;
 types.add(Pair.of(t.image, type));
     }
     jj_consume_token(CLOSECBRACE);
-return new TypeRecord(types);
+return new TypeRecord(name, types);
   }
 
   /** Generated Token Manager. */
@@ -423,7 +419,7 @@ return new TypeRecord(types);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x4000000,0x40000,0x40000,0x400,0xc8000008,0x0,0xc0000000,0x0,0x200,0x40000,0x3800008,0x0,};
+      jj_la1_0 = new int[] {0x0,0x4000000,0x40000,0x40000,0x400,0xc8000008,0x0,0xc0000000,0x0,0x200,0x40000,0x3800000,0x0,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x8,0x0,0x40,0x0,0x0,0x2c1,0x40,0x0,0x40,0x0,0x0,0x40,0x40,};

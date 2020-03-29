@@ -56,14 +56,28 @@ public class FLPFunction implements CodeableClass {
 			genericSignature = builder.toString();
 		}
 		
-		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, typeFunction.toBytecodeString(), genericSignature, null);
+		String returnTypeString = typeFunction.toBytecodeString();
+		if(typeFunction.getReturnType() instanceof TypeNamedGeneric) {
+			String s = ((TypeNamedGeneric) typeFunction.getReturnType()).getName();
+			if(context.getRecordType(s) != null) {
+				
+				StringBuilder result = new StringBuilder("(");
+				typeFunction.getParams().stream().map(Pair::second).map(Type::toBytecodeString).forEach(result::append);
+				result.append(")");
+				result.append("L" + proj.getLibraryName() + context.getRecordType(s).toBytecodeString());
+				returnTypeString = result.toString(); 
+			}
+		}
+//		System.out.println(typeFunction.getReturnType().getClass().getName());
+//		System.out.println("Writing " + name + " : " + returnTypeString);
+		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, returnTypeString, genericSignature, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();
 		methodVisitor.visitLabel(lineNumber);
 		methodVisitor.visitLineNumber(body.getLineNumber(), lineNumber);
 		
-		body.emit(methodVisitor, context);
+		body.emit(proj, methodVisitor, context);
 		methodVisitor.visitInsn(body.returnType(context));
 		
 		Label variableTypes = new Label();

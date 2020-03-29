@@ -6,9 +6,11 @@ import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class TypeRecord implements Type {
 	
+	private String name;
 	private List<Pair<String, Type>> types;
 	
-	public TypeRecord(List<Pair<String, Type>> types) {
+	public TypeRecord(String name, List<Pair<String, Type>> types) {
+		this.name = name;
 		this.types = types;
 	}
 	
@@ -18,7 +20,7 @@ public class TypeRecord implements Type {
 
 	@Override
 	public String toBytecodeString() {
-		return "L";
+		return "$" + name + ";";
 	}
 
 	@Override

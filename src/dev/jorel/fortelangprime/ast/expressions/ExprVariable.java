@@ -2,6 +2,7 @@ package dev.jorel.fortelangprime.ast.expressions;
 
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypingContext;
@@ -60,7 +61,7 @@ public class ExprVariable implements Expr {
 	}
 
 	@Override
-	public void emit(MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
 		Type paramType = getTypeUnsafe(context);
 		methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
 	}
