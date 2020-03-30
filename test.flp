@@ -18,6 +18,7 @@ Library Sample {
 
 	## Record type declaration
 	@Printable
+	@Equatable
 	type Color = {
 		red<Int>;
 		green<Int>;

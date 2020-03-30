@@ -206,10 +206,14 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 	Token name;
 	TypeRecord type;
 	boolean printable = false;
+	boolean equatable = false;
 } {
   	(
   	  	(			< PRINTABLE >
 			{ printable = true; }
+  	  	)?
+  	  	(  	  	  	< EQUATABLE >
+  	  	  	{ equatable = true; }
   	  	)?
 		< TYPE >
 		name = < VAR_NAME >
@@ -217,7 +221,7 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 		type = recordType(name.image)
 		{
 			universalContext.addRecordType(name.image, type); 
-			list.add(new RecordTypeDeclaration(name.image, type, printable));
+			list.add(new RecordTypeDeclaration(name.image, type, printable, equatable));
 		}
 	)*
 	{ return list; }

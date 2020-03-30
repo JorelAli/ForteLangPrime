@@ -39,4 +39,9 @@ public class TypeBool implements Type {
 		return IF_ICMPEQ;
 	}
 
+	@Override
+	public int negativeComparingInstruction() {
+		return IF_ICMPNE;
+	}
+	
 }

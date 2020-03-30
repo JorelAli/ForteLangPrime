@@ -53,5 +53,10 @@ public class TypeRecord implements Type {
 	public int comparingInstruction() {
 		return IF_ACMPEQ;
 	}
+	
+	@Override
+	public int negativeComparingInstruction() {
+		return IF_ACMPNE;
+	}
 
 }

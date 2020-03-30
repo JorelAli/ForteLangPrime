@@ -1,7 +1,6 @@
 import java.io.File;
 
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
-import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class Main {
 	
@@ -35,8 +34,10 @@ public class Main {
 		System.out.println(Sample.eqBool(true, true));
 		System.out.println(Sample.eqBool(true, false));
 		
-//		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
+		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
 		
 	}
+	
+	
 	
 }

@@ -21,7 +21,7 @@ public class TypeNamedGeneric implements Type {
 
 	@Override
 	public String toBytecodeString(UniversalContext context) {
-		return "Ljava/lang/Object;";
+		return "L" + context.getLibraryName() + "$" + name + ";";
 	}
 
 	@Override
@@ -47,6 +47,11 @@ public class TypeNamedGeneric implements Type {
 	@Override
 	public int comparingInstruction() {
 		return IF_ACMPEQ;
+	}
+	
+	@Override
+	public int negativeComparingInstruction() {
+		return IF_ACMPNE;
 	}
 
 }

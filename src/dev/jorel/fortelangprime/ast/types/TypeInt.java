@@ -38,4 +38,9 @@ public class TypeInt implements Type {
 	public int comparingInstruction() {
 		return IF_ICMPEQ;
 	}
+	
+	@Override
+	public int negativeComparingInstruction() {
+		return IF_ICMPNE;
+	}
 }

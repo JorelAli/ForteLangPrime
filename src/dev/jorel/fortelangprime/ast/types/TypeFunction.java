@@ -24,7 +24,7 @@ public class TypeFunction implements Type {
 	@Override
 	public String toBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
-		params.stream().map(Pair::second).map(t -> t.toBytecodeString(context)).forEach(result::append);
+		params.stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
 		result.append(")");
 		result.append(returnType.toBytecodeString(context));
 		return result.toString();
@@ -33,7 +33,7 @@ public class TypeFunction implements Type {
 	public String toGenericBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
 		params.stream().map(Pair::second)
-			.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), t -> t.toBytecodeString(context)))
+			.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), StreamUtils.with(Type::toBytecodeString, context)))
 			.forEach(result::append);
 		result.append(")");
 		
@@ -70,6 +70,11 @@ public class TypeFunction implements Type {
 	
 	@Override
 	public int comparingInstruction() {
+		return -1;
+	}
+	
+	@Override
+	public int negativeComparingInstruction() {
 		return -1;
 	}
 

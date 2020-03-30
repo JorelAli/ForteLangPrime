@@ -12,6 +12,7 @@ import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 public class FLPFunction implements CodeableClass {
 
@@ -71,7 +72,7 @@ public class FLPFunction implements CodeableClass {
 			if(context.getRecordType(s) != null) {
 				
 				StringBuilder result = new StringBuilder("(");
-				typeFunction.getParams().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).forEach(result::append);
+				typeFunction.getParams().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
 				result.append(")");
 				result.append("L" + context.getLibraryName() + context.getRecordType(s).toBytecodeString(context));
 				returnTypeString = result.toString(); 

@@ -12,6 +12,7 @@ import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 //Constructing a full record (not using record updating { blah | x = 2 })
 public class ExprRecordConstruction implements Expr {
@@ -153,7 +154,7 @@ public class ExprRecordConstruction implements Expr {
 					}
 				}
 				
-				String paramSignature = tr.getTypes().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).collect(Collectors.joining());
+				String paramSignature = tr.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
 				methodVisitor.visitInsn(ARETURN);
 				methodVisitor.visitMaxs(0, 0);
@@ -175,7 +176,7 @@ public class ExprRecordConstruction implements Expr {
 			values.forEach(exprPair -> {
 				exprPair.second().emit(methodVisitor, context);
 			});
-			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).collect(Collectors.joining());
+			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 			methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
 			methodVisitor.visitInsn(ARETURN);
 			methodVisitor.visitMaxs(0, 0);

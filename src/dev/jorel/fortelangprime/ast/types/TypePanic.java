@@ -38,4 +38,9 @@ public class TypePanic implements Type {
 	public int comparingInstruction() {
 		return -1;
 	}
+	
+	@Override
+	public int negativeComparingInstruction() {
+		return -1;
+	}
 }

@@ -8,18 +8,21 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 public class RecordTypeDeclaration implements CodeableClass {
 	
 	private String name;
 	private TypeRecord recordType;
 	boolean printable;
+	boolean equatable;
 
 	/**
 	 * 
@@ -27,10 +30,11 @@ public class RecordTypeDeclaration implements CodeableClass {
 	 * @param recordType
 	 * @param printable If true, adds a toString method
 	 */
-	public RecordTypeDeclaration(String name, TypeRecord recordType, boolean printable) {
+	public RecordTypeDeclaration(String name, TypeRecord recordType, boolean printable, boolean equatable) {
 		this.name = name;
 		this.recordType = recordType;
 		this.printable = printable;
+		this.equatable = equatable;
 	}
 	
 	public String getName() {
@@ -60,7 +64,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 		
 		//Create default constructor
 		{
-			String signature = recordType.getTypes().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).collect(Collectors.joining());
+			String signature = recordType.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 			MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC | ACC_SYNTHETIC, "<init>", "(" + signature + ")V", null, null);
 			methodVisitor.visitCode();
 			methodVisitor.visitVarInsn(ALOAD, 0);
@@ -79,62 +83,12 @@ public class RecordTypeDeclaration implements CodeableClass {
 		
 		//Generate toString method
 		if(printable) {
-			
-			String internalName = context.getLibraryName() + "$" + name;
-			
-			MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
-			methodVisitor.visitCode();
-			
-			methodVisitor.visitTypeInsn(NEW, "java/lang/StringBuilder");
-			methodVisitor.visitInsn(DUP);
-			methodVisitor.visitLdcInsn("{ ");
-			methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false);
-			
-			List<Pair<String, Type>> types = recordType.getTypes();
-			for (int i = 0; i < types.size(); i++) {
-				Pair<String, Type> pair = types.get(i);
-				
-				methodVisitor.visitLdcInsn(pair.first() + " = ");
-				methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-				
-				methodVisitor.visitVarInsn(ALOAD, 0);
-				methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
-				methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(" + pair.second().toBytecodeString(context) + ")Ljava/lang/StringBuilder;", false);
-				
-//				if(i != types.size() - 1) {
-				methodVisitor.visitLdcInsn(i != types.size() - 1 ? "; " : ";");
-				methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-//				}
-			}
-			methodVisitor.visitLdcInsn(" }<" + name + ">");
-			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-			
-//			methodVisitor.visitVarInsn(ALOAD, 0);
-//			methodVisitor.visitFieldInsn(GETFIELD, "A", "x", "I");
-//			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false);
-//			methodVisitor.visitLdcInsn(", ");
-//			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-//			methodVisitor.visitVarInsn(ALOAD, 0);
-//			methodVisitor.visitFieldInsn(GETFIELD, "A", "y", "Ljava/lang/String;");
-//			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-//			methodVisitor.visitLdcInsn(")");
-//			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-//			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-			methodVisitor.visitInsn(ARETURN);
-			
-			
-//			Label label0 = new Label();
-//			methodVisitor.visitLabel(label0);
-//			methodVisitor.visitLineNumber(12, label0);
-//			methodVisitor.visitLdcInsn("");
-//			methodVisitor.visitInsn(ARETURN);
-//			Label label1 = new Label();
-//			methodVisitor.visitLabel(label1);
-//			methodVisitor.visitLocalVariable("this", "LE;", null, label0, label1, 0);
-			methodVisitor.visitMaxs(1, 1);
-			methodVisitor.visitEnd();
-			
+			emitPrintable(innerClassWriter, context);
+		}
+		
+		//Generate equals method
+		if(equatable) {
+			emitEquatable(innerClassWriter, context);
 		}
 		
 		innerClassWriter.visitEnd();
@@ -143,7 +97,120 @@ public class RecordTypeDeclaration implements CodeableClass {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void emitEquatable(ClassWriter innerClassWriter, UniversalContext context) {
+		/**
+		 * Checking if two objects are equal:
+		 * - If other == null, then garb
+		 */
 		
+		MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+		methodVisitor.visitCode();
+		
+		//this == obj
+		Label keepGoing = new Label();
+		methodVisitor.visitVarInsn(ALOAD, 0);
+		methodVisitor.visitVarInsn(ALOAD, 1);
+		methodVisitor.visitJumpInsn(IF_ACMPNE, keepGoing);
+		
+		Label earlyReturn = new Label();
+		methodVisitor.visitLabel(earlyReturn);
+		methodVisitor.visitInsn(ICONST_1);
+		methodVisitor.visitInsn(IRETURN);
+		
+		methodVisitor.visitLabel(keepGoing);
+		
+		//if obj == null
+		keepGoing = new Label();
+		methodVisitor.visitVarInsn(ALOAD, 1);
+		methodVisitor.visitJumpInsn(IFNONNULL, keepGoing);
+		
+		earlyReturn = new Label();
+		methodVisitor.visitLabel(earlyReturn);
+		methodVisitor.visitInsn(ICONST_0);
+		methodVisitor.visitInsn(IRETURN);
+		
+		methodVisitor.visitLabel(keepGoing);
+		keepGoing = new Label();
+
+		//this.class == that.class
+		earlyReturn = new Label();
+		methodVisitor.visitVarInsn(ALOAD, 0);
+		methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+		methodVisitor.visitVarInsn(ALOAD, 1);
+		methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+		methodVisitor.visitJumpInsn(IF_ACMPEQ, keepGoing);
+		
+		earlyReturn = new Label();
+		methodVisitor.visitLabel(earlyReturn);
+		methodVisitor.visitInsn(ICONST_0);
+		methodVisitor.visitInsn(IRETURN);
+		
+		methodVisitor.visitLabel(keepGoing);
+		keepGoing = new Label();
+
+		//A a = (A) obj
+		String internalName = context.getLibraryName() + "$" + name;
+		methodVisitor.visitVarInsn(ALOAD, 1);
+		methodVisitor.visitTypeInsn(CHECKCAST, internalName);
+		methodVisitor.visitVarInsn(ASTORE, 2);
+		
+		//Check params
+		for(Pair<String, Type> pair : recordType.getTypes()) {
+			earlyReturn = new Label();
+			methodVisitor.visitVarInsn(ALOAD, 0);
+			methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
+			methodVisitor.visitVarInsn(ALOAD, 2);
+			methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
+			methodVisitor.visitJumpInsn(pair.second().comparingInstruction(), keepGoing);
+			
+			methodVisitor.visitLabel(earlyReturn);
+			methodVisitor.visitInsn(ICONST_0);
+			methodVisitor.visitInsn(IRETURN);
+			
+			methodVisitor.visitLabel(keepGoing);
+			keepGoing = new Label();
+		}
+		
+		//return true;
+		methodVisitor.visitInsn(ICONST_1);
+		methodVisitor.visitInsn(IRETURN);
+		methodVisitor.visitMaxs(1, 1);
+		methodVisitor.visitEnd();
+	}
+
+	private void emitPrintable(ClassWriter innerClassWriter, UniversalContext context) {
+		String internalName = context.getLibraryName() + "$" + name;
+		
+		MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+		methodVisitor.visitCode();
+		
+		methodVisitor.visitTypeInsn(NEW, "java/lang/StringBuilder");
+		methodVisitor.visitInsn(DUP);
+		methodVisitor.visitLdcInsn("{ ");
+		methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false);
+		
+		List<Pair<String, Type>> types = recordType.getTypes();
+		for (int i = 0; i < types.size(); i++) {
+			Pair<String, Type> pair = types.get(i);
+			
+			methodVisitor.visitLdcInsn(pair.first() + " = ");
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+			
+			methodVisitor.visitVarInsn(ALOAD, 0);
+			methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(" + pair.second().toBytecodeString(context) + ")Ljava/lang/StringBuilder;", false);
+			
+			methodVisitor.visitLdcInsn(i != types.size() - 1 ? "; " : ";");
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+		}
+		methodVisitor.visitLdcInsn(" }<" + name + ">");
+		methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+		methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+		methodVisitor.visitInsn(ARETURN);
+		methodVisitor.visitMaxs(1, 1);
+		methodVisitor.visitEnd();
 	}
 	
 }

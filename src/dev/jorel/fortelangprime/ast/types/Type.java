@@ -16,6 +16,7 @@ public interface Type extends Opcodes {
 	// Bytecode instruction generation
 	public int loadInstruction();
 	public int comparingInstruction();
+	public int negativeComparingInstruction();
 	public int returnType();
 	
 	// Other stuff
