@@ -47,55 +47,57 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int RCHEVRON = 18;
   /** RegularExpression Id. */
-  int PRINTABLE = 19;
+  int STAR = 19;
   /** RegularExpression Id. */
-  int EQUATABLE = 20;
+  int PRINTABLE = 20;
   /** RegularExpression Id. */
-  int CONCAT = 21;
+  int EQUATABLE = 21;
   /** RegularExpression Id. */
-  int PLUS = 22;
+  int CONCAT = 22;
   /** RegularExpression Id. */
-  int ROUGHLY_EQUALS = 23;
+  int PLUS = 23;
   /** RegularExpression Id. */
-  int EQUALS_EQUALS = 24;
+  int ROUGHLY_EQUALS = 24;
   /** RegularExpression Id. */
-  int TYPE_INT = 25;
+  int EQUALS_EQUALS = 25;
   /** RegularExpression Id. */
-  int TYPE_BOOL = 26;
+  int TYPE_INT = 26;
   /** RegularExpression Id. */
-  int TYPE_STRING = 27;
+  int TYPE_BOOL = 27;
   /** RegularExpression Id. */
-  int TYPE = 28;
+  int TYPE_STRING = 28;
   /** RegularExpression Id. */
-  int IF = 29;
+  int TYPE = 29;
   /** RegularExpression Id. */
-  int THEN = 30;
+  int IF = 30;
   /** RegularExpression Id. */
-  int ELSE = 31;
+  int THEN = 31;
   /** RegularExpression Id. */
-  int TRUE = 32;
+  int ELSE = 32;
   /** RegularExpression Id. */
-  int FALSE = 33;
+  int TRUE = 33;
   /** RegularExpression Id. */
-  int PANIC = 34;
+  int FALSE = 34;
   /** RegularExpression Id. */
-  int LIBRARY = 35;
+  int PANIC = 35;
   /** RegularExpression Id. */
-  int SCRIPT = 36;
+  int LIBRARY = 36;
   /** RegularExpression Id. */
-  int EXPORT = 37;
+  int SCRIPT = 37;
   /** RegularExpression Id. */
-  int IMPORT = 38;
+  int EXPORT = 38;
   /** RegularExpression Id. */
-  int AS = 39;
+  int IMPORT = 39;
   /** RegularExpression Id. */
-  int VAR_NAME = 40;
+  int AS = 40;
   /** RegularExpression Id. */
-  int INT_LITERAL = 41;
+  int VAR_NAME = 41;
   /** RegularExpression Id. */
-  int NUMBER = 42;
+  int INT_LITERAL = 42;
   /** RegularExpression Id. */
-  int STRING = 43;
+  int NUMBER = 43;
+  /** RegularExpression Id. */
+  int STRING = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -123,6 +125,7 @@ public interface ForteLangPrimeParserConstants {
     "\"=\"",
     "\"<\"",
     "\">\"",
+    "\"*\"",
     "\"@Printable\"",
     "\"@Equatable\"",
     "\"++\"",
@@ -153,11 +156,11 @@ public interface ForteLangPrimeParserConstants {
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
-    "<token of kind 49>",
+    "<token of kind 50>",
     "\"#[\"",
     "\"#[\"",
     "\"]#\"",
-    "<token of kind 53>",
+    "<token of kind 54>",
   };
 
 }

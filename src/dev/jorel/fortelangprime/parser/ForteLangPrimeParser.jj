@@ -71,6 +71,7 @@ TOKEN : {
 	|	< EQUALS : "=" > 
 	|	< LCHEVRON : "<" > 
 	|	< RCHEVRON : ">" >
+	|	< STAR : "*" >
 }
 
 // Generators
@@ -188,9 +189,10 @@ FLPLibrary program() : {
 List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
 	(
 	  	< EXPORT >
-	  	t = < VAR_NAME >
+	  	(			t = < VAR_NAME > { exports.add(t.image); }
+		| 	< STAR > { universalContext.exportAll(); }
+		)
 	  	< SEMICOLON >
-	  	{ exports.add(t.image); }
 	)*
 	{ return exports; }
 }
@@ -209,12 +211,7 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 	boolean equatable = false;
 } {
   	(
-  	  	(			< PRINTABLE >
-			{ printable = true; }
-  	  	)?
-  	  	(  	  	  	< EQUATABLE >
-  	  	  	{ equatable = true; }
-  	  	)?
+  	  	(< PRINTABLE > { printable = true; } | < EQUATABLE > { equatable = true; })*
 		< TYPE >
 		name = < VAR_NAME >
 		< EQUALS >
@@ -283,6 +280,15 @@ List<TypeNamedGeneric> genericTypeDeclaration() : {
 
 Expr expression() : {
   	Expr expr;
+} {
+  	( expr = innerExpression(false)
+  	| < OPENBRACKET > expr = innerExpression(true) < CLOSEBRACKET >
+ 	)
+	{ return expr; }
+}
+
+Expr innerExpression(boolean withBrackets) : {
+  	Expr expr;
   	Expr secondaryExpr;
   	Token op;
 } {
@@ -294,9 +300,10 @@ Expr expression() : {
 	| expr = ifStatement()
 	| expr = recordExpr()
 	)
-	( LOOKAHEAD(2)		op = < EQUALS_EQUALS >
+	( LOOKAHEAD(2)
+		op = < EQUALS_EQUALS >
 		secondaryExpr = expression()
-		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind));}
+		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind), withBrackets);}
 	)?
 	{ return expr; }
 }

@@ -18,12 +18,21 @@ import dev.jorel.fortelangprime.parser.util.Pair;
 public class UniversalContext {
 
 	private String libName;
+	private boolean allExports = false;
 	Map<String, TypeFunction> functions;
 	Map<String, TypeRecord> recordTypes;
 	
 	public UniversalContext() {
 		this.functions = new HashMap<>();
 		this.recordTypes = new HashMap<>();
+	}
+	
+	public void exportAll() {
+		this.allExports = true;
+	}
+	
+	public boolean doesExportAll() {
+		return this.allExports;
 	}
 	
 	public void setLibraryName(String libName) {

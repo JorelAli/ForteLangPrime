@@ -99,12 +99,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 		}
 	}
 	
-	private void emitEquatable(ClassWriter innerClassWriter, UniversalContext context) {
-		/**
-		 * Checking if two objects are equal:
-		 * - If other == null, then garb
-		 */
-		
+	private void emitEquatable(ClassWriter innerClassWriter, UniversalContext context) {		
 		MethodVisitor methodVisitor = innerClassWriter.visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
 		methodVisitor.visitCode();
 		

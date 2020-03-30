@@ -1,24 +1,12 @@
 Library Sample {
 	
-	export not;
-	export id;
-	export red;
-	export green;
-	export yellow;
-	export someOtherBool;
-	export someOtherOtherBool;
-	export and;
-	
-	export eqInt;
-	export eqStr;
-	export eqColor;
-	export eqBool;
+	export *;
 
 } {
 
 	## Record type declaration
-	@Printable
 	@Equatable
+	@Printable
 	type Color = {
 		red<Int>;
 		green<Int>;

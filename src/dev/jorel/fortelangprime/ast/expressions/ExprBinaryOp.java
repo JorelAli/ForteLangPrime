@@ -14,12 +14,14 @@ public class ExprBinaryOp implements Expr {
 	private Expr left;
 	private Expr right;
 	private Operation op;
+	private boolean hasBrackets;
 	
-	public ExprBinaryOp(int lineNumber, Expr left, Expr right, Operation op) {
+	public ExprBinaryOp(int lineNumber, Expr left, Expr right, Operation op, boolean hasBrackets) {
 		this.lineNumber = lineNumber;
 		this.left = left;
 		this.right = right;
 		this.op = op;
+		this.hasBrackets = hasBrackets;
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public Expr deepCopy() {
-		return new ExprBinaryOp(lineNumber, left, right, op);
+		return new ExprBinaryOp(lineNumber, left, right, op, hasBrackets);
 	}
 
 	@Override
