@@ -125,6 +125,9 @@ public class ExprVariable implements Expr {
 		
 		if(paramType.getInternalType() == InternalType.FUNCTION) {
 			TypeFunction tf = (TypeFunction) paramType;
+			for(Expr e : params) {
+				e.emit(prog, methodVisitor, context);
+			}
 			methodVisitor.visitMethodInsn(INVOKESTATIC, prog.getLibraryName(), name, tf.toBytecodeString(), true);
 		} else {
 			methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));

@@ -6,7 +6,8 @@ Library Sample {
 	export green;
 	export yellow;
 	export someOtherBool;
-	
+	export someOtherOtherBool;
+
 } {
 
 	## Record type declaration
@@ -47,5 +48,6 @@ Library Sample {
 	yellow <Color> = { red | green = 255; };
 
 	someOtherBool <Bool> = someBool;
+	someOtherOtherBool <Bool> = identity1 someBool;
 
 }

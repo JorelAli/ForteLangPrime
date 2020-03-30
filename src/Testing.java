@@ -17,6 +17,7 @@ public class Testing {
 		System.out.println(Sample.yellow());
 		
 		System.out.println(Sample.someOtherBool());
+		System.out.println(Sample.someOtherOtherBool());
 		
 //		System.out.println();
 //		Sample.Color color = Sample.red();
