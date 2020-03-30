@@ -6,7 +6,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
@@ -16,13 +15,15 @@ import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class FLPFunction implements CodeableClass {
 
-	final private String name;
-	final private TypeFunction typeFunction;
-	final private List<TypeNamedGeneric> genericDeclarations;
-	final private Expr body;
+	private final int lineNumber;
+	private final String name;
+	private final TypeFunction typeFunction;
+	private final List<TypeNamedGeneric> genericDeclarations;
+	private final Expr body;
 	private boolean exported;
 	
-	public FLPFunction(String name, TypeFunction typeFunction, List<TypeNamedGeneric> genericDeclarations, Expr body) {
+	public FLPFunction(int lineNumber, String name, TypeFunction typeFunction, List<TypeNamedGeneric> genericDeclarations, Expr body) {
+		this.lineNumber = lineNumber;
 		this.name = name;
 		this.typeFunction = typeFunction;
 		this.genericDeclarations = genericDeclarations;
@@ -34,6 +35,10 @@ public class FLPFunction implements CodeableClass {
 		this.exported = true;
 	}
 	
+	public int getLineNumber() {
+		return this.lineNumber;
+	}
+	
 	public Expr getFunctionBody() {
 		return this.body;
 	}
@@ -43,7 +48,7 @@ public class FLPFunction implements CodeableClass {
 	}
 	
 	@Override
-	public void emit(EmitterContext proj, ClassWriter classWriter, UniversalContext context) {
+	public void emit(ClassWriter classWriter, UniversalContext context) {
 		
 		String genericSignature;
 		if(genericDeclarations.size() == 0) {
@@ -53,27 +58,27 @@ public class FLPFunction implements CodeableClass {
 			for(TypeNamedGeneric generic : genericDeclarations) {
 				builder.append(generic.getName());
 				builder.append(":");
-				builder.append(generic.toBytecodeString());
+				builder.append(generic.toBytecodeString(context));
 			}
 			builder.append(">");
-			builder.append(typeFunction.toGenericBytecodeString());
+			builder.append(typeFunction.toGenericBytecodeString(context));
 			genericSignature = builder.toString();
 		}
 		
-		String returnTypeString = typeFunction.toBytecodeString();
+		String returnTypeString = typeFunction.toBytecodeString(context);
 		if(typeFunction.getReturnType() instanceof TypeNamedGeneric) {
 			String s = ((TypeNamedGeneric) typeFunction.getReturnType()).getName();
 			if(context.getRecordType(s) != null) {
 				
 				StringBuilder result = new StringBuilder("(");
-				typeFunction.getParams().stream().map(Pair::second).map(Type::toBytecodeString).forEach(result::append);
+				typeFunction.getParams().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).forEach(result::append);
 				result.append(")");
-				result.append("L" + proj.getLibraryName() + context.getRecordType(s).toBytecodeString());
+				result.append("L" + context.getLibraryName() + context.getRecordType(s).toBytecodeString(context));
 				returnTypeString = result.toString(); 
 			}
 		}
-//		System.out.println(typeFunction.getReturnType().getClass().getName());
-//		System.out.println("Writing " + name + " : " + returnTypeString);
+
+		System.out.println("Writing " + name + " : " + returnTypeString);
 		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, returnTypeString, genericSignature, null);
 		methodVisitor.visitCode();
 		
@@ -81,7 +86,7 @@ public class FLPFunction implements CodeableClass {
 		methodVisitor.visitLabel(lineNumber);
 		methodVisitor.visitLineNumber(body.getLineNumber(), lineNumber);
 		
-		body.emit(proj, methodVisitor, context);
+		body.emit(methodVisitor, context);
 		methodVisitor.visitInsn(body.returnType(context));
 		
 		Label variableTypes = new Label();
@@ -92,7 +97,7 @@ public class FLPFunction implements CodeableClass {
 				index++;
 				continue;
 			}
-			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(), e.second().toGenericBytecodeString(), lineNumber, variableTypes, index++);
+			methodVisitor.visitLocalVariable(e.first(), e.second().toBytecodeString(context), e.second().toGenericBytecodeString(context), lineNumber, variableTypes, index++);
 		}
 		
 		methodVisitor.visitMaxs(0, 0);

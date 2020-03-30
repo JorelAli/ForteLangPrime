@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
 import dev.jorel.fortelangprime.ast.RecordTypeDeclaration;
@@ -69,19 +68,16 @@ public class BytecodeGenerator implements Opcodes {
 	
 	private byte[] generateBytecode(String fileName, String metadata, String libName, List<FLPFunction> functions, List<RecordTypeDeclaration> typeDecls) {
 		
-		EmitterContext proj = new EmitterContext(libName);
-		
-		
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
 		
 		for(FLPFunction f : functions) {
-			f.emit(proj, classWriter, context);
+			f.emit(classWriter, context);
 		}
 		
 		for(RecordTypeDeclaration r : typeDecls) {
-			r.emit(proj, classWriter, context);
+			r.emit(classWriter, context);
 		}		
 			
 		classWriter.visitEnd();

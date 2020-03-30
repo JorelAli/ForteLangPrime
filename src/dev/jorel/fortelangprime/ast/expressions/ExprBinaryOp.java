@@ -3,7 +3,6 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
@@ -65,14 +64,20 @@ public class ExprBinaryOp implements Expr {
 	}
 
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
+	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		switch(op) {
 			case EQUALS_EQUALS:
-				left.emit(prog, methodVisitor, context);
-				right.emit(prog, methodVisitor, context);
+				left.emit(methodVisitor, context);
+				right.emit(methodVisitor, context);
 				Label end = new Label();
 				Label ifEqual = new Label();
-				methodVisitor.visitJumpInsn(IF_ICMPEQ, ifEqual);
+				
+				if(left.getType(context).comparingInstruction() == IF_ACMPEQ) {
+					methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
+					methodVisitor.visitJumpInsn(IFNE, ifEqual);
+				} else {
+					methodVisitor.visitJumpInsn(left.getType(context).comparingInstruction(), ifEqual);
+				}
 				methodVisitor.visitInsn(ICONST_0);
 				methodVisitor.visitJumpInsn(GOTO, end);
 				

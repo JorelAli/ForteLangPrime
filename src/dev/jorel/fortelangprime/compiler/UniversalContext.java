@@ -16,13 +16,22 @@ import dev.jorel.fortelangprime.parser.util.Pair;
  * Context about the code, populated by the parser and used by everything
  */
 public class UniversalContext {
-	
+
+	private String libName;
 	Map<String, TypeFunction> functions;
 	Map<String, TypeRecord> recordTypes;
 	
 	public UniversalContext() {
 		this.functions = new HashMap<>();
 		this.recordTypes = new HashMap<>();
+	}
+	
+	public void setLibraryName(String libName) {
+		this.libName = libName;
+	}
+	
+	public String getLibraryName() {
+		return this.libName;
 	}
 	
 	public void addFunction(String functionName, TypeFunction typeFunction) {

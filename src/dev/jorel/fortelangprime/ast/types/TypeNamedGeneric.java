@@ -1,5 +1,7 @@
 package dev.jorel.fortelangprime.ast.types;
 
+import dev.jorel.fortelangprime.compiler.UniversalContext;
+
 public class TypeNamedGeneric implements Type {
 	
 	private String name;
@@ -18,7 +20,7 @@ public class TypeNamedGeneric implements Type {
 	}
 
 	@Override
-	public String toBytecodeString() {
+	public String toBytecodeString(UniversalContext context) {
 		return "Ljava/lang/Object;";
 	}
 
@@ -33,13 +35,18 @@ public class TypeNamedGeneric implements Type {
 	}
 
 	@Override
-	public String toGenericBytecodeString() {
+	public String toGenericBytecodeString(UniversalContext context) {
 		return "T" + name + ";";
 	}
 
 	@Override
 	public boolean isGeneric() {
 		return true;
+	}
+	
+	@Override
+	public int comparingInstruction() {
+		return IF_ACMPEQ;
 	}
 
 }

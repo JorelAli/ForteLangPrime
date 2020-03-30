@@ -136,7 +136,12 @@ return list;
         break label_3;
       }
       f = functionDeclaration();
-functions.add(f);
+for(FLPFunction function : functions) {
+                                if(function.getName().equals(f.getName())) {
+                                        {if (true) throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());}
+                                }
+                        }
+                        functions.add(f);
     }
 return functions;
   }
@@ -163,7 +168,7 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-return new FLPFunction(name.image, tf, genericTypeDeclaration, expr);
+return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr);
   }
 
   final public List<TypeNamedGeneric> genericTypeDeclaration() throws ParseException {Token t;
@@ -465,24 +470,6 @@ return new TypeRecord(name, types);
     finally { jj_save(2, xla); }
   }
 
-  private boolean jj_3R_25()
- {
-    if (jj_scan_token(VAR_NAME)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24()
- {
-    if (jj_scan_token(FALSE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_23()
- {
-    if (jj_scan_token(TRUE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_18()
  {
     Token xsp;
@@ -631,6 +618,24 @@ return new TypeRecord(name, types);
   private boolean jj_3R_19()
  {
     if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25()
+ {
+    if (jj_scan_token(VAR_NAME)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24()
+ {
+    if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23()
+ {
+    if (jj_scan_token(TRUE)) return true;
     return false;
   }
 

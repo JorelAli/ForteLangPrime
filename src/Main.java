@@ -23,8 +23,20 @@ public class Main {
 //		System.out.println(Sample.someOtherOtherBool());
 //		System.out.println(Sample.and(true, false));
 		
-		System.out.println(Sample.equality(2, 2));
-		System.out.println(Sample.equality(2, 1));
+//		System.out.println(Sample.equality(2, 2));
+//		System.out.println(Sample.equality(2, 1));
+		
+		System.out.println(Sample.eqInt(2, 2));
+		System.out.println(Sample.eqInt(2, 3));
+		
+		System.out.println(Sample.eqStr("hello", "hello"));
+		System.out.println(Sample.eqStr("hello", "world"));
+		
+		System.out.println(Sample.eqBool(true, true));
+		System.out.println(Sample.eqBool(true, false));
+		
+//		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
+		
 	}
 	
 }

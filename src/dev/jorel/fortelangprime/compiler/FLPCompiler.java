@@ -36,6 +36,7 @@ public class FLPCompiler {
 		FLPLibrary lib = ForteLangPrimeParser.parse(flpFile);
 		
 		UniversalContext context = ForteLangPrimeParser.getUniversalContext();
+		context.setLibraryName(lib.name);
 		for(FLPFunction f : lib.functions) {
 			f.getFunctionBody().typeCheck(context);
 		}

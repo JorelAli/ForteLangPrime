@@ -2,7 +2,6 @@ package dev.jorel.fortelangprime.ast.expressions;
 
 import org.objectweb.asm.MethodVisitor;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
@@ -20,7 +19,7 @@ public class ExprBoolLit implements Expr {
 	
 	public boolean getValue() {
 		return this.value;
-	}
+	}	
 
 	@Override
 	public Type getType(UniversalContext context) {
@@ -53,7 +52,7 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
+	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		if(value) {
 			methodVisitor.visitInsn(ICONST_1);
 		} else {

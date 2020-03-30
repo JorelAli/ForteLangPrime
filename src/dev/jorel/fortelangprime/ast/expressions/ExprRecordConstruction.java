@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.MethodVisitor;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
@@ -117,7 +116,7 @@ public class ExprRecordConstruction implements Expr {
 	}
 	
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
+	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		
 		if(base != null) {
 			if(base.getInternalType() == ExpressionType.VARIABLE) {
@@ -137,10 +136,10 @@ public class ExprRecordConstruction implements Expr {
 					newExprs.add(null);
 				}
 				//TODO: This is only temporarily (), it will have to include function params later
-				methodVisitor.visitMethodInsn(INVOKESTATIC, prog.getLibraryName(), baseVar.getName(), "()L" + prog.getLibraryName() + tr.toBytecodeString(), true);
+				methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), baseVar.getName(), "()L" + context.getLibraryName() + tr.toBytecodeString(context), true);
 				methodVisitor.visitVarInsn(ASTORE, 0);
 				
-				methodVisitor.visitTypeInsn(NEW, prog.getLibraryName() + "$" + tng.getName());
+				methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + tng.getName());
 				methodVisitor.visitInsn(DUP);
 				
 				for (int i = 0; i < newExprs.size(); i++) {
@@ -148,14 +147,14 @@ public class ExprRecordConstruction implements Expr {
 					Pair<String, Type> expectedPair = tr.getTypes().get(i);
 					if(pair == null) {
 						methodVisitor.visitVarInsn(ALOAD, 0);
-						methodVisitor.visitFieldInsn(GETFIELD, prog.getLibraryName() + "$" + tng.getName(), expectedPair.first(), expectedPair.second().toBytecodeString());
+						methodVisitor.visitFieldInsn(GETFIELD, context.getLibraryName() + "$" + tng.getName(), expectedPair.first(), expectedPair.second().toBytecodeString(context));
 					} else {
-						pair.second().emit(prog, methodVisitor, context);
+						pair.second().emit(methodVisitor, context);
 					}
 				}
 				
-				String paramSignature = tr.getTypes().stream().map(Pair::second).map(Type::toBytecodeString).collect(Collectors.joining());
-				methodVisitor.visitMethodInsn(INVOKESPECIAL, prog.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
+				String paramSignature = tr.getTypes().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).collect(Collectors.joining());
+				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
 				methodVisitor.visitInsn(ARETURN);
 				methodVisitor.visitMaxs(0, 0);
 				methodVisitor.visitEnd();
@@ -171,13 +170,13 @@ public class ExprRecordConstruction implements Expr {
 				name = context.getNameOfRecordTypeMatching(types);
 			}
 			
-			methodVisitor.visitTypeInsn(NEW, prog.getLibraryName() + "$" + name);
+			methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + name);
 			methodVisitor.visitInsn(DUP);
 			values.forEach(exprPair -> {
-				exprPair.second().emit(prog, methodVisitor, context);
+				exprPair.second().emit(methodVisitor, context);
 			});
-			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(Type::toBytecodeString).collect(Collectors.joining());
-			methodVisitor.visitMethodInsn(INVOKESPECIAL, prog.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
+			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(t -> t.toBytecodeString(context)).collect(Collectors.joining());
+			methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
 			methodVisitor.visitInsn(ARETURN);
 			methodVisitor.visitMaxs(0, 0);
 			methodVisitor.visitEnd();

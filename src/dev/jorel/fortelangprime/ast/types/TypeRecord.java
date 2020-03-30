@@ -2,6 +2,7 @@ package dev.jorel.fortelangprime.ast.types;
 
 import java.util.List;
 
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class TypeRecord implements Type {
@@ -24,7 +25,7 @@ public class TypeRecord implements Type {
 	}
 
 	@Override
-	public String toBytecodeString() {
+	public String toBytecodeString(UniversalContext context) {
 		return "$" + name + ";";
 	}
 
@@ -39,13 +40,18 @@ public class TypeRecord implements Type {
 	}
 
 	@Override
-	public String toGenericBytecodeString() {
+	public String toGenericBytecodeString(UniversalContext context) {
 		return null;
 	}
 
 	@Override
 	public boolean isGeneric() {
 		return false;
+	}
+	
+	@Override
+	public int comparingInstruction() {
+		return IF_ACMPEQ;
 	}
 
 }

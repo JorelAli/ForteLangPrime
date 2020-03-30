@@ -229,7 +229,14 @@ List<FLPFunction> functions() : {
 } {
   	( 	  
 		f = functionDeclaration()
-		{ functions.add(f); }
+		{
+		  	for(FLPFunction function : functions) {
+				if(function.getName().equals(f.getName())) {
+					throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
+				}
+		  	}
+			functions.add(f);
+		}
 	)*
 	{ return functions; }
 } 
@@ -252,7 +259,7 @@ FLPFunction functionDeclaration() : {
 	< EQUALS >
 	expr = expression()
 	< SEMICOLON >
-	{ return new FLPFunction(name.image, tf, genericTypeDeclaration, expr); }
+	{ return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr); }
 }
 
 List<TypeNamedGeneric> genericTypeDeclaration() : {

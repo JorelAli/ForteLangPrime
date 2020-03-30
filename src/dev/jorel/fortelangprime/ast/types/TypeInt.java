@@ -1,9 +1,11 @@
 package dev.jorel.fortelangprime.ast.types;
 
+import dev.jorel.fortelangprime.compiler.UniversalContext;
+
 public class TypeInt implements Type {
 
 	@Override
-	public String toBytecodeString() {
+	public String toBytecodeString(UniversalContext context) {
 		return "I";
 	}
 	
@@ -23,12 +25,17 @@ public class TypeInt implements Type {
 	}
 	
 	@Override
-	public String toGenericBytecodeString() {
+	public String toGenericBytecodeString(UniversalContext context) {
 		return null;
 	}
 
 	@Override
 	public boolean isGeneric() {
 		return false;
+	}
+	
+	@Override
+	public int comparingInstruction() {
+		return IF_ICMPEQ;
 	}
 }

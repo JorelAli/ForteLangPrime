@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
 
-import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
@@ -120,15 +119,15 @@ public class ExprVariable implements Expr {
 	}
 
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
+	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		Type paramType = getType(context);
 		
 		if(paramType.getInternalType() == InternalType.FUNCTION) {
 			TypeFunction tf = (TypeFunction) paramType;
 			for(Expr e : params) {
-				e.emit(prog, methodVisitor, context);
+				e.emit(methodVisitor, context);
 			}
-			methodVisitor.visitMethodInsn(INVOKESTATIC, prog.getLibraryName(), name, tf.toBytecodeString(), true);
+			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), name, tf.toBytecodeString(context), true);
 		} else {
 			methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
 		}

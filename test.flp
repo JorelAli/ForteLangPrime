@@ -8,7 +8,11 @@ Library Sample {
 	export someOtherBool;
 	export someOtherOtherBool;
 	export and;
-	export equality;
+	
+	export eqInt;
+	export eqStr;
+	export eqColor;
+	export eqBool;
 
 } {
 
@@ -54,6 +58,9 @@ Library Sample {
 
 	and a<Bool> -> b<Bool> -> <Bool> = if not a then false else if not b then false else true;
 
-	equality a<Int> -> b<Int> -> <Bool> = a == b;
+	eqInt a<Int> -> b<Int> 		 -> <Bool> = a == b;
+	eqStr a<String> -> b<String> -> <Bool> = a == b;
+	eqBool a<Bool> -> b<Bool> 	 -> <Bool> = a == b;
+	eqColor a<Color> -> b<Color> -> <Bool> = a == b;
 
 }

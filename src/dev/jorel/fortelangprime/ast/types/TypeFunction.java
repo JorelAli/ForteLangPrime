@@ -2,6 +2,7 @@ package dev.jorel.fortelangprime.ast.types;
 
 import java.util.List;
 
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
 import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
@@ -21,25 +22,25 @@ public class TypeFunction implements Type {
 	}
 	
 	@Override
-	public String toBytecodeString() {
+	public String toBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
-		params.stream().map(Pair::second).map(Type::toBytecodeString).forEach(result::append);
+		params.stream().map(Pair::second).map(t -> t.toBytecodeString(context)).forEach(result::append);
 		result.append(")");
-		result.append(returnType.toBytecodeString());
+		result.append(returnType.toBytecodeString(context));
 		return result.toString();
 	}
 	
-	public String toGenericBytecodeString() {
+	public String toGenericBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
 		params.stream().map(Pair::second)
-			.map(StreamUtils.conditioning(Type::isGeneric, Type::toGenericBytecodeString, Type::toBytecodeString))
+			.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), t -> t.toBytecodeString(context)))
 			.forEach(result::append);
 		result.append(")");
 		
 		if(returnType.isGeneric()) {
-			result.append(returnType.toGenericBytecodeString());
+			result.append(returnType.toGenericBytecodeString(context));
 		} else {
-			result.append(returnType.toBytecodeString());
+			result.append(returnType.toBytecodeString(context));
 		}
 		return result.toString();
 	}
@@ -67,5 +68,9 @@ public class TypeFunction implements Type {
 		return true;
 	}
 	
+	@Override
+	public int comparingInstruction() {
+		return -1;
+	}
 
 }
