@@ -6,6 +6,7 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
@@ -31,7 +32,14 @@ public class ExprIfStatement implements Expr {
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
 		if(condition.typeCheck(context).getInternalType() != InternalType.BOOLEAN) {
-			throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+			if(condition.typeCheck(context).getInternalType() == InternalType.FUNCTION) {
+				TypeFunction tf = (TypeFunction) condition.typeCheck(context);
+				if(tf.getReturnType().getInternalType() != InternalType.BOOLEAN) {
+					throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+				}
+			} else {
+				throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+			}
 		}
 		if(ifTrue.getInternalType() != ifFalse.getInternalType()) {
 			StringBuilder builder = new StringBuilder("Return types on ");
@@ -86,7 +94,7 @@ public class ExprIfStatement implements Expr {
 				
 			case VARIABLE: {
 				ExprVariable variable = (ExprVariable) condition;
-				methodVisitor.visitVarInsn(ILOAD, variable.getIndex(context));
+				variable.emit(prog, methodVisitor, context);
 				
 				Label ifFalseLabel = new Label();
 				methodVisitor.visitJumpInsn(IFEQ, ifFalseLabel);

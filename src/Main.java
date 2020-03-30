@@ -21,6 +21,7 @@ public class Main {
 		
 		System.out.println(Sample.someOtherBool());
 		System.out.println(Sample.someOtherOtherBool());
+		System.out.println(Sample.and(true, false));
 		
 	}
 	

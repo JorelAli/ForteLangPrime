@@ -7,6 +7,7 @@ Library Sample {
 	export yellow;
 	export someOtherBool;
 	export someOtherOtherBool;
+	export and;
 
 } {
 
@@ -49,5 +50,7 @@ Library Sample {
 
 	someOtherBool <Bool> = someBool;
 	someOtherOtherBool <Bool> = identity1 someBool;
+
+	and a<Bool> -> b<Bool> -> <Bool> = if not a then false else if not b then false else true;
 
 }
