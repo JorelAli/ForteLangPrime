@@ -22,13 +22,16 @@
 				"match": ""
 			}, {
 				"name": "keyword.control.fortelangprime",
-				"match": "->|\\b(if|then|else)\\b"
+				"match": "\\||->|\\b(if|then|else)\\b"
 			}, {
 				"name": "keyword.other.fortelangprime",
-				"match": "\\b(import|export)\\b"
+				"match": "@Equatable|@Printable|\\b(type|import|export)\\b"
 			}, {
 				"name": "invalid.illegal.fortelangprime",
 				"match": "\\b(panic)\\b"
+			}, {
+				"name": "entity.name.type.fortelangprime2",
+				"match": "(?<=type\\s)\\S+"
 			}, {
 				"name": "entity.name.type.fortelangprime",
 				"match": "<([A-Z]([a-zA-Z0-9])*)>"
