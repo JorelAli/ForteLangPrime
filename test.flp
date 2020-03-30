@@ -5,6 +5,7 @@ Library Sample {
 	export red;
 	export green;
 	export yellow;
+	export someOtherBool;
 	
 } {
 
@@ -19,7 +20,7 @@ Library Sample {
 	## Basic functions (returning simple parameters)
 	justTwo <Int> = 2;
 	aString <String> = "hello";
-	someBool <Bool> = false;
+	someBool <Bool> = true;
 	panicTest <Bool> = panic;
 
 	## Functions with parameters
@@ -44,5 +45,7 @@ Library Sample {
 
 	## Record updating using the red function as a base
 	yellow <Color> = { red | green = 255; };
+
+	someOtherBool <Bool> = someBool;
 
 }

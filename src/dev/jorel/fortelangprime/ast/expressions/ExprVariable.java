@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
+import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.parser.util.Pair;
@@ -48,13 +50,14 @@ public class ExprVariable implements Expr {
 			return context.getFunction(name);
 		}
 		
-		return null;
+		return null; //erm...
 	}
 
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
 		boolean functionFound = false;
 		boolean inLocalScope = false;
+		
 		//Search declared functions
 		if(context.getFunction(name) != null) {
 			functionFound = true;
@@ -68,7 +71,11 @@ public class ExprVariable implements Expr {
 		}
 		
 		if(functionFound || inLocalScope) {
-			return getType(context);
+			Type result = getType(context);
+			if(result == null) {
+				throw new TypeException("Type for variable " + lineNumber + " couldn't be found");
+			}
+			return result;
 		} else {
 			if(!functionFound) {
 				throw new TypeException("Function " + name + " can't be found in the file");
@@ -115,7 +122,13 @@ public class ExprVariable implements Expr {
 	@Override
 	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
 		Type paramType = getType(context);
-		methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
+		
+		if(paramType.getInternalType() == InternalType.FUNCTION) {
+			TypeFunction tf = (TypeFunction) paramType;
+			methodVisitor.visitMethodInsn(INVOKESTATIC, prog.getLibraryName(), name, tf.toBytecodeString(), true);
+		} else {
+			methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
+		}
 	}
 
 	@Override
