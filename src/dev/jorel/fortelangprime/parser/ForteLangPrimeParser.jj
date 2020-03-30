@@ -100,7 +100,8 @@ TOKEN : {
 TOKEN : { 
 		< IF : "if" > 
 	|	< THEN : "then" > 
-	|	< ELSE : "else" > 
+	|	< ELSE : "else" >
+	|	< INFIX : "infix">
 }
 
 // Constants
@@ -125,6 +126,7 @@ TOKEN : {
 	|	< INT_LITERAL : (["0"-"9"])+ > 
 	|	< NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > 
 	|	< STRING : "\"" ("\\" ~[] | ~["\"", "\\"])* "\"" >
+	|	< CUSTOM_OPERATOR : (["!", "#", "$", "%", "&", "*", "+", ".", "/", "<", "=", ">", "?", "@", "\\", "^", "|", "-", "~"])+>
 }
 
 // Whitespace
@@ -178,7 +180,8 @@ FLPLibrary program() : {
 
 	< OPENCBRACE >
 
-	//TODO: Make it so you can put type declarations anywhere, not just at the start of the file
+	//TODO: Make it so you can put declarations anywhere, not just at the start of the file
+	(customOperator())*
 	typeDeclarations = typeDeclarations()
 	functions = functions()
 
@@ -201,6 +204,31 @@ void epsilon() : { } {
 	{
 	  { }
 	}
+}
+
+void customOperator() : {
+
+} {
+	< INFIX >
+	< VAR_NAME >
+	< OPENBRACKET >
+	< CUSTOM_OPERATOR >
+	< CLOSEBRACKET >
+	
+	( < VAR_NAME > )?
+	< LCHEVRON >
+	type()
+	< RCHEVRON >
+	< ARROW >
+	( < VAR_NAME > )?
+	< LCHEVRON >
+	type()
+	< RCHEVRON >
+	< ARROW >
+	< LCHEVRON > type() < RCHEVRON >
+	< EQUALS >
+	expression()
+	< SEMICOLON >
 }
 
 List<RecordTypeDeclaration> typeDeclarations() : {
@@ -301,7 +329,7 @@ Expr innerExpression(boolean withBrackets) : {
 	| expr = recordExpr()
 	)
 	( LOOKAHEAD(2)
-		op = < EQUALS_EQUALS >
+		( op = < EQUALS_EQUALS > | op = < CUSTOM_OPERATOR > )
 		secondaryExpr = expression()
 		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind), withBrackets);}
 	)?

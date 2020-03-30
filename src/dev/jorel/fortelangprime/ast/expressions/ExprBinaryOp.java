@@ -26,8 +26,8 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public Type getType(UniversalContext context) {
-		switch(op) {
-			case EQUALS_EQUALS:
+		switch(op.ID) {
+			case 0: //Equals_EQUALS
 				return new TypeBool();
 		}
 		return null;
@@ -35,8 +35,8 @@ public class ExprBinaryOp implements Expr {
 	
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
-		switch(op) {
-			case EQUALS_EQUALS:
+		switch(op.ID) {
+			case 0: //Equals_EQUALS
 				if(left.typeCheck(context).getInternalType() != right.typeCheck(context).getInternalType()) {
 					throw new TypeException("Left is " + left.getType(context).getInternalType() + " but right is " + right.getType(context).getInternalType());
 				}
@@ -67,8 +67,8 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
-		switch(op) {
-			case EQUALS_EQUALS:
+		switch(op.ID) {
+			case 0: //Equals_EQUALS
 				left.emit(methodVisitor, context);
 				right.emit(methodVisitor, context);
 				Label end = new Label();
@@ -92,8 +92,8 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public int returnType(UniversalContext context) {
-		switch(op) {
-			case EQUALS_EQUALS:
+		switch(op.ID) {
+			case 0: //Equals_EQUALS
 				return IRETURN;
 		}
 		return 0;

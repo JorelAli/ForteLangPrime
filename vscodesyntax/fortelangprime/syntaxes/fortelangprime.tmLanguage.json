@@ -25,7 +25,7 @@
 				"match": "\\||->|\\b(if|then|else)\\b"
 			}, {
 				"name": "keyword.other.fortelangprime",
-				"match": "@Equatable|@Printable|\\b(type|import|export)\\b"
+				"match": "@Equatable|@Printable|\\b(infix|type|import|export)\\b"
 			}, {
 				"name": "invalid.illegal.fortelangprime",
 				"match": "\\b(panic)\\b"
