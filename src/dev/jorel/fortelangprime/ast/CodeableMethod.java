@@ -5,7 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.EmitterContext;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 
 public interface CodeableMethod extends Opcodes {
 	
@@ -17,8 +17,8 @@ public interface CodeableMethod extends Opcodes {
 		methodVisitor.visitLineNumber(getLineNumber(), lineNumber);
 	}
 
-	void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context);
+	void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context);
 
-	int returnType(TypingContext context);
+	int returnType(UniversalContext context);
 	
 }

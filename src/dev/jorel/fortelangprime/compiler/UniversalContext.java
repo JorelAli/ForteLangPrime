@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime.ast.types;
+package dev.jorel.fortelangprime.compiler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,14 +7,20 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.types.TypeFunction;
+import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
-public class TypingContext {
+/**
+ * Context about the code, populated by the parser and used by everything
+ */
+public class UniversalContext {
 	
 	Map<String, TypeFunction> functions;
 	Map<String, TypeRecord> recordTypes;
 	
-	public TypingContext() {
+	public UniversalContext() {
 		this.functions = new HashMap<>();
 		this.recordTypes = new HashMap<>();
 	}

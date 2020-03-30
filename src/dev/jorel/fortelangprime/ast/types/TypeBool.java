@@ -6,6 +6,11 @@ public class TypeBool implements Type {
 	public String toBytecodeString() {
 		return "Z";
 	}
+	
+	@Override
+	public InternalType getInternalType() {
+		return InternalType.BOOLEAN;
+	}
 
 	@Override
 	public int loadInstruction() {

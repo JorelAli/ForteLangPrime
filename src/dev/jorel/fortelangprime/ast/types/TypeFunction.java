@@ -16,6 +16,11 @@ public class TypeFunction implements Type {
 	}
 	
 	@Override
+	public InternalType getInternalType() {
+		return InternalType.FUNCTION;
+	}
+	
+	@Override
 	public String toBytecodeString() {
 		StringBuilder result = new StringBuilder("(");
 		params.stream().map(Pair::second).map(Type::toBytecodeString).forEach(result::append);

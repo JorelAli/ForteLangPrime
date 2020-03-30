@@ -21,25 +21,26 @@ import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
 import dev.jorel.fortelangprime.parser.util.*;
+import dev.jorel.fortelangprime.compiler.*;
 
 public class ForteLangPrimeParser {
 
-  	private static TypingContext typingContext;
+  	private static UniversalContext universalContext;
   	private static String currentFunctionName;
 	
 	public static FLPLibrary parse(String input) throws ParseException, IOException {
-		typingContext = new TypingContext();
+		universalContext = new UniversalContext();
 		InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
 		return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
 	}
 
 	public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException {
-		typingContext = new TypingContext();
+		universalContext = new UniversalContext();
 	  	return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
 	}
 
-	public static TypingContext getTypingContext() {
-		return ForteLangPrimeParser.typingContext;
+	public static UniversalContext getUniversalContext() {
+		return ForteLangPrimeParser.universalContext;
 	}
 	
 }
@@ -214,7 +215,7 @@ List<RecordTypeDeclaration> typeDeclarations() : {
 		< EQUALS >
 		type = recordType(name.image)
 		{
-			typingContext.addRecordType(name.image, type); 
+			universalContext.addRecordType(name.image, type); 
 			list.add(new RecordTypeDeclaration(name.image, type, printable));
 		}
 	)*
@@ -245,7 +246,7 @@ FLPFunction functionDeclaration() : {
 	functionTypes = functionTypes()
 	{
 	  	tf = Converter.functionTypesToTypeFunction(functionTypes);
-	  	typingContext.addFunction(name.image, tf);
+	  	universalContext.addFunction(name.image, tf);
 	}
 	< EQUALS >
 	expr = expression()
@@ -282,9 +283,7 @@ Expr expression() : {
 	{ return expr; }
 }
 
-ExprRecordConstruction recordExpr() : {
-  //	public ExprRecordConstruction(int lineNumber, List<Pair<String, Expr>> values) {
-  
+ExprRecordConstruction recordExpr() : {  
 	List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
 	Token startingToken;
 	Expr base = null;

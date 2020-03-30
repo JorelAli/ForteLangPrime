@@ -11,7 +11,7 @@ import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class FLPFunction implements CodeableClass {
@@ -34,12 +34,16 @@ public class FLPFunction implements CodeableClass {
 		this.exported = true;
 	}
 	
+	public Expr getFunctionBody() {
+		return this.body;
+	}
+	
 	public String getName() {
 		return this.name;
 	}
 	
 	@Override
-	public void emit(EmitterContext proj, ClassWriter classWriter, TypingContext context) {
+	public void emit(EmitterContext proj, ClassWriter classWriter, UniversalContext context) {
 		
 		String genericSignature;
 		if(genericDeclarations.size() == 0) {

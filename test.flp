@@ -38,19 +38,11 @@ Library Sample {
 	## If statements
 	alwaysFalse <Bool> = if true then if true then false else true else true;
 
-	## Example of a fully defined record 
-	red <Color> = {
-		red = 255;
-		green = 0;
-		blue = 0;
-	};
+	## Fully defined records
+	red <Color> = { red = 255; green = 0; blue = 0; };
+	green <Color> = { green = 255; red = 0; blue = 0; };
 
-	green <Color> = {
-		green = 255;
-		red = 0;
-		blue = 0;
-	};
-
+	## Record updating using the red function as a base
 	yellow <Color> = { red | green = 255; };
 
 }

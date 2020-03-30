@@ -8,6 +8,11 @@ public class TypeInt implements Type {
 	}
 	
 	@Override
+	public InternalType getInternalType() {
+		return InternalType.INTEGER;
+	}
+	
+	@Override
 	public int loadInstruction() {
 		return ILOAD;
 	}

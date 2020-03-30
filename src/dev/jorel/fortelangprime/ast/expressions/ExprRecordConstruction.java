@@ -7,11 +7,10 @@ import java.util.stream.Collectors;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
-import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
@@ -29,24 +28,55 @@ public class ExprRecordConstruction implements Expr {
 	}
 
 	@Override
-	public Type getType(TypingContext context) throws TypeException {
+	public Type getType(UniversalContext context) {
 		List<Pair<String, Type>> types = new ArrayList<>();
 		for(Pair<String, Expr> pair : values) {
 			types.add(Pair.of(pair.first(), pair.second().getType(context)));
 		}
 		return context.getRecordTypeMatching(types);
 	}
-	
-	private Type getTypeUnsafe(TypingContext context) {
-		List<Pair<String, Type>> types = new ArrayList<>();
-		for(Pair<String, Expr> pair : values) {
-			try {
-				types.add(Pair.of(pair.first(), pair.second().getType(context)));
-			} catch (TypeException e) {
-				e.printStackTrace();
+
+	@Override
+	public Type typeCheck(UniversalContext context) throws TypeException {
+		
+		if(base != null) {
+			ExprVariable baseVar = (ExprVariable) base;
+			baseVar.typeCheck(context);
+			TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
+			TypeRecord tr = (TypeRecord) context.getRecordType(tng.getName());
+			
+			if(tr == null) {
+				throw new TypeException("Record type has not been declared on line " + baseVar.getLineNumber());
 			}
+			
+			// Yeah, I know a set would be better, but for pretty-printing it's better
+			// (Also, this is a compiler, who cares about performance!)
+			List<String> names = tr.getTypes().stream().map(Pair::first).collect(Collectors.toList());
+			
+			naming: for(Pair<String, Type> expectPair : tr.getTypes()) {
+				for(Pair<String, Expr> pair : this.values) {
+					if(expectPair.first() == null) {
+						continue naming;
+					}
+					if(pair.first().equals(expectPair.first())) {
+						if(expectPair.second().getInternalType() != pair.second().getType(context).getInternalType()) {
+							throw new TypeException("Mismatched types on line " + lineNumber);
+						}
+					}
+					if(!names.contains(pair.first())) {
+						throw new TypeException("Parameter " + pair.first() + " is not present in { " + names.stream().collect(Collectors.joining(", ")) + " }");
+					}
+				}
+			}
+			
+			return tr;
+		} else {
+			Type type = getType(context);
+			if(type == null) {
+				throw new TypeException(lineNumber + " Record type with parameters " + values.stream().map(Pair::first).collect(Collectors.joining(", ")) + " has not been declared");
+			}
+			return type;
 		}
-		return context.getRecordTypeMatching(types);
 	}
 
 	@Override
@@ -69,8 +99,8 @@ public class ExprRecordConstruction implements Expr {
 		return ExpressionType.INT_LITERAL;
 	}
 
-	private List<Pair<String, Expr>> reorderParams(TypingContext context, List<Pair<String, Expr>> oldValues) {
-		TypeRecord recordType = (TypeRecord) getTypeUnsafe(context);
+	private List<Pair<String, Expr>> reorderParams(UniversalContext context, List<Pair<String, Expr>> oldValues) {
+		TypeRecord recordType = (TypeRecord) getType(context);
 		List<String> orderedNames = recordType.getTypes().stream().map(Pair::first).collect(Collectors.toList()); 
 		List<Pair<String, Expr>> newExprs = new ArrayList<>();
 		naming: for(String str : orderedNames) {
@@ -87,7 +117,7 @@ public class ExprRecordConstruction implements Expr {
 	}
 	
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
 		
 		if(base != null) {
 			if(base.getInternalType() == ExpressionType.VARIABLE) {
@@ -132,15 +162,11 @@ public class ExprRecordConstruction implements Expr {
 			}
 		} else {
 			this.values = reorderParams(context, this.values);
-			TypeRecord recordType = (TypeRecord) getTypeUnsafe(context);
+			TypeRecord recordType = (TypeRecord) getType(context);
 			String name; {
 				List<Pair<String, Type>> types = new ArrayList<>();
 				for(Pair<String, Expr> pair : values) {
-					try {
-						types.add(Pair.of(pair.first(), pair.second().getType(context)));
-					} catch (TypeException e) {
-						e.printStackTrace();
-					}
+					types.add(Pair.of(pair.first(), pair.second().getType(context)));
 				}
 				name = context.getNameOfRecordTypeMatching(types);
 			}
@@ -159,7 +185,7 @@ public class ExprRecordConstruction implements Expr {
 	}
 
 	@Override
-	public int returnType(TypingContext context) {
+	public int returnType(UniversalContext context) {
 		return ARETURN;
 	}
 

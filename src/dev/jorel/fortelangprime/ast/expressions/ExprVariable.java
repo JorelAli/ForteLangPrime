@@ -3,9 +3,8 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
-import dev.jorel.fortelangprime.ast.enums.ExpressionType;
 import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
@@ -30,10 +29,20 @@ public class ExprVariable implements Expr {
 	}
 
 	@Override
-	public Type getType(TypingContext context) throws TypeException {
+	public Type getType(UniversalContext context) {
 		return context.getFunction(parentFunctionName).getParams().stream()
 			.filter(p -> p.first().equals(name))
 			.findFirst().get().second();
+	}
+
+	@Override
+	public Type typeCheck(UniversalContext context) throws TypeException {
+		if(!context.getFunction(parentFunctionName).getParams().stream()
+			.filter(p -> p.first().equals(name))
+			.findFirst().isPresent()) {
+			throw new TypeException("Parameter " + name + " has no locatable type in function " + parentFunctionName);
+		}
+		return getType(context);
 	}
 
 	@Override
@@ -56,7 +65,7 @@ public class ExprVariable implements Expr {
 		return ExpressionType.VARIABLE;
 	}
 	
-	public int getIndex(TypingContext context) {
+	public int getIndex(UniversalContext context) {
 		int index = 0;
 		for(Pair<String, Type> pair : context.getFunction(parentFunctionName).getParams()) {
 			if(pair.first().equals(name)) {
@@ -69,20 +78,14 @@ public class ExprVariable implements Expr {
 	}
 
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
-		Type paramType = getTypeUnsafe(context);
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
+		Type paramType = getType(context);
 		methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
-	}
-	
-	private Type getTypeUnsafe(TypingContext context) {
-		return context.getFunction(parentFunctionName).getParams().stream()
-				.filter(p -> p.first().equals(name))
-				.findFirst().get().second();
 	}
 
 	@Override
-	public int returnType(TypingContext context) {
-		return getTypeUnsafe(context).returnType();
+	public int returnType(UniversalContext context) {
+		return getType(context).returnType();
 	}
 
 	@Override

@@ -3,10 +3,9 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
-import dev.jorel.fortelangprime.ast.enums.ExpressionType;
-import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.ast.types.TypeBool;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
 public class ExprBoolLit implements Expr {
@@ -24,8 +23,13 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public Type getType(TypingContext context) throws TypeException {
+	public Type getType(UniversalContext context) {
 		return new TypeBool();
+	}
+
+	@Override
+	public Type typeCheck(UniversalContext context) throws TypeException {
+		return getType(context);
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
 		if(value) {
 			methodVisitor.visitInsn(ICONST_1);
 		} else {
@@ -58,7 +62,7 @@ public class ExprBoolLit implements Expr {
 	}
 
 	@Override
-	public int returnType(TypingContext context) {
+	public int returnType(UniversalContext context) {
 		return IRETURN;
 	}
 

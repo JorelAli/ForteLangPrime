@@ -1,19 +1,13 @@
 import java.io.File;
 
-import dev.jorel.fortelangprime.BytecodeGenerator;
-import dev.jorel.fortelangprime.BytecodeGenerator.JavaVersion;
-import dev.jorel.fortelangprime.ast.FLPLibrary;
-import dev.jorel.fortelangprime.parser.ForteLangPrimeParser;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class Testing {
 	
 	public static void main(String[] args) throws Exception {
 		
-		FLPLibrary lib = ForteLangPrimeParser.parse(new File("test.flp"));
-		BytecodeGenerator generator = new BytecodeGenerator(ForteLangPrimeParser.getTypingContext(), lib, JavaVersion.V_8);
-		generator.compile();
-		generator.writeToFile(new File("classfolder"));
+		new FLPCompiler(new File("test.flp"), new File("classfolder")).compile();
 		
 		System.out.println("Sample.id(true) = " + Sample.id(true));
 		System.out.println("Sample.id(\"hello\") = " + Sample.id("hello"));

@@ -14,6 +14,7 @@ import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
 import dev.jorel.fortelangprime.parser.util.*;
+import dev.jorel.fortelangprime.compiler.*;
 
 /** Token Manager. */
 @SuppressWarnings("unused")public class ForteLangPrimeParserTokenManager implements ForteLangPrimeParserConstants {

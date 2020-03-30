@@ -13,6 +13,11 @@ public class TypeNamedGeneric implements Type {
 	}
 
 	@Override
+	public InternalType getInternalType() {
+		return InternalType.NAMED_GENERIC;
+	}
+
+	@Override
 	public String toBytecodeString() {
 		return "Ljava/lang/Object;";
 	}

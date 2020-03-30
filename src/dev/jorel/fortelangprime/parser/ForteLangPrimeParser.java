@@ -16,25 +16,26 @@ import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
 import dev.jorel.fortelangprime.parser.util.*;
+import dev.jorel.fortelangprime.compiler.*;
 
 public class ForteLangPrimeParser implements ForteLangPrimeParserConstants {
 
-        private static TypingContext typingContext;
+        private static UniversalContext universalContext;
         private static String currentFunctionName;
 
         public static FLPLibrary parse(String input) throws ParseException, IOException {
-                typingContext = new TypingContext();
+                universalContext = new UniversalContext();
                 InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
                 return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
         }
 
         public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException {
-                typingContext = new TypingContext();
+                universalContext = new UniversalContext();
                 return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
         }
 
-        public static TypingContext getTypingContext() {
-                return ForteLangPrimeParser.typingContext;
+        public static UniversalContext getUniversalContext() {
+                return ForteLangPrimeParser.universalContext;
         }
 
 /** Main endpoint */
@@ -114,7 +115,7 @@ printable = true;
       name = jj_consume_token(VAR_NAME);
       jj_consume_token(EQUALS);
       type = recordType(name.image);
-typingContext.addRecordType(name.image, type);
+universalContext.addRecordType(name.image, type);
                         list.add(new RecordTypeDeclaration(name.image, type, printable));
     }
 return list;
@@ -158,7 +159,7 @@ return functions;
 ForteLangPrimeParser.currentFunctionName = name.image;
     functionTypes = functionTypes();
 tf = Converter.functionTypesToTypeFunction(functionTypes);
-                typingContext.addFunction(name.image, tf);
+                universalContext.addFunction(name.image, tf);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
@@ -228,9 +229,7 @@ return genericNames;
 return expr;
   }
 
-  final public ExprRecordConstruction recordExpr() throws ParseException {//	public ExprRecordConstruction(int lineNumber, List<Pair<String, Expr>> values) {
-
-        List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
+  final public ExprRecordConstruction recordExpr() throws ParseException {List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
         Token startingToken;
         Expr base = null;
         Token t;
@@ -429,16 +428,16 @@ return new TypeRecord(name, types);
     finally { jj_save(0, xla); }
   }
 
-  private boolean jj_3R_7()
- {
-    if (jj_scan_token(VAR_NAME)) return true;
-    return false;
-  }
-
   private boolean jj_3_1()
  {
     if (jj_3R_7()) return true;
     if (jj_scan_token(PIPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7()
+ {
+    if (jj_scan_token(VAR_NAME)) return true;
     return false;
   }
 

@@ -14,6 +14,11 @@ public class TypeRecord implements Type {
 		this.types = types;
 	}
 	
+	@Override
+	public InternalType getInternalType() {
+		return InternalType.RECORD;
+	}
+	
 	public List<Pair<String, Type>> getTypes() {
 		return this.types;
 	}

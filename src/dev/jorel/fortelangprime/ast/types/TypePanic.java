@@ -8,6 +8,11 @@ public class TypePanic implements Type {
 	}
 	
 	@Override
+	public InternalType getInternalType() {
+		return InternalType.PANIC;
+	}
+	
+	@Override
 	public int loadInstruction() {
 		return -1;
 	}

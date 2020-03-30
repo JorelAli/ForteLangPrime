@@ -2,7 +2,6 @@ package dev.jorel.fortelangprime.ast;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.invoke.StringConcatFactory;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +13,7 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
 public class RecordTypeDeclaration implements CodeableClass {
@@ -44,7 +43,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 	}
 	
 	@Override
-	public void emit(EmitterContext proj, ClassWriter parentClassWriter, TypingContext context) {
+	public void emit(EmitterContext proj, ClassWriter parentClassWriter, UniversalContext context) {
 		String innerClassName = proj.getLibraryName() + "$" + name;
 
 		parentClassWriter.visitInnerClass(innerClassName, proj.getLibraryName(), name, ACC_PUBLIC | ACC_STATIC);

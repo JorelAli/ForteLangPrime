@@ -8,6 +8,11 @@ public class TypeString implements Type {
 	}
 	
 	@Override
+	public InternalType getInternalType() {
+		return InternalType.STRING;
+	}
+	
+	@Override
 	public int loadInstruction() {
 		return ALOAD;
 	}

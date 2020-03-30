@@ -4,9 +4,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
-import dev.jorel.fortelangprime.ast.enums.ExpressionType;
+import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
+import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
 public class ExprIfStatement implements Expr {
@@ -24,11 +24,33 @@ public class ExprIfStatement implements Expr {
 	}
 
 	@Override
-	public Type getType(TypingContext context) throws TypeException {
-		//TODO: Type checking occurs here - need to check if condition is 
-		//'well typed' (integer) and if the ifTrue and ifFalse are of
-		//the same type
+	public Type getType(UniversalContext context) {
 		return ifTrue.getType(context);
+	}
+	
+	@Override
+	public Type typeCheck(UniversalContext context) throws TypeException {
+		if(condition.typeCheck(context).getInternalType() != InternalType.BOOLEAN) {
+			throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+		}
+		if(ifTrue.getInternalType() != ifFalse.getInternalType()) {
+			StringBuilder builder = new StringBuilder("Return types on ");
+			builder.append(ifTrue.getLineNumber());
+			builder.append(":");
+			builder.append(ifTrue.getInternalType());
+			builder.append(" and ");
+			builder.append(ifFalse.getLineNumber());
+			builder.append(":");
+			builder.append(ifFalse.getInternalType());
+			builder.append(" are different types");
+			throw new TypeException(builder.toString());
+		}
+		return getType(context);
+	}
+
+	@Override
+	public ExpressionType getInternalType() {
+		return ifTrue.getInternalType();
 	}
 
 	@Override
@@ -47,12 +69,7 @@ public class ExprIfStatement implements Expr {
 	}
 
 	@Override
-	public ExpressionType getInternalType() {
-		return ExpressionType.IF_STATEMENT;
-	}
-
-	@Override
-	public void emit(EmitterContext prog, MethodVisitor methodVisitor, TypingContext context) {
+	public void emit(EmitterContext prog, MethodVisitor methodVisitor, UniversalContext context) {
 	
 		switch(condition.getInternalType()) {
 			case BOOL_LITERAL: {
@@ -94,7 +111,7 @@ public class ExprIfStatement implements Expr {
 	}
 
 	@Override
-	public int returnType(TypingContext context) {
+	public int returnType(UniversalContext context) {
 		return ifTrue.returnType(context);
 	}
 

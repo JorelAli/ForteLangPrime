@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime;
+package dev.jorel.fortelangprime.compiler;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,15 +8,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import dev.jorel.fortelangprime.EmitterContext;
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
 import dev.jorel.fortelangprime.ast.RecordTypeDeclaration;
-import dev.jorel.fortelangprime.ast.types.TypingContext;
 
 public class BytecodeGenerator implements Opcodes {
 	
@@ -32,11 +29,11 @@ public class BytecodeGenerator implements Opcodes {
 	}
 	
 	private FLPLibrary lib;
-	private TypingContext context; 
+	private UniversalContext context; 
 	private int javaVersion;
 	private byte[] compiledData;
 	
-	public BytecodeGenerator(TypingContext context, FLPLibrary lib, JavaVersion version) {
+	public BytecodeGenerator(UniversalContext context, FLPLibrary lib, JavaVersion version) {
 		this.context = context;
 		this.lib = lib;
 		this.javaVersion = version.version;

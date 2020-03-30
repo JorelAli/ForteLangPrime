@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime;
+package dev.jorel.fortelangprime.compiler;
 
 public class CompilationException extends Exception {
 
