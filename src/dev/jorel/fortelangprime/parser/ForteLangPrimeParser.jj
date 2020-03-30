@@ -307,9 +307,14 @@ ExprRecordConstruction recordExpr() : {
 
 ExprVariable variable() : {
   	Token t;
+  	List<Expr> expressions = new ArrayList<Expr>();
+  	Expr e;
 } {
   	t = < VAR_NAME >
-  	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName); }
+  	( LOOKAHEAD(2)
+		e = expression()
+		{ expressions.add(e); }  	)*
+  	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName, expressions); }
 }
 
 ExprIfStatement ifStatement() : {

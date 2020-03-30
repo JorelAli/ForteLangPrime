@@ -1,5 +1,8 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.EmitterContext;
@@ -13,11 +16,13 @@ public class ExprVariable implements Expr {
 	private int lineNumber;
 	private String name;
 	private String parentFunctionName;
+	private List<Expr> params;
 	
-	public ExprVariable(int lineNumber, String name, String parentFunctionName) {
+	public ExprVariable(int lineNumber, String name, String parentFunctionName, List<Expr> params) {
 		this.lineNumber = lineNumber;
 		this.name = name;
 		this.parentFunctionName = parentFunctionName;
+		this.params = params;
 	}
 	
 	public String getName() {
@@ -30,19 +35,49 @@ public class ExprVariable implements Expr {
 
 	@Override
 	public Type getType(UniversalContext context) {
-		return context.getFunction(parentFunctionName).getParams().stream()
-			.filter(p -> p.first().equals(name))
-			.findFirst().get().second();
+		Optional<Pair<String, Type>> localType = context.getFunction(parentFunctionName).getParams().stream()
+			.filter(p -> p.first().equals(name)).findFirst();
+		
+		// Search local scope
+		if(localType.isPresent()) {
+			return localType.get().second();
+		}
+		
+		// Search declared functions
+		if(context.getFunction(name) != null) {
+			return context.getFunction(name);
+		}
+		
+		return null;
 	}
 
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
-		if(!context.getFunction(parentFunctionName).getParams().stream()
+		boolean functionFound = false;
+		boolean inLocalScope = false;
+		//Search declared functions
+		if(context.getFunction(name) != null) {
+			functionFound = true;
+		}
+		
+		//Search local scope
+		if(context.getFunction(parentFunctionName).getParams().stream()
 			.filter(p -> p.first().equals(name))
 			.findFirst().isPresent()) {
-			throw new TypeException("Parameter " + name + " has no locatable type in function " + parentFunctionName);
+			inLocalScope = true;
 		}
-		return getType(context);
+		
+		if(functionFound || inLocalScope) {
+			return getType(context);
+		} else {
+			if(!functionFound) {
+				throw new TypeException("Function " + name + " can't be found in the file");
+			}
+			if(!inLocalScope) {
+				throw new TypeException("Parameter " + name + " has no locatable type in function " + parentFunctionName);
+			}
+			throw new TypeException("Honestly, I have no idea what happened here");
+		}
 	}
 
 	@Override
@@ -57,7 +92,7 @@ public class ExprVariable implements Expr {
 
 	@Override
 	public Expr deepCopy() {
-		return new ExprVariable(lineNumber, name, parentFunctionName);
+		return new ExprVariable(lineNumber, name, parentFunctionName, params);
 	}
 
 	@Override
