@@ -77,11 +77,11 @@ public class ExprVariable implements Expr {
 			}
 			return result;
 		} else {
-			if(!functionFound) {
-				throw new TypeException("Function " + name + " can't be found in the file");
-			}
 			if(!inLocalScope) {
 				throw new TypeException("Parameter " + name + " has no locatable type in function " + parentFunctionName);
+			}
+			if(!functionFound) {
+				throw new TypeException("Function " + name + " can't be found in the file");
 			}
 			throw new TypeException("Honestly, I have no idea what happened here");
 		}

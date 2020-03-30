@@ -83,7 +83,8 @@ TOKEN : {
 TOKEN : { 
 		< CONCAT : "++" > 
 	|	< PLUS : "+" >
-	|	< ROUGHLY_EQUALS : "~=" > 
+	|	< ROUGHLY_EQUALS : "~=" >
+	|	< EQUALS_EQUALS : "==" >
 }
 
 // Types (and type-related keywords)
@@ -271,6 +272,8 @@ List<TypeNamedGeneric> genericTypeDeclaration() : {
 
 Expr expression() : {
   	Expr expr;
+  	Expr secondaryExpr;
+  	Token op;
 } {
 	( expr = integer()
 	| expr = bool()
@@ -280,6 +283,10 @@ Expr expression() : {
 	| expr = ifStatement()
 	| expr = recordExpr()
 	)
+	( LOOKAHEAD(2)		op = < EQUALS_EQUALS >
+		secondaryExpr = expression()
+		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind));}
+	)?
 	{ return expr; }
 }
 

@@ -57,43 +57,45 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int ROUGHLY_EQUALS = 23;
   /** RegularExpression Id. */
-  int TYPE_INT = 24;
+  int EQUALS_EQUALS = 24;
   /** RegularExpression Id. */
-  int TYPE_BOOL = 25;
+  int TYPE_INT = 25;
   /** RegularExpression Id. */
-  int TYPE_STRING = 26;
+  int TYPE_BOOL = 26;
   /** RegularExpression Id. */
-  int TYPE = 27;
+  int TYPE_STRING = 27;
   /** RegularExpression Id. */
-  int IF = 28;
+  int TYPE = 28;
   /** RegularExpression Id. */
-  int THEN = 29;
+  int IF = 29;
   /** RegularExpression Id. */
-  int ELSE = 30;
+  int THEN = 30;
   /** RegularExpression Id. */
-  int TRUE = 31;
+  int ELSE = 31;
   /** RegularExpression Id. */
-  int FALSE = 32;
+  int TRUE = 32;
   /** RegularExpression Id. */
-  int PANIC = 33;
+  int FALSE = 33;
   /** RegularExpression Id. */
-  int LIBRARY = 34;
+  int PANIC = 34;
   /** RegularExpression Id. */
-  int SCRIPT = 35;
+  int LIBRARY = 35;
   /** RegularExpression Id. */
-  int EXPORT = 36;
+  int SCRIPT = 36;
   /** RegularExpression Id. */
-  int IMPORT = 37;
+  int EXPORT = 37;
   /** RegularExpression Id. */
-  int AS = 38;
+  int IMPORT = 38;
   /** RegularExpression Id. */
-  int VAR_NAME = 39;
+  int AS = 39;
   /** RegularExpression Id. */
-  int INT_LITERAL = 40;
+  int VAR_NAME = 40;
   /** RegularExpression Id. */
-  int NUMBER = 41;
+  int INT_LITERAL = 41;
   /** RegularExpression Id. */
-  int STRING = 42;
+  int NUMBER = 42;
+  /** RegularExpression Id. */
+  int STRING = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -126,6 +128,7 @@ public interface ForteLangPrimeParserConstants {
     "\"++\"",
     "\"+\"",
     "\"~=\"",
+    "\"==\"",
     "\"Int\"",
     "\"Bool\"",
     "\"String\"",
@@ -150,11 +153,11 @@ public interface ForteLangPrimeParserConstants {
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
-    "<token of kind 48>",
+    "<token of kind 49>",
     "\"#[\"",
     "\"#[\"",
     "\"]#\"",
-    "<token of kind 52>",
+    "<token of kind 53>",
   };
 
 }

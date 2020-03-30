@@ -8,6 +8,7 @@ Library Sample {
 	export someOtherBool;
 	export someOtherOtherBool;
 	export and;
+	export equality;
 
 } {
 
@@ -52,5 +53,7 @@ Library Sample {
 	someOtherOtherBool <Bool> = identity1 someBool;
 
 	and a<Bool> -> b<Bool> -> <Bool> = if not a then false else if not b then false else true;
+
+	equality a<Int> -> b<Int> -> <Bool> = a == b;
 
 }
