@@ -25,4 +25,14 @@ public class UnresolvedCustomOperation implements Operation {
 		return true;
 	}
 
+	@Override
+	public int getPrecedence() {
+		return -1;
+	}
+
+	@Override
+	public Associativity getAssociativity() {
+		return null;
+	}
+
 }

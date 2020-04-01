@@ -37,81 +37,93 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int PLAY_BUTTON = 13;
   /** RegularExpression Id. */
-  int GUARD = 14;
+  int REVERSE_PLAY_BUTTON = 14;
   /** RegularExpression Id. */
-  int PIPE = 15;
+  int GUARD = 15;
   /** RegularExpression Id. */
-  int EQUALS = 16;
+  int PIPE = 16;
   /** RegularExpression Id. */
-  int LCHEVRON = 17;
+  int EQUALS = 17;
   /** RegularExpression Id. */
-  int RCHEVRON = 18;
+  int LCHEVRON = 18;
   /** RegularExpression Id. */
-  int STAR = 19;
+  int RCHEVRON = 19;
   /** RegularExpression Id. */
-  int PRINTABLE = 20;
+  int STAR = 20;
   /** RegularExpression Id. */
-  int EQUATABLE = 21;
+  int PRINTABLE = 21;
   /** RegularExpression Id. */
-  int CONCAT = 22;
+  int EQUATABLE = 22;
   /** RegularExpression Id. */
-  int PLUS = 23;
+  int CONCAT = 23;
   /** RegularExpression Id. */
-  int MINUS = 24;
+  int PLUS = 24;
   /** RegularExpression Id. */
-  int SLASH = 25;
+  int MINUS = 25;
   /** RegularExpression Id. */
-  int HAT = 26;
+  int SLASH = 26;
   /** RegularExpression Id. */
-  int ROUGHLY_EQUALS = 27;
+  int HAT = 27;
   /** RegularExpression Id. */
-  int EQUALS_EQUALS = 28;
+  int MOD = 28;
   /** RegularExpression Id. */
-  int TYPE_INT = 29;
+  int LESS_THAN_OR_EQUAL = 29;
   /** RegularExpression Id. */
-  int TYPE_BOOL = 30;
+  int GREATER_THAN_OR_EQUAL = 30;
   /** RegularExpression Id. */
-  int TYPE_STRING = 31;
+  int EQUALS_EQUALS = 31;
   /** RegularExpression Id. */
-  int TYPE = 32;
+  int NOT_EQUALS = 32;
   /** RegularExpression Id. */
-  int IF = 33;
+  int AND_AND = 33;
   /** RegularExpression Id. */
-  int THEN = 34;
+  int OR_OR = 34;
   /** RegularExpression Id. */
-  int ELSE = 35;
+  int TYPE_INT = 35;
   /** RegularExpression Id. */
-  int INFIX = 36;
+  int TYPE_BOOL = 36;
   /** RegularExpression Id. */
-  int INFIXL = 37;
+  int TYPE_STRING = 37;
   /** RegularExpression Id. */
-  int INFIXR = 38;
+  int TYPE = 38;
   /** RegularExpression Id. */
-  int TRUE = 39;
+  int IF = 39;
   /** RegularExpression Id. */
-  int FALSE = 40;
+  int THEN = 40;
   /** RegularExpression Id. */
-  int PANIC = 41;
+  int ELSE = 41;
   /** RegularExpression Id. */
-  int LIBRARY = 42;
+  int INFIX = 42;
   /** RegularExpression Id. */
-  int SCRIPT = 43;
+  int INFIXL = 43;
   /** RegularExpression Id. */
-  int EXPORT = 44;
+  int INFIXR = 44;
   /** RegularExpression Id. */
-  int IMPORT = 45;
+  int TRUE = 45;
   /** RegularExpression Id. */
-  int AS = 46;
+  int FALSE = 46;
   /** RegularExpression Id. */
-  int VAR_NAME = 47;
+  int PANIC = 47;
   /** RegularExpression Id. */
-  int INT_LITERAL = 48;
+  int LIBRARY = 48;
   /** RegularExpression Id. */
-  int NUMBER = 49;
+  int SCRIPT = 49;
   /** RegularExpression Id. */
-  int STRING = 50;
+  int EXPORT = 50;
   /** RegularExpression Id. */
-  int CUSTOM_OPERATOR = 51;
+  int IMPORT = 51;
+  /** RegularExpression Id. */
+  int AS = 52;
+  /** RegularExpression Id. */
+  int VAR_NAME = 53;
+  /** RegularExpression Id. */
+  int INT_LITERAL = 54;
+  /** RegularExpression Id. */
+  int NUMBER = 55;
+  /** RegularExpression Id. */
+  int STRING = 56;
+  /** RegularExpression Id. */
+  int CUSTOM_OPERATOR = 57;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -134,6 +146,7 @@ public interface ForteLangPrimeParserConstants {
     "\"=>\"",
     "\"->>\"",
     "\"|>\"",
+    "\"<|\"",
     "\"?:\"",
     "\"|\"",
     "\"=\"",
@@ -147,8 +160,13 @@ public interface ForteLangPrimeParserConstants {
     "\"-\"",
     "\"/\"",
     "\"^\"",
-    "\"~=\"",
+    "\"%\"",
+    "\"<=\"",
+    "\">=\"",
     "\"==\"",
+    "\"!=\"",
+    "\"&&\"",
+    "\"||\"",
     "\"Int\"",
     "\"Bool\"",
     "\"String\"",
@@ -177,11 +195,11 @@ public interface ForteLangPrimeParserConstants {
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
-    "<token of kind 57>",
+    "<token of kind 63>",
     "\"#[\"",
     "\"#[\"",
     "\"]#\"",
-    "<token of kind 61>",
+    "<token of kind 67>",
   };
 
 }

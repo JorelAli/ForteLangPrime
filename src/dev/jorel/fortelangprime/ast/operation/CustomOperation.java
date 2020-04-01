@@ -36,10 +36,12 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 		this.body = body;
 	}
 	
+	@Override
 	public int getPrecedence() {
 		return this.precedence;
 	}
 	
+	@Override
 	public Associativity getAssociativity() {
 		return this.associativity;
 	}

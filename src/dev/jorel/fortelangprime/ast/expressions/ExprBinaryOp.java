@@ -94,6 +94,8 @@ public class ExprBinaryOp implements Expr {
 	public Expr deepCopy() {
 		return new ExprBinaryOp(lineNumber, left, right, op, hasBrackets);
 	}
+	
+	
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
@@ -145,9 +147,6 @@ public class ExprBinaryOp implements Expr {
 				methodVisitor.visitInsn(I2D);
 				methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "pow", "(DD)D", false);
 				methodVisitor.visitInsn(D2I);
-				//
-//				int d = (int) Math.pow(2, 30);
-//				methodVisitor.visitInsn(IINC);
 				break;
 			case SUBTRACT:
 				left.emit(methodVisitor, context);

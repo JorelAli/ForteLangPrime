@@ -66,11 +66,12 @@ TOKEN : {
 	|	< COMMA : "," > 
 	|	< FAT_ARROW : "=>" > 
 	|	< DOUBLE_ARROW : "->>" > 
-	|	< PLAY_BUTTON : "|>" > 
+	|	< PLAY_BUTTON : "|>" >
+	|	< REVERSE_PLAY_BUTTON : "<|" >  
 	|	< GUARD : "?:" > 
 	|	< PIPE : "|" > 
 	|	< EQUALS : "=" > 
-	|	< LCHEVRON : "<" > 
+	|	< LCHEVRON : "<" >
 	|	< RCHEVRON : ">" >
 	|	< STAR : "*" >
 }
@@ -88,8 +89,13 @@ TOKEN : {
 	| 	< MINUS : "-" >
 	| 	< SLASH : "/" >
 	|  	< HAT : "^" >
-	|	< ROUGHLY_EQUALS : "~=" >
+	| 	< MOD : "%" >
+	| 	< LESS_THAN_OR_EQUAL : "<=" >
+	| 	< GREATER_THAN_OR_EQUAL : ">=" > 
 	|	< EQUALS_EQUALS : "==" >
+	|	< NOT_EQUALS : "!=" >
+	|	< AND_AND : "&&" >
+	|	< OR_OR : "||" >
 }
 
 // Types (and type-related keywords)
