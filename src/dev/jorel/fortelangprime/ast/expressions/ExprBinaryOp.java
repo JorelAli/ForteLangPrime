@@ -1,6 +1,5 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.Label;
@@ -14,9 +13,11 @@ import dev.jorel.fortelangprime.ast.operation.StandardOperation;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.TypeInt;
+import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
+import dev.jorel.fortelangprime.util.Pair;
 
 public class ExprBinaryOp implements Expr {
 	
@@ -129,13 +130,6 @@ public class ExprBinaryOp implements Expr {
 		}	
 	}
 	
-	public static boolean eqInt(int a, int b) {
-		int n = a;
-		boolean bl = a == b;
-		int n2 = b;
-		return a == b;
-	}
-	
 	public void emitOperationNew(MethodVisitor methodVisitor, UniversalContext context, ExprBinaryOp binop) {
 		Operation op = binop.getOperation();
 		if(op.isStandard()) {
@@ -143,8 +137,8 @@ public class ExprBinaryOp implements Expr {
 			FLPCompiler.log("Emitting standard operation " + operation.name());
 			switch(operation) {
 				case EQUALS: {
-					binop.left.emit(methodVisitor, context);
-					binop.right.emit(methodVisitor, context);
+//					binop.left.emit(methodVisitor, context);
+//					binop.right.emit(methodVisitor, context);
 					Label end = new Label();
 					Label ifEqual = new Label();
 					
@@ -180,6 +174,105 @@ public class ExprBinaryOp implements Expr {
 				break;
 			case SUBTRACT:
 				methodVisitor.visitInsn(ISUB);
+				break;
+			case ACCESSRECORD:
+				
+				ExprVariable exprVar = (ExprVariable) binop.right;
+				TypeRecord leftType = (TypeRecord) binop.left.getType(context);
+				String classOwner = context.getLibraryName() + "$" + leftType.getName();
+				String descriptor = leftType.getTypes().stream().filter(p -> p.first().equals(exprVar.getName())).findFirst().get().second().toBytecodeString(context);
+				methodVisitor.visitFieldInsn(GETFIELD, classOwner, exprVar.getName(), descriptor);
+				break;
+			case AND:
+				methodVisitor.visitInsn(IAND);
+				break;
+			case CONCATENATE:
+				break;
+			case CONS:
+				break;
+			case GE: {
+				Label end = new Label();
+				Label ifEqual = new Label();
+				
+				methodVisitor.visitJumpInsn(IF_ICMPGE, ifEqual);
+				methodVisitor.visitInsn(ICONST_0);
+				methodVisitor.visitJumpInsn(GOTO, end);
+				
+				methodVisitor.visitLabel(ifEqual);
+				methodVisitor.visitInsn(ICONST_1);
+				
+				methodVisitor.visitLabel(end);
+				break;
+			}
+			case GT: {
+				Label end = new Label();
+				Label ifEqual = new Label();
+				
+				methodVisitor.visitJumpInsn(IF_ICMPGT, ifEqual);
+				methodVisitor.visitInsn(ICONST_0);
+				methodVisitor.visitJumpInsn(GOTO, end);
+				
+				methodVisitor.visitLabel(ifEqual);
+				methodVisitor.visitInsn(ICONST_1);
+				
+				methodVisitor.visitLabel(end);
+				break;
+			}
+			case LE: {
+				Label end = new Label();
+				Label ifEqual = new Label();
+				
+				methodVisitor.visitJumpInsn(IF_ICMPLE, ifEqual);
+				methodVisitor.visitInsn(ICONST_0);
+				methodVisitor.visitJumpInsn(GOTO, end);
+				
+				methodVisitor.visitLabel(ifEqual);
+				methodVisitor.visitInsn(ICONST_1);
+				
+				methodVisitor.visitLabel(end);
+				break;
+			}
+			case LT: {
+				Label end = new Label();
+				Label ifEqual = new Label();
+				
+				methodVisitor.visitJumpInsn(IF_ICMPLT, ifEqual);
+				methodVisitor.visitInsn(ICONST_0);
+				methodVisitor.visitJumpInsn(GOTO, end);
+				
+				methodVisitor.visitLabel(ifEqual);
+				methodVisitor.visitInsn(ICONST_1);
+				
+				methodVisitor.visitLabel(end);
+				break;
+			}
+			case MODULO:
+				methodVisitor.visitInsn(IREM);
+				break;
+			case NE:
+				Label end = new Label();
+				Label ifEqual = new Label();
+				
+				if(binop.getLeft().getType(context).comparingInstruction() == IF_ACMPEQ) {
+					methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
+					methodVisitor.visitJumpInsn(IFNE, ifEqual);
+				} else {
+					methodVisitor.visitJumpInsn(binop.getLeft().getType(context).comparingInstruction(), ifEqual);
+				}
+				methodVisitor.visitInsn(ICONST_1);
+				methodVisitor.visitJumpInsn(GOTO, end);
+				
+				methodVisitor.visitLabel(ifEqual);
+				methodVisitor.visitInsn(ICONST_0);
+				
+				methodVisitor.visitLabel(end);
+				break;
+			case OR:
+				methodVisitor.visitInsn(IOR);
+				break;
+			case PIPE2LEFT:
+				break;
+			case PIPE2RIGHT:
 				break;
 			default:
 				break;
@@ -273,12 +366,18 @@ public class ExprBinaryOp implements Expr {
 			case SUBTRACT:
 			case POW:
 				return IRETURN;
+			case ACCESSRECORD:
+				return ((TypeRecord) this.left.getType(context)).getTypes()
+					.stream()
+					.filter(p -> p.first().equals(((ExprVariable) this.right).getName()))
+					.findFirst().get().second().returnType();
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
 			return operation.returnType(context);
 		}
-		return -1;
+//		return IRETURN;
+		throw new RuntimeException("Invalid return type " + op);
 	}
 
 	@Override

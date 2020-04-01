@@ -31,11 +31,13 @@ public class ShuntingYard implements Opcodes {
 		}
 		
 		tokens.add(op);
-		
+
+		if(op.getOperation() != StandardOperation.ACCESSRECORD) {
 		if(op.getRight() instanceof ExprBinaryOp) {
 			tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
 		} else {
 			tokens.add(op.getRight());
+		}
 		}
 		
 		if(op.hasBrackets()) {

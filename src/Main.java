@@ -41,10 +41,7 @@ public class Main {
 		System.out.println(Sample.mul(2, 20));
 		System.out.println(Sample.pow(2, 16));
 		System.out.println(Sample.ooo());
-	}
-	
-	public static int pow(int a, int b) {
-		return (int) Math.pow(a, b);
+		System.out.println(Sample.greenInt());
 	}
 	
 	

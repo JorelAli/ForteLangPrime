@@ -21,22 +21,22 @@ public class ExprInternalCast implements Expr {
 	
 	@Override
 	public int getLineNumber() {
-		return -1;
+		throw new RuntimeException("ExprInternalCast line number invalid");
 	}
 
 	@Override
 	public int returnType(UniversalContext context) {
-		return -1;
+		throw new RuntimeException("ExprInternalCast return type invalid");
 	}
 
 	@Override
 	public Type getType(UniversalContext context) {
-		return null;
+		throw new RuntimeException("ExprInternalCast type invalid");
 	}
 
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
-		return null;
+		throw new RuntimeException("ExprInternalCast type check invalid");
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class ExprInternalCast implements Expr {
 
 	@Override
 	public ExpressionType getInternalType() {
-		return null;
+		throw new RuntimeException("ExprInternalCast internal type invalid");
 	}
 
 }

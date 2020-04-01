@@ -40,6 +40,8 @@ Library Sample {
 	red <Color> = { red = 255; green = 0; blue = 0; };
 	green <Color> = { green = 255; red = 0; blue = 0; };
 
+	greenInt <Int> = { red = 255; green = 0; blue = 0; }.green;
+
 	## Record updating using the red function as a base
 	yellow <Color> = { red | green = 255; };
 

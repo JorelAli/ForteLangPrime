@@ -164,9 +164,9 @@ public class ExprRecordConstruction implements Expr {
 				String paramSignature = tr.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 				FLPCompiler.log("Calling constructor for " + tng.getName());
 				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
-				methodVisitor.visitInsn(ARETURN);
-				methodVisitor.visitMaxs(0, 0);
-				methodVisitor.visitEnd();
+//				methodVisitor.visitInsn(ARETURN);
+//				methodVisitor.visitMaxs(0, 0);
+//				methodVisitor.visitEnd();
 			} else {
 				//wtf?
 			}
@@ -191,9 +191,9 @@ public class ExprRecordConstruction implements Expr {
 			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 			FLPCompiler.log("Calling constructor for " + name);
 			methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
-			methodVisitor.visitInsn(ARETURN);
-			methodVisitor.visitMaxs(0, 0);
-			methodVisitor.visitEnd();
+//			methodVisitor.visitInsn(ARETURN);
+//			methodVisitor.visitMaxs(0, 0);
+//			methodVisitor.visitEnd();
 		}
 	}
 

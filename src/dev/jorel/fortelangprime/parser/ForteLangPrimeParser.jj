@@ -90,6 +90,7 @@ TOKEN : {
 	| 	< SLASH : "/" >
 	|  	< HAT : "^" >
 	| 	< MOD : "%" >
+	| 	< FULL_STOP : "." >
 	| 	< LESS_THAN_OR_EQUAL : "<=" >
 	| 	< GREATER_THAN_OR_EQUAL : ">=" > 
 	|	< EQUALS_EQUALS : "==" >
@@ -376,7 +377,20 @@ private Token standardOperation() : {
 	| t = < SLASH >
 	| t = < MINUS >
 	| t = < PLUS >
-	| t = < HAT >	)
+	| t = < HAT >
+	| t = < FULL_STOP >
+	| t = < MOD >
+	| t = < COLON >
+	| t = < CONCAT >
+	| t = < NOT_EQUALS >
+	| t = < LCHEVRON >
+	| t = < RCHEVRON >
+	| t = < GREATER_THAN_OR_EQUAL >
+	| t = < LESS_THAN_OR_EQUAL >
+	| t = < AND_AND >
+	| t = < OR_OR >
+	| t = < PLAY_BUTTON >
+	| t = < REVERSE_PLAY_BUTTON >	)
 	{ return t; }
 }
 

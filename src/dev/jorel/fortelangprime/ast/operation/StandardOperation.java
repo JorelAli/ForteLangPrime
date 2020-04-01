@@ -9,6 +9,8 @@ import dev.jorel.fortelangprime.compiler.UniversalContext;
 
 public enum StandardOperation implements Operation {
 	
+	ACCESSRECORD(FULL_STOP, 9, Associativity.LEFT),
+	
 	POW(HAT, 8, Associativity.RIGHT),
 	
 	MULTIPLY(STAR, 7, Associativity.LEFT),
