@@ -1,33 +1,81 @@
 package dev.jorel.fortelangprime.ast.operation;
 
-public class ShuntingYard {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
-//	while there are tokens to be read do:
-//	    read a token.
-//	    if the token is a number, then:
-//	        push it to the output queue.
-//	    if the token is a function then:
-//	        push it onto the operator stack 
-//	    if the token is an operator, then:
-//	        while ((there is a function at the top of the operator stack)
-//	               or (there is an operator at the top of the operator stack with greater precedence)
-//	               or (the operator at the top of the operator stack has equal precedence and the token is left associative))
-//	              and (the operator at the top of the operator stack is not a left parenthesis):
-//	            pop operators from the operator stack onto the output queue.
-//	        push it onto the operator stack.
-//	    if the token is a left paren (i.e. "("), then:
-//	        push it onto the operator stack.
-//	    if the token is a right paren (i.e. ")"), then:
-//	        while the operator at the top of the operator stack is not a left paren:
-//	            pop the operator from the operator stack onto the output queue.
-//	        /* If the stack runs out without finding a left paren, then there are mismatched parentheses. */
-//	        if there is a left paren at the top of the operator stack, then:
-//	            pop the operator from the operator stack and discard it
-//	/* After while loop, if operator stack not null, pop everything to output queue */
-//	if there are no more tokens to read then:
-//	    while there are still operator tokens on the stack:
-//	        /* If the operator token on the top of the stack is a paren, then there are mismatched parentheses. */
-//	        pop the operator from the operator stack onto the output queue.
-//	exit.
+import dev.jorel.fortelangprime.ast.expressions.Expr;
+import dev.jorel.fortelangprime.ast.expressions.ExprBinaryOp;
+import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.LeftBracket;
+import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.RightBracket;
+
+public class ShuntingYard {
+	
+	public static List<ShuntingYardable> flatten(ExprBinaryOp op) {
+		List<ShuntingYardable> tokens = new ArrayList<>();
+		if(op.hasBrackets()) {
+			tokens.add(new LeftBracket());
+		}
+		
+		if(op.getLeft() instanceof ExprBinaryOp) {
+			tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
+		} else {
+			tokens.add(op.getLeft());
+		}
+		
+		tokens.add(op.getOperation());
+		
+		if(op.getRight() instanceof ExprBinaryOp) {
+			tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
+		} else {
+			tokens.add(op.getRight());
+		}
+		
+		if(op.hasBrackets()) {
+			tokens.add(new RightBracket());
+		}
+		
+		return tokens;
+	}
+	
+	public static List<ShuntingYardable> doShuntingYard(List<ShuntingYardable> elements) {
+		
+		List<ShuntingYardable> outputQueue = new ArrayList<>();
+		Stack<ShuntingYardable> operatorStack = new Stack<>();
+		
+		while(!elements.isEmpty()) {
+			ShuntingYardable element = elements.get(0);
+			elements.remove(0);
+			if(element instanceof Expr) {
+				outputQueue.add(element);
+			}
+			if(element instanceof Operation) {
+				Operation operation = (Operation) element;
+				while(!operatorStack.isEmpty() && !(operatorStack.peek() instanceof LeftBracket) &&
+					((((Operation) operatorStack.peek()).getPrecedence() > operation.getPrecedence())
+					|| (((Operation) operatorStack.peek()).getPrecedence() == operation.getPrecedence() && operation.getAssociativity() == Associativity.LEFT))
+				) {
+					outputQueue.add(operatorStack.pop());
+				}
+				operatorStack.add(element);
+			}
+			if(element instanceof LeftBracket) {
+				operatorStack.add(element);
+			}
+			if(element instanceof RightBracket) {
+				while(!(operatorStack.peek() instanceof LeftBracket)) {
+					outputQueue.add(operatorStack.pop());
+				}
+				if(operatorStack.peek() instanceof LeftBracket) {
+					operatorStack.pop();
+				}
+			}
+		}
+		while(!operatorStack.isEmpty()) {
+			outputQueue.add(operatorStack.pop());
+		}
+		
+		return outputQueue;
+	}
 	
 }

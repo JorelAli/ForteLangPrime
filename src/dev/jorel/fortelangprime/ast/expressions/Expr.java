@@ -1,11 +1,12 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
 import dev.jorel.fortelangprime.ast.CodeableMethod;
+import dev.jorel.fortelangprime.ast.operation.ShuntingYardable;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
-public interface Expr extends CodeableMethod {
+public interface Expr extends CodeableMethod, ShuntingYardable {
 
 	// Type system
 	public Type getType(UniversalContext context);

@@ -3,7 +3,7 @@ package dev.jorel.fortelangprime.ast.operation;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.ForteLangPrimeParserConstants;
 
-public interface Operation {
+public interface Operation extends ShuntingYardable {
 	
 	public boolean isStandard();
 	public boolean isUnresolved();
