@@ -1,7 +1,7 @@
 package dev.jorel.fortelangprime.ast;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import dev.jorel.fortelangprime.ast.operation.CustomOperation;
 
@@ -15,17 +15,14 @@ public class FLPLibrary {
 	
 	public final List<CodeableClass> thingsToEmit;
 	
-	public FLPLibrary(String name, List<String> exports, List<CustomOperation> customOperations, List<FLPFunction> functions, List<RecordTypeDeclaration> typeDeclarations) {
+	public FLPLibrary(String name, List<String> exports, List<CodeableClass> thingsToEmit) {
 		this.name = name;
 		this.exports = exports;
-		this.customOperations = customOperations;
-		this.functions = functions;
-		this.typeDeclarations = typeDeclarations;
+		this.thingsToEmit = thingsToEmit;
 		
-		thingsToEmit = new ArrayList<>();
-		thingsToEmit.addAll(customOperations);
-		thingsToEmit.addAll(functions);
-		thingsToEmit.addAll(typeDeclarations);
+		this.customOperations = thingsToEmit.stream().filter(CustomOperation.class::isInstance).map(CustomOperation.class::cast).collect(Collectors.toList());
+		this.functions = thingsToEmit.stream().filter(FLPFunction.class::isInstance).map(FLPFunction.class::cast).collect(Collectors.toList());
+		this.typeDeclarations = thingsToEmit.stream().filter(RecordTypeDeclaration.class::isInstance).map(RecordTypeDeclaration.class::cast).collect(Collectors.toList());
 	}
 	
 }

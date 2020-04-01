@@ -47,10 +47,13 @@ return lib;
   }
 
   final public FLPLibrary program() throws ParseException {Token name; List<String> exports;
-        CustomOperation op;
-        List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
-        List<RecordTypeDeclaration> typeDeclarations;
-        List<FLPFunction> functions;
+//	CustomOperation op;
+//	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
+//	List<RecordTypeDeclaration> typeDeclarations;
+//	List<FLPFunction> functions;
+        CodeableClass thingToEmit;
+        FLPFunction f;
+        List<CodeableClass> thingsToEmit = new ArrayList<CodeableClass>();
     jj_consume_token(LIBRARY);
     name = jj_consume_token(VAR_NAME);
     jj_consume_token(OPENCBRACE);
@@ -60,9 +63,14 @@ return lib;
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case LCHEVRON:
+      case PRINTABLE:
+      case EQUATABLE:
+      case TYPE:
       case INFIX:
       case INFIXL:
-      case INFIXR:{
+      case INFIXR:
+      case VAR_NAME:{
         ;
         break;
         }
@@ -70,14 +78,50 @@ return lib;
         jj_la1[0] = jj_gen;
         break label_1;
       }
-      op = customOperator();
-customOperations.add(op);
-universalContext.addCustomOperation(op);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case INFIX:
+      case INFIXL:
+      case INFIXR:{
+        thingToEmit = customOperator();
+thingsToEmit.add(thingToEmit);
+        break;
+        }
+      case PRINTABLE:
+      case EQUATABLE:
+      case TYPE:{
+        thingToEmit = typeDeclaration();
+thingsToEmit.add(thingToEmit);
+        break;
+        }
+      case LCHEVRON:
+      case VAR_NAME:{
+        f = functionDeclaration();
+for(CodeableClass c : thingsToEmit) {
+                                if(c instanceof FLPFunction) {
+                                        FLPFunction function = (FLPFunction) c;
+                                        if(function.getName().equals(f.getName())) {
+                                                {if (true) throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());}
+                                        }
+                                }
+                        }
+                        thingsToEmit.add(f);
+//		  	for(FLPFunction function : functions) {
+//				if(function.getName().equals(f.getName())) {
+//					throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
+//				}
+//		  	}
+//			functions.add(f);
+
+        break;
+        }
+      default:
+        jj_la1[1] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     }
-    typeDeclarations = typeDeclarations();
-    functions = functions();
     jj_consume_token(CLOSECBRACE);
-return new FLPLibrary(name.image, exports, customOperations, functions, typeDeclarations);
+return new FLPLibrary(name.image, exports, thingsToEmit);
   }
 
   final public List<String> exports() throws ParseException {List<String> exports = new ArrayList<String>(); Token t;
@@ -89,7 +133,7 @@ return new FLPLibrary(name.image, exports, customOperations, functions, typeDecl
         break;
         }
       default:
-        jj_la1[1] = jj_gen;
+        jj_la1[2] = jj_gen;
         break label_2;
       }
       jj_consume_token(EXPORT);
@@ -105,7 +149,7 @@ universalContext.exportAll();
         break;
         }
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[3] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -118,7 +162,6 @@ return exports;
 { }
   }
 
-//CustomOperation(Associativity associativity, int precedence, String internalName, String operatorToken, Type leftType, Type rightType, Type returnType, Expr body)
   final public CustomOperation customOperator() throws ParseException {Token start;
         Token t;
         Token tempName;
@@ -149,7 +192,7 @@ associativity = Associativity.LEFT;
       break;
       }
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -168,7 +211,7 @@ tempName = null;
       break;
       }
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       ;
     }
     jj_consume_token(LCHEVRON);
@@ -183,7 +226,7 @@ tempName = null;
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       ;
     }
     jj_consume_token(LCHEVRON);
@@ -197,14 +240,13 @@ rightType = Pair.of(tempName == null ? null : tempName.image, type);
     jj_consume_token(EQUALS);
     body = expression();
     jj_consume_token(SEMICOLON);
-return new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body);
+CustomOperation result = new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body);
+                universalContext.addCustomOperation(result);
+                return result;
   }
 
   final public List<RecordTypeDeclaration> typeDeclarations() throws ParseException {List<RecordTypeDeclaration> list = new ArrayList<RecordTypeDeclaration>();
-        Token name;
-        TypeRecord type;
-        boolean printable = false;
-        boolean equatable = false;
+        RecordTypeDeclaration decl;
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -215,46 +257,54 @@ return new CustomOperation(start.beginLine, associativity, precedence, internalN
         break;
         }
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         break label_3;
       }
-      label_4:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case PRINTABLE:
-        case EQUATABLE:{
-          ;
-          break;
-          }
-        default:
-          jj_la1[7] = jj_gen;
-          break label_4;
-        }
-        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case PRINTABLE:{
-          jj_consume_token(PRINTABLE);
-printable = true;
-          break;
-          }
-        case EQUATABLE:{
-          jj_consume_token(EQUATABLE);
-equatable = true;
-          break;
-          }
-        default:
-          jj_la1[8] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-      jj_consume_token(TYPE);
-      name = jj_consume_token(VAR_NAME);
-      jj_consume_token(EQUALS);
-      type = recordType(name.image);
-universalContext.addRecordType(name.image, type);
-                        list.add(new RecordTypeDeclaration(name.image, type, printable, equatable));
+      decl = typeDeclaration();
+list.add(decl);
     }
 return list;
+  }
+
+  final public RecordTypeDeclaration typeDeclaration() throws ParseException {Token name;
+        TypeRecord type;
+        boolean printable = false;
+        boolean equatable = false;
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PRINTABLE:
+      case EQUATABLE:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[8] = jj_gen;
+        break label_4;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PRINTABLE:{
+        jj_consume_token(PRINTABLE);
+printable = true;
+        break;
+        }
+      case EQUATABLE:{
+        jj_consume_token(EQUATABLE);
+equatable = true;
+        break;
+        }
+      default:
+        jj_la1[9] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+    jj_consume_token(TYPE);
+    name = jj_consume_token(VAR_NAME);
+    jj_consume_token(EQUALS);
+    type = recordType(name.image);
+universalContext.addRecordType(name.image, type);
+                return new RecordTypeDeclaration(name.image, type, printable, equatable);
   }
 
   final public List<FLPFunction> functions() throws ParseException {List<FLPFunction> functions = new ArrayList<FLPFunction>();
@@ -268,7 +318,7 @@ return list;
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         break label_5;
       }
       f = functionDeclaration();
@@ -293,7 +343,7 @@ return functions;
       break;
       }
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
     name = jj_consume_token(VAR_NAME);
@@ -320,7 +370,7 @@ genericNames.add(new TypeNamedGeneric(t.image));
         break;
         }
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         break label_6;
       }
       jj_consume_token(COMMA);
@@ -351,7 +401,7 @@ return genericNames;
       break;
       }
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -392,7 +442,7 @@ return expr;
       break;
       }
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[14] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -407,7 +457,7 @@ return expr;
         break;
         }
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[15] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -439,7 +489,7 @@ return expr;
         break;
         }
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[16] = jj_gen;
         break label_7;
       }
       t = jj_consume_token(VAR_NAME);
@@ -501,7 +551,7 @@ value = false;
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -529,7 +579,7 @@ varName = null;
       break;
       }
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
     jj_consume_token(LCHEVRON);
@@ -548,7 +598,7 @@ types.addAll(otherTypes);
       break;
       }
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       ;
     }
 return types;
@@ -582,14 +632,14 @@ type = new TypeBool();
         break;
         }
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[20] = jj_gen;
         ;
       }
 type = new TypeNamedGeneric(t.image);
       break;
       }
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -608,7 +658,7 @@ return type;
         break;
         }
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         break label_9;
       }
       t = jj_consume_token(VAR_NAME);
@@ -644,6 +694,25 @@ return new TypeRecord(name, types);
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
+  }
+
+  private boolean jj_3R_26()
+ {
+    if (jj_scan_token(IF)) return true;
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(25)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(48)) return true;
+    }
+    if (jj_3R_10()) return true;
+    return false;
   }
 
   private boolean jj_3R_21()
@@ -825,25 +894,6 @@ return new TypeRecord(name, types);
     return false;
   }
 
-  private boolean jj_3R_26()
- {
-    if (jj_scan_token(IF)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(25)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(48)) return true;
-    }
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   /** Generated Token Manager. */
   public ForteLangPrimeParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -855,7 +905,7 @@ return new TypeRecord(name, types);
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[22];
+  final private int[] jj_la1 = new int[23];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -863,10 +913,10 @@ return new TypeRecord(name, types);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x80000,0x0,0x0,0x0,0x20300000,0x300000,0x300000,0x20000,0x20000,0x400,0x4000000a,0x40000008,0x2000000,0x0,0x0,0x0,0x200,0x20000,0x1c000000,0x0,};
+      jj_la1_0 = new int[] {0x20320000,0x20320000,0x0,0x80000,0x0,0x0,0x0,0x20300000,0x300000,0x300000,0x20000,0x20000,0x400,0x4000000a,0x40000008,0x2000000,0x0,0x0,0x0,0x200,0x20000,0x1c000000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0xe,0x200,0x1000,0xe,0x1000,0x1000,0x0,0x0,0x0,0x1000,0x0,0x0,0xb070,0xb070,0x10000,0x1000,0x30,0x1000,0x0,0x0,0x1000,0x1000,};
+      jj_la1_1 = new int[] {0x100e,0x100e,0x200,0x1000,0xe,0x1000,0x1000,0x0,0x0,0x0,0x1000,0x0,0x0,0xb070,0xb070,0x10000,0x1000,0x30,0x1000,0x0,0x0,0x1000,0x1000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[3];
   private boolean jj_rescan = false;
@@ -879,7 +929,7 @@ return new TypeRecord(name, types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -906,7 +956,7 @@ return new TypeRecord(name, types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -916,7 +966,7 @@ return new TypeRecord(name, types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -926,7 +976,7 @@ return new TypeRecord(name, types);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1057,7 +1107,7 @@ return new TypeRecord(name, types);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 22; i++) {
+    for (int i = 0; i < 23; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

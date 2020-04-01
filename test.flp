@@ -4,7 +4,6 @@ Library Sample {
 
 } {
 
-	infix 2 bind (>>=) <Bool> -> <Bool> -> <Bool> = true;
 
 	## Record type declaration
 	@Equatable
@@ -56,4 +55,5 @@ Library Sample {
 
 	testCustomOperator <Bool> = true >>= false;
 
+	infix 2 bind (>>=) <Bool> -> <Bool> -> <Bool> = true;
 }

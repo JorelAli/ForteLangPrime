@@ -171,10 +171,13 @@ FLPLibrary input() : { FLPLibrary lib; } {
 
 FLPLibrary program() : {
 	Token name; List<String> exports;
-	CustomOperation op;
-	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
-	List<RecordTypeDeclaration> typeDeclarations;
-	List<FLPFunction> functions;
+//	CustomOperation op;
+//	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
+//	List<RecordTypeDeclaration> typeDeclarations;
+//	List<FLPFunction> functions;
+	CodeableClass thingToEmit;
+	FLPFunction f;
+	List<CodeableClass> thingsToEmit = new ArrayList<CodeableClass>();
 } {
   	< LIBRARY >
 	name = < VAR_NAME >
@@ -187,15 +190,28 @@ FLPLibrary program() : {
 
 	//TODO: Make it so you can put declarations anywhere, not just at the start of the file
 	(
-		op = customOperator()
-		{ customOperations.add(op); }
-		{ universalContext.addCustomOperation(op); }
+		thingToEmit = customOperator()
+		{ thingsToEmit.add(thingToEmit); }
+	|
+		 thingToEmit = typeDeclaration()
+		 { thingsToEmit.add(thingToEmit); }
+	|
+		f = functionDeclaration()
+		{
+		  	for(CodeableClass c : thingsToEmit) {
+				if(c instanceof FLPFunction) {
+					FLPFunction function = (FLPFunction) c;
+					if(function.getName().equals(f.getName())) {
+						throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
+					}
+				}
+		  	}
+		  	thingsToEmit.add(f);
+		}
 	)*
-	typeDeclarations = typeDeclarations()
-	functions = functions()
 
 	< CLOSECBRACE >
-	{ return new FLPLibrary(name.image, exports, customOperations, functions, typeDeclarations); }
+	{ return new FLPLibrary(name.image, exports, thingsToEmit); }
 }
 
 List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
@@ -215,7 +231,6 @@ void epsilon() : { } {
 	}
 }
 
-//CustomOperation(Associativity associativity, int precedence, String internalName, String operatorToken, Type leftType, Type rightType, Type returnType, Expr body)
 CustomOperation customOperator() : {
 	Token start;
 	Token t;
@@ -260,28 +275,39 @@ CustomOperation customOperator() : {
 	< EQUALS >
 	body = expression()
 	< SEMICOLON >
-	{ return new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body); }
+	{
+	  	CustomOperation result = new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body);
+		universalContext.addCustomOperation(result);
+		return result;
+	}
 }
 
 List<RecordTypeDeclaration> typeDeclarations() : {
 	List<RecordTypeDeclaration> list = new ArrayList<RecordTypeDeclaration>();
+	RecordTypeDeclaration decl;
+} {
+  	(
+  	  	decl = typeDeclaration()
+		{ list.add(decl); }
+	)*
+	{ return list; }
+}
+
+RecordTypeDeclaration typeDeclaration() : {
 	Token name;
 	TypeRecord type;
 	boolean printable = false;
 	boolean equatable = false;
 } {
-  	(
-  	  	(< PRINTABLE > { printable = true; } | < EQUATABLE > { equatable = true; })*
-		< TYPE >
-		name = < VAR_NAME >
-		< EQUALS >
-		type = recordType(name.image)
-		{
-			universalContext.addRecordType(name.image, type); 
-			list.add(new RecordTypeDeclaration(name.image, type, printable, equatable));
-		}
-	)*
-	{ return list; }
+	(< PRINTABLE > { printable = true; } | < EQUATABLE > { equatable = true; })*
+	< TYPE >
+	name = < VAR_NAME >
+	< EQUALS >
+	type = recordType(name.image)
+	{
+		universalContext.addRecordType(name.image, type); 
+		return new RecordTypeDeclaration(name.image, type, printable, equatable);
+	}
 }
 
 List<FLPFunction> functions() : {
