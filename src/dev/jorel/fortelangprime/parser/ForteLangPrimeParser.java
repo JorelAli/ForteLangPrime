@@ -72,6 +72,7 @@ return lib;
       }
       op = customOperator();
 customOperations.add(op);
+universalContext.addCustomOperation(op);
     }
     typeDeclarations = typeDeclarations();
     functions = functions();
@@ -155,7 +156,7 @@ associativity = Associativity.LEFT;
     t = jj_consume_token(INT_LITERAL);
 precedence = Integer.parseInt(t.image);
     t = jj_consume_token(VAR_NAME);
-internalName = t.image;
+internalName = t.image; currentFunctionName = t.image;
     jj_consume_token(OPENBRACKET);
     t = jj_consume_token(CUSTOM_OPERATOR);
 operatorToken = t.image;
@@ -645,25 +646,6 @@ return new TypeRecord(name, types);
     finally { jj_save(2, xla); }
   }
 
-  private boolean jj_3R_26()
- {
-    if (jj_scan_token(IF)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(25)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(48)) return true;
-    }
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   private boolean jj_3R_21()
  {
     if (jj_3R_27()) return true;
@@ -840,6 +822,25 @@ return new TypeRecord(name, types);
   private boolean jj_3R_22()
  {
     if (jj_scan_token(INT_LITERAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26()
+ {
+    if (jj_scan_token(IF)) return true;
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(25)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(48)) return true;
+    }
+    if (jj_3R_10()) return true;
     return false;
   }
 

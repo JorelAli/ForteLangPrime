@@ -35,7 +35,7 @@ public class Main {
 		System.out.println(Sample.eqBool(true, false));
 		
 		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
-		
+		System.out.println(Sample.testCustomOperator());
 	}
 	
 	

@@ -186,7 +186,11 @@ FLPLibrary program() : {
 	< OPENCBRACE >
 
 	//TODO: Make it so you can put declarations anywhere, not just at the start of the file
-	(op = customOperator() { customOperations.add(op); } )*
+	(
+		op = customOperator()
+		{ customOperations.add(op); }
+		{ universalContext.addCustomOperation(op); }
+	)*
 	typeDeclarations = typeDeclarations()
 	functions = functions()
 
@@ -233,7 +237,7 @@ CustomOperation customOperator() : {
 	| start = < INFIXL > { associativity = Associativity.LEFT; }
 	)
 	t = < INT_LITERAL > { precedence = Integer.parseInt(t.image); }
-	t = < VAR_NAME > { internalName = t.image; }
+	t = < VAR_NAME > { internalName = t.image; currentFunctionName = t.image; }
 	< OPENBRACKET >
 	t = < CUSTOM_OPERATOR > { operatorToken = t.image; }
 	< CLOSEBRACKET >

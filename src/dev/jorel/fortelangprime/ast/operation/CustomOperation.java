@@ -49,11 +49,18 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 	public boolean isStandard() {
 		return false;
 	}
+	
+	public String getInternalName() {
+		return this.internalName;
+	}
+	
+	public Type getReturnType(UniversalContext context) {
+		return this.returnType;
+	}
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
-		// TODO Auto-generated method stub
-		System.out.println("TODO: EMIT");
+		body.emit(methodVisitor, context);
 	}
 
 	@Override
@@ -70,16 +77,19 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 	public Operation resolve(UniversalContext context) {
 		return this;
 	}
-
-	@Override
-	public void emit(ClassWriter classWriter, UniversalContext context) {
+	
+	public String getTypeDescriptor(UniversalContext context) {
 		StringBuilder returnTypeString = new StringBuilder("(");
 		returnTypeString.append(leftType.second().toBytecodeString(context));
 		returnTypeString.append(rightType.second().toBytecodeString(context));
 		returnTypeString.append(")");
 		returnTypeString.append(returnType.toBytecodeString(context));
-		
-		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, internalName, returnTypeString.toString(), null, null);
+		return returnTypeString.toString();
+	}
+
+	@Override
+	public void emit(ClassWriter classWriter, UniversalContext context) {
+		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, internalName, getTypeDescriptor(context), null, null);
 		methodVisitor.visitCode();
 		
 		Label lineNumber = new Label();

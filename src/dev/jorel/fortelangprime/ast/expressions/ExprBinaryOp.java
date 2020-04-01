@@ -37,7 +37,7 @@ public class ExprBinaryOp implements Expr {
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
-//			operation.
+			return operation.getReturnType(context);
 		}
 		
 		return null;
@@ -56,8 +56,9 @@ public class ExprBinaryOp implements Expr {
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
-//			operation.
-			return null;
+			// TODO: Properly type check custom operators
+			//Check that the operator has been declared!
+			return operation.getReturnType(context);
 		}
 		return null;		
 	}
@@ -109,7 +110,10 @@ public class ExprBinaryOp implements Expr {
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
-//			operation.
+			left.emit(methodVisitor, context);
+			right.emit(methodVisitor, context);
+			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), operation.getInternalName(), operation.getTypeDescriptor(context), true);
+//			System.out.println("TODO: emit binop custom op");
 		}
 	}
 
@@ -123,7 +127,7 @@ public class ExprBinaryOp implements Expr {
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
-//			operation.
+			return operation.returnType(context);
 		}
 		return -1;
 	}
