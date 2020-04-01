@@ -8,6 +8,7 @@ import dev.jorel.fortelangprime.ast.operation.Operation;
 import dev.jorel.fortelangprime.ast.operation.StandardOperation;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
@@ -87,6 +88,7 @@ public class ExprBinaryOp implements Expr {
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		if(op.isStandard()) {
 			StandardOperation operation = (StandardOperation) op;
+			FLPCompiler.log("Emitting standard operation " + operation.name());
 			switch(operation) {
 			case EQUALS:
 				left.emit(methodVisitor, context);
@@ -110,6 +112,7 @@ public class ExprBinaryOp implements Expr {
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
+			FLPCompiler.log("Emitting custom operation " + operation.getOperatorToken());
 			left.emit(methodVisitor, context);
 			right.emit(methodVisitor, context);
 			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), operation.getInternalName(), operation.getTypeDescriptor(context), true);

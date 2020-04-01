@@ -1,5 +1,6 @@
 package dev.jorel.fortelangprime.compiler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,8 @@ import dev.jorel.fortelangprime.util.Pair;
 public class UniversalContext {
 
 	private String libName;
+	private int javaVersion;
+	private File outputDir;
 	private boolean allExports = false;
 	List<CustomOperation> customOperations;
 	Map<String, TypeFunction> functions;
@@ -104,6 +107,22 @@ public class UniversalContext {
 			}
 		}
 		return null;
+	}
+
+	public void setJavaVersion(int javaVersion) {
+		this.javaVersion = javaVersion;
+	}
+	
+	public int getJavaVersion() {
+		return this.javaVersion;
+	}
+	
+	public File getOutputDir() {
+		return this.outputDir;
+	}
+	
+	public void setOutputDir(File outputDir) {
+		this.outputDir = outputDir;
 	}
 
 }

@@ -4,6 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
@@ -54,8 +55,10 @@ public class ExprBoolLit implements Expr {
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		if(value) {
+			FLPCompiler.log("Emitting boolean value true");
 			methodVisitor.visitInsn(ICONST_1);
 		} else {
+			FLPCompiler.log("Emitting boolean value false");
 			methodVisitor.visitInsn(ICONST_0);
 		}
 	}

@@ -8,6 +8,7 @@ import dev.jorel.fortelangprime.ast.CodeableClass;
 import dev.jorel.fortelangprime.ast.CodeableMethod;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.util.Pair;
 
@@ -96,6 +97,7 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 
 	@Override
 	public void emit(ClassWriter classWriter, UniversalContext context) {
+		FLPCompiler.log("\nEmitting custom operator " + operatorToken + " with internal name " + internalName);
 		MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, internalName, getTypeDescriptor(context), null, null);
 		methodVisitor.visitCode();
 		

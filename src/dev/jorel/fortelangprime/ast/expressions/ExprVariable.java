@@ -8,6 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.util.Pair;
@@ -123,12 +124,16 @@ public class ExprVariable implements Expr {
 		Type paramType = getType(context);
 		
 		if(paramType.getInternalType() == InternalType.FUNCTION) {
+			FLPCompiler.log("Emitting function call " + name);
 			TypeFunction tf = (TypeFunction) paramType;
 			for(Expr e : params) {
+				FLPCompiler.log("Emitting parameters for " + name + ": " + e.getInternalType());
 				e.emit(methodVisitor, context);
 			}
+			FLPCompiler.log("Emitting function call invocation");
 			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), name, tf.toBytecodeString(context), true);
 		} else {
+			FLPCompiler.log("Emitting parameter from location function (indexed: " + getIndex(context) + ")");
 			methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
 		}
 	}

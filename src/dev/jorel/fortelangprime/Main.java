@@ -40,6 +40,10 @@ public class Main {
 		System.out.println(TAB + TAB + "--javaVersion=9 to compile classes for Java 9 and higher. By default, we");
 		System.out.println(TAB + TAB + "use Java version 1.8!");
 		System.out.println();
+		System.out.println(TAB + CYAN + "--verbose" + RESET);
+		System.out.println(TAB + TAB + "Outputs message about what the compiler is doing. There's a lot of");
+		System.out.println(TAB + TAB + "messages output by the compiler, you've been warned!");
+		System.out.println();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -65,6 +69,10 @@ public class Main {
 			
 			if(s.startsWith("--outputDir=")) {
 				outputDir = new File(str.substring(12));
+			}
+			
+			if(s.startsWith("--verbose=")) {
+				FLPCompiler.VERBOSE = true;
 			}
 		}
 		

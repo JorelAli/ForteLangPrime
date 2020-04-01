@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.util.Pair;
@@ -122,9 +123,11 @@ public class ExprRecordConstruction implements Expr {
 		if(base != null) {
 			if(base.getInternalType() == ExpressionType.VARIABLE) {
 				ExprVariable baseVar = (ExprVariable) base;
+				FLPCompiler.log("Emitting record update using " + baseVar.getName());
 				TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
 				TypeRecord tr = (TypeRecord) context.getRecordType(tng.getName());
 				
+				FLPCompiler.log("Reordering record parameters to match type");
 				List<String> orderedNames = tr.getTypes().stream().map(Pair::first).collect(Collectors.toList()); 
 				List<Pair<String, Expr>> newExprs = new ArrayList<>();
 				naming: for(String str : orderedNames) {
@@ -136,10 +139,12 @@ public class ExprRecordConstruction implements Expr {
 					}
 					newExprs.add(null);
 				}
+				FLPCompiler.log("Invoking base function");
 				//TODO: This is only temporarily (), it will have to include function params later
 				methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), baseVar.getName(), "()L" + context.getLibraryName() + tr.toBytecodeString(context), true);
 				methodVisitor.visitVarInsn(ASTORE, 0);
 				
+				FLPCompiler.log("Loading instance of " + tng.getName());
 				methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + tng.getName());
 				methodVisitor.visitInsn(DUP);
 				
@@ -147,18 +152,23 @@ public class ExprRecordConstruction implements Expr {
 					Pair<String, Expr> pair = newExprs.get(i);
 					Pair<String, Type> expectedPair = tr.getTypes().get(i);
 					if(pair == null) {
+						FLPCompiler.log("Loading local parameter " + expectedPair.first() + " from base");
 						methodVisitor.visitVarInsn(ALOAD, 0);
 						methodVisitor.visitFieldInsn(GETFIELD, context.getLibraryName() + "$" + tng.getName(), expectedPair.first(), expectedPair.second().toBytecodeString(context));
 					} else {
+						FLPCompiler.log("Loading parameter " + pair.first());
 						pair.second().emit(methodVisitor, context);
 					}
 				}
 				
 				String paramSignature = tr.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
+				FLPCompiler.log("Calling constructor for " + tng.getName());
 				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
 				methodVisitor.visitInsn(ARETURN);
 				methodVisitor.visitMaxs(0, 0);
 				methodVisitor.visitEnd();
+			} else {
+				//wtf?
 			}
 		} else {
 			this.values = reorderParams(context, this.values);
@@ -171,12 +181,15 @@ public class ExprRecordConstruction implements Expr {
 				name = context.getNameOfRecordTypeMatching(types);
 			}
 			
+			FLPCompiler.log("Loading instance of " + name);
 			methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + name);
 			methodVisitor.visitInsn(DUP);
+			FLPCompiler.log("Emitting values for record");
 			values.forEach(exprPair -> {
 				exprPair.second().emit(methodVisitor, context);
 			});
 			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
+			FLPCompiler.log("Calling constructor for " + name);
 			methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
 			methodVisitor.visitInsn(ARETURN);
 			methodVisitor.visitMaxs(0, 0);

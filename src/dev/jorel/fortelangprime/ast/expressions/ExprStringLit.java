@@ -4,6 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeString;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
@@ -49,6 +50,7 @@ public class ExprStringLit implements Expr {
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
+		FLPCompiler.log("Emitting String value " + value);
 		methodVisitor.visitLdcInsn(value);
 	}
 

@@ -14,17 +14,6 @@ import dev.jorel.fortelangprime.ast.FLPLibrary;
 
 public class BytecodeGenerator implements Opcodes {
 	
-	public enum JavaVersion {
-		V_1(V1_1), V_2(V1_2), V_3(V1_3), V_4(V1_4), V_5(V1_5), V_6(V1_6), V_7(V1_7), V_8(V1_8), V_9(V9), V_10(V10), V_11(V11),
-		V_12(V12), V_13(V13), V_14(V14);
-		
-		private int version;
-		
-		JavaVersion(int version) {
-			this.version = version;
-		}
-	}
-	
 	private FLPLibrary lib;
 	private UniversalContext context; 
 	private int javaVersion;
@@ -33,7 +22,7 @@ public class BytecodeGenerator implements Opcodes {
 	public BytecodeGenerator(UniversalContext context, FLPLibrary lib, JavaVersion version) {
 		this.context = context;
 		this.lib = lib;
-		this.javaVersion = version.version;
+		this.javaVersion = version.getVersion();
 	}
 	
 	/**
@@ -41,15 +30,16 @@ public class BytecodeGenerator implements Opcodes {
 	 * @throws CompilationException 
 	 */
 	public void compile() throws CompilationException {
-		
+
 		//Applies the exports list
 		for(FLPFunction f : lib.functions) {
 			if(lib.exports.contains(f.getName())) {
+				FLPCompiler.log("Exporting function " + f.getName());
 				f.setPublic();
 			}
 		}
 		
-		//Checks the exports list for invalid exported functions
+		FLPCompiler.log("Checking export list for invalid functions");
 		Set<String> declaredFunctionNames = lib.functions.parallelStream().map(FLPFunction::getName).collect(Collectors.toSet());
 		for(String str : lib.exports) {
 			if(!declaredFunctionNames.contains(str)) {
@@ -61,12 +51,14 @@ public class BytecodeGenerator implements Opcodes {
 	}
 	
 	public void writeToFile(File parentFolder) throws IOException {
+		FLPCompiler.log("\nWriting class to file " + parentFolder + "/" + lib.name + ".class");
 		Files.write(new File(parentFolder, lib.name + ".class").toPath(), compiledData);
 	}
 	
 	private byte[] generateBytecode(String metadata, FLPLibrary lib) {
 		String fileName = lib.name + ".flp"; 
 		
+		FLPCompiler.log("Compiling main class " + lib.name);
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, lib.name, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
