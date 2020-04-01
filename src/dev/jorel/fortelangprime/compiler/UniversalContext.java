@@ -13,7 +13,7 @@ import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.parser.ParseException;
-import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.util.Pair;
 
 /**
  * Context about the code, populated by the parser and used by everything

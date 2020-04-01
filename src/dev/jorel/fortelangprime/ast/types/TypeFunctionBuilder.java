@@ -3,7 +3,7 @@ package dev.jorel.fortelangprime.ast.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.util.Pair;
 
 public class TypeFunctionBuilder {
 

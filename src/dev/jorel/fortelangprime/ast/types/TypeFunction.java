@@ -3,8 +3,8 @@ package dev.jorel.fortelangprime.ast.types;
 import java.util.List;
 
 import dev.jorel.fortelangprime.compiler.UniversalContext;
-import dev.jorel.fortelangprime.parser.util.Pair;
-import dev.jorel.fortelangprime.parser.util.StreamUtils;
+import dev.jorel.fortelangprime.util.Pair;
+import dev.jorel.fortelangprime.util.StreamUtils;
 
 public class TypeFunction implements Type {
 	

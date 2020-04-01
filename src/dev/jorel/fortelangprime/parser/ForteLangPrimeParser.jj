@@ -21,8 +21,8 @@ import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
 import dev.jorel.fortelangprime.ast.operation.*;
-import dev.jorel.fortelangprime.parser.util.*;
 import dev.jorel.fortelangprime.compiler.*;
+import dev.jorel.fortelangprime.util.*;
 
 public class ForteLangPrimeParser {
 
@@ -163,13 +163,13 @@ SKIP : {
 }
 
 /** Main endpoint */
-FLPLibrary input() : { FLPLibrary lib; } {
+private FLPLibrary input() : { FLPLibrary lib; } {
 	lib = program()
 	<EOF>
 	{ return lib; }
 }
 
-FLPLibrary program() : {
+private FLPLibrary program() : {
 	Token name; List<String> exports;
 //	CustomOperation op;
 //	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
@@ -214,7 +214,7 @@ FLPLibrary program() : {
 	{ return new FLPLibrary(name.image, exports, thingsToEmit); }
 }
 
-List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
+private List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
 	(
 	  	< EXPORT >
 	  	(			t = < VAR_NAME > { exports.add(t.image); }
@@ -225,13 +225,7 @@ List<String> exports() : { List<String> exports = new ArrayList<String>(); Token
 	{ return exports; }
 }
 
-void epsilon() : { } {
-	{
-	  { }
-	}
-}
-
-CustomOperation customOperator() : {
+private CustomOperation customOperator() : {
 	Token start;
 	Token t;
 	Token tempName;
@@ -282,18 +276,7 @@ CustomOperation customOperator() : {
 	}
 }
 
-List<RecordTypeDeclaration> typeDeclarations() : {
-	List<RecordTypeDeclaration> list = new ArrayList<RecordTypeDeclaration>();
-	RecordTypeDeclaration decl;
-} {
-  	(
-  	  	decl = typeDeclaration()
-		{ list.add(decl); }
-	)*
-	{ return list; }
-}
-
-RecordTypeDeclaration typeDeclaration() : {
+private RecordTypeDeclaration typeDeclaration() : {
 	Token name;
 	TypeRecord type;
 	boolean printable = false;
@@ -310,25 +293,7 @@ RecordTypeDeclaration typeDeclaration() : {
 	}
 }
 
-List<FLPFunction> functions() : {
-  	List<FLPFunction> functions = new ArrayList<FLPFunction>();
-  	FLPFunction f;
-} {
-  	( 	  
-		f = functionDeclaration()
-		{
-		  	for(FLPFunction function : functions) {
-				if(function.getName().equals(f.getName())) {
-					throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
-				}
-		  	}
-			functions.add(f);
-		}
-	)*
-	{ return functions; }
-} 
-
-FLPFunction functionDeclaration() : {
+private FLPFunction functionDeclaration() : {
 	List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
   	Token name;
   	Expr expr;
@@ -349,7 +314,7 @@ FLPFunction functionDeclaration() : {
 	{ return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr); }
 }
 
-List<TypeNamedGeneric> genericTypeDeclaration() : {
+private List<TypeNamedGeneric> genericTypeDeclaration() : {
 	Token t;
 	List<TypeNamedGeneric> genericNames = new ArrayList<TypeNamedGeneric>();
 } {
@@ -364,7 +329,7 @@ List<TypeNamedGeneric> genericTypeDeclaration() : {
 	{ return genericNames; }
 }
 
-Expr expression() : {
+private Expr expression() : {
   	Expr expr;
 } {
   	( expr = innerExpression(false)
@@ -373,7 +338,7 @@ Expr expression() : {
 	{ return expr; }
 }
 
-Expr innerExpression(boolean withBrackets) : {
+private Expr innerExpression(boolean withBrackets) : {
   	Expr expr;
   	Expr secondaryExpr;
   	Token op;
@@ -394,7 +359,7 @@ Expr innerExpression(boolean withBrackets) : {
 	{ return expr; }
 }
 
-ExprRecordConstruction recordExpr() : {  
+private ExprRecordConstruction recordExpr() : {  
 	List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
 	Token startingToken;
 	Expr base = null;
@@ -416,7 +381,7 @@ ExprRecordConstruction recordExpr() : {
 	{ return new ExprRecordConstruction(startingToken.beginLine, base, values); }
 }
 
-ExprVariable variable() : {
+private ExprVariable variable() : {
   	Token t;
   	List<Expr> expressions = new ArrayList<Expr>();
   	Expr e;
@@ -428,7 +393,7 @@ ExprVariable variable() : {
   	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName, expressions); }
 }
 
-ExprIfStatement ifStatement() : {
+private ExprIfStatement ifStatement() : {
 	Token t;
   	Expr a;
   	Expr b;
@@ -443,14 +408,14 @@ ExprIfStatement ifStatement() : {
   	{ return new ExprIfStatement(t.beginLine, a, b, c); }
 }
 
-ExprIntLit integer() : {
+private ExprIntLit integer() : {
   	Token t;
 } {
   	t = < INT_LITERAL >
   	{ return new ExprIntLit(t.beginLine, Integer.parseInt(t.image)); }	
 }
 
-ExprBoolLit bool() : {
+private ExprBoolLit bool() : {
 	Token t;
 	boolean value;
 } {
@@ -460,21 +425,21 @@ ExprBoolLit bool() : {
 	{ return new ExprBoolLit(t.beginLine, value); }
 }
 
-ExprStringLit string() : {
+private ExprStringLit string() : {
   	Token t;
 } {
   	t = < STRING >
 	{ return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1)); }
 }
 
-ExprPanic panic() : {
+private ExprPanic panic() : {
 	Token t;
 } {
 	t = < PANIC >
 	{ return new ExprPanic(t.beginLine); }
 } 
 
-List<Pair<String, Type>> functionTypes() : {
+private List<Pair<String, Type>> functionTypes() : {
   	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
   	List<Pair<String, Type>> otherTypes = new ArrayList<Pair<String, Type>>();
 	Type t;
@@ -502,7 +467,7 @@ List<Pair<String, Type>> functionTypes() : {
 	{ return types; }
 }
 
-Type type() : {
+private Type type() : {
 	Token t;
 	Type type;
 } {
@@ -511,13 +476,11 @@ Type type() : {
 	| < TYPE_BOOL > { type = new TypeBool(); }
 	//TODO: Add generic to this constructor
 	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
-	//TODO: Implement record types
-//	| type = recordType("")
 	)
 	{ return type; }
 }
 
-TypeRecord recordType(String name) : {
+private TypeRecord recordType(String name) : {
 	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
 	Token t;
 	Type type;

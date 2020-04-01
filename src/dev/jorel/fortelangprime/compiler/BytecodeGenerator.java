@@ -7,18 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
-import dev.jorel.fortelangprime.ast.RecordTypeDeclaration;
-import dev.jorel.fortelangprime.ast.operation.CustomOperation;
-import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
-import dev.jorel.fortelangprime.parser.util.Pair;
-import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 public class BytecodeGenerator implements Opcodes {
 	

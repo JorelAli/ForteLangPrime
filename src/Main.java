@@ -6,6 +6,8 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		
+		dev.jorel.fortelangprime.Main.printHelp();
+		
 		File[] files = new File(".").listFiles(f -> f.toString().endsWith("flp"));
 		for(File file : files) {
 			new FLPCompiler(file, new File("classfolder")).compile();

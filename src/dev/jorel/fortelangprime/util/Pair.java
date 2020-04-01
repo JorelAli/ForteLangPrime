@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime.parser.util;
+package dev.jorel.fortelangprime.util;
 
 public class Pair<A, B> {
 

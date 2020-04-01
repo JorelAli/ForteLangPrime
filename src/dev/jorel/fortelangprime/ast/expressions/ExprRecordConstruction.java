@@ -11,8 +11,8 @@ import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
-import dev.jorel.fortelangprime.parser.util.Pair;
-import dev.jorel.fortelangprime.parser.util.StreamUtils;
+import dev.jorel.fortelangprime.util.Pair;
+import dev.jorel.fortelangprime.util.StreamUtils;
 
 //Constructing a full record (not using record updating { blah | x = 2 })
 public class ExprRecordConstruction implements Expr {

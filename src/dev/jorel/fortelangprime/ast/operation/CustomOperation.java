@@ -9,7 +9,7 @@ import dev.jorel.fortelangprime.ast.CodeableMethod;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
-import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.util.Pair;
 
 public class CustomOperation implements Operation, CodeableMethod, CodeableClass {
 	
@@ -23,7 +23,6 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 	private final Type returnType;
 	private final Expr body;
 	
-	// infix 2 bind (>>=) <Bool> -> <Bool> -> <Type> = true;
 	public CustomOperation(int lineNumber, Associativity associativity, int precedence, String internalName, String operatorToken, Pair<String, Type> leftType, Pair<String, Type> rightType, Type returnType, Expr body) {
 		this.lineNumber = lineNumber;
 		this.associativity = associativity;
@@ -34,6 +33,14 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 		this.rightType = rightType;
 		this.returnType = returnType;
 		this.body = body;
+	}
+	
+	public int getPrecedence() {
+		return this.precedence;
+	}
+	
+	public Associativity getAssociativity() {
+		return this.associativity;
 	}
 	
 	@Override

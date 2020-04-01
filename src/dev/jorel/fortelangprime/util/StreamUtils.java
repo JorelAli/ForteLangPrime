@@ -1,4 +1,4 @@
-package dev.jorel.fortelangprime.parser.util;
+package dev.jorel.fortelangprime.util;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

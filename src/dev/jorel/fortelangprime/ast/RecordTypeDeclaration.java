@@ -14,8 +14,8 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
-import dev.jorel.fortelangprime.parser.util.Pair;
-import dev.jorel.fortelangprime.parser.util.StreamUtils;
+import dev.jorel.fortelangprime.util.Pair;
+import dev.jorel.fortelangprime.util.StreamUtils;
 
 public class RecordTypeDeclaration implements CodeableClass {
 	
