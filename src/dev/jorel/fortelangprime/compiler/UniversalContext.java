@@ -1,5 +1,6 @@
 package dev.jorel.fortelangprime.compiler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,9 +8,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import dev.jorel.fortelangprime.ast.operation.CustomOperation;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
+import dev.jorel.fortelangprime.parser.ParseException;
 import dev.jorel.fortelangprime.parser.util.Pair;
 
 /**
@@ -19,10 +22,12 @@ public class UniversalContext {
 
 	private String libName;
 	private boolean allExports = false;
+	List<CustomOperation> customOperations;
 	Map<String, TypeFunction> functions;
 	Map<String, TypeRecord> recordTypes;
 	
 	public UniversalContext() {
+		customOperations = new ArrayList<>();
 		this.functions = new HashMap<>();
 		this.recordTypes = new HashMap<>();
 	}
@@ -41,6 +46,24 @@ public class UniversalContext {
 	
 	public String getLibraryName() {
 		return this.libName;
+	}
+	
+	public void addCustomOperation(CustomOperation op) throws ParseException {
+		for(CustomOperation o : customOperations) {
+			if(o.getOperatorToken().equals(op.getOperatorToken())) {
+				throw new ParseException("Custom operator " + o.getOperatorToken() + " has already been declared ");
+			}
+		}
+		customOperations.add(op);
+	}
+	
+	public CustomOperation searchCustomOperation(String opToken) {
+		for(CustomOperation o : customOperations) {
+			if(o.getOperatorToken().equals(opToken)) {
+				return o;
+			}
+		}
+		return null; //TODO: Error?
 	}
 	
 	public void addFunction(String functionName, TypeFunction typeFunction) {

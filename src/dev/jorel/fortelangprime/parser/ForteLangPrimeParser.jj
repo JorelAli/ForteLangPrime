@@ -20,6 +20,7 @@ import java.util.List;
 import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
+import dev.jorel.fortelangprime.ast.operation.*;
 import dev.jorel.fortelangprime.parser.util.*;
 import dev.jorel.fortelangprime.compiler.*;
 
@@ -102,6 +103,8 @@ TOKEN : {
 	|	< THEN : "then" > 
 	|	< ELSE : "else" >
 	|	< INFIX : "infix">
+	|	< INFIXL : "infixl">
+	|	< INFIXR : "infixr">
 }
 
 // Constants
@@ -168,6 +171,8 @@ FLPLibrary input() : { FLPLibrary lib; } {
 
 FLPLibrary program() : {
 	Token name; List<String> exports;
+	CustomOperation op;
+	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
 	List<RecordTypeDeclaration> typeDeclarations;
 	List<FLPFunction> functions;
 } {
@@ -181,12 +186,12 @@ FLPLibrary program() : {
 	< OPENCBRACE >
 
 	//TODO: Make it so you can put declarations anywhere, not just at the start of the file
-	(customOperator())*
+	(op = customOperator() { customOperations.add(op); } )*
 	typeDeclarations = typeDeclarations()
 	functions = functions()
 
 	< CLOSECBRACE >
-	{ return new FLPLibrary(name.image, exports, functions, typeDeclarations); }
+	{ return new FLPLibrary(name.image, exports, customOperations, functions, typeDeclarations); }
 }
 
 List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
@@ -206,29 +211,52 @@ void epsilon() : { } {
 	}
 }
 
-void customOperator() : {
-
-} {
-	< INFIX >
-	< VAR_NAME >
-	< OPENBRACKET >
-	< CUSTOM_OPERATOR >
-	< CLOSEBRACKET >
+//CustomOperation(Associativity associativity, int precedence, String internalName, String operatorToken, Type leftType, Type rightType, Type returnType, Expr body)
+CustomOperation customOperator() : {
+	Token start;
+	Token t;
+	Token tempName;
 	
-	( < VAR_NAME > )?
+	Associativity associativity;
+	int precedence;
+	String internalName;
+	String operatorToken;
+	Type type;
+	Pair<String, Type> leftType;
+	Pair<String, Type> rightType;
+	Type returnType;
+	Expr body;
+	
+} {
+	( start = < INFIX > { associativity = Associativity.NONE; }
+	| start = < INFIXR > { associativity = Associativity.RIGHT; }
+	| start = < INFIXL > { associativity = Associativity.LEFT; }
+	)
+	t = < INT_LITERAL > { precedence = Integer.parseInt(t.image); }
+	t = < VAR_NAME > { internalName = t.image; }
+	< OPENBRACKET >
+	t = < CUSTOM_OPERATOR > { operatorToken = t.image; }
+	< CLOSEBRACKET >
+
+	{ tempName = null; }
+	( tempName = < VAR_NAME > )?
 	< LCHEVRON >
-	type()
+	type = type()
+	{ leftType = Pair.of(tempName == null ? null : tempName.image, type); }
 	< RCHEVRON >
 	< ARROW >
-	( < VAR_NAME > )?
+	{ tempName = null; }
+	( tempName = < VAR_NAME > )?
 	< LCHEVRON >
-	type()
+	type = type()
+	{ rightType = Pair.of(tempName == null ? null : tempName.image, type); }
 	< RCHEVRON >
 	< ARROW >
-	< LCHEVRON > type() < RCHEVRON >
+	< LCHEVRON > returnType = type() < RCHEVRON >
 	< EQUALS >
-	expression()
+	body = expression()
 	< SEMICOLON >
+	{ return new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body); }
 }
 
 List<RecordTypeDeclaration> typeDeclarations() : {
@@ -331,7 +359,7 @@ Expr innerExpression(boolean withBrackets) : {
 	( LOOKAHEAD(2)
 		( op = < EQUALS_EQUALS > | op = < CUSTOM_OPERATOR > )
 		secondaryExpr = expression()
-		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind), withBrackets);}
+		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind, op.image), withBrackets);}
 	)?
 	{ return expr; }
 }

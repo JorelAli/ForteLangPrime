@@ -3,6 +3,9 @@ package dev.jorel.fortelangprime.ast.expressions;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.ast.operation.CustomOperation;
+import dev.jorel.fortelangprime.ast.operation.Operation;
+import dev.jorel.fortelangprime.ast.operation.StandardOperation;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
@@ -26,23 +29,37 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public Type getType(UniversalContext context) {
-		switch(op.ID) {
-			case 0: //Equals_EQUALS
+		if(op.isStandard()) {
+			StandardOperation operation = (StandardOperation) op;
+			switch(operation) {
+			case EQUALS:
 				return new TypeBool();
+			}
+		} else {
+			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
+//			operation.
 		}
+		
 		return null;
 	}
 	
 	@Override
 	public Type typeCheck(UniversalContext context) throws TypeException {
-		switch(op.ID) {
-			case 0: //Equals_EQUALS
+		if(op.isStandard()) {
+			StandardOperation operation = (StandardOperation) op;
+			switch(operation) {
+			case EQUALS:
 				if(left.typeCheck(context).getInternalType() != right.typeCheck(context).getInternalType()) {
 					throw new TypeException("Left is " + left.getType(context).getInternalType() + " but right is " + right.getType(context).getInternalType());
 				}
 				return new TypeBool();
+			}
+		} else {
+			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
+//			operation.
+			return null;
 		}
-		return null;
+		return null;		
 	}
 
 	@Override
@@ -67,8 +84,10 @@ public class ExprBinaryOp implements Expr {
 
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
-		switch(op.ID) {
-			case 0: //Equals_EQUALS
+		if(op.isStandard()) {
+			StandardOperation operation = (StandardOperation) op;
+			switch(operation) {
+			case EQUALS:
 				left.emit(methodVisitor, context);
 				right.emit(methodVisitor, context);
 				Label end = new Label();
@@ -87,16 +106,26 @@ public class ExprBinaryOp implements Expr {
 				methodVisitor.visitInsn(ICONST_1);
 				
 				methodVisitor.visitLabel(end);
+			}
+		} else {
+			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
+//			operation.
 		}
 	}
 
 	@Override
 	public int returnType(UniversalContext context) {
-		switch(op.ID) {
-			case 0: //Equals_EQUALS
+		if(op.isStandard()) {
+			StandardOperation operation = (StandardOperation) op;
+			switch(operation) {
+			case EQUALS:
 				return IRETURN;
+			}
+		} else {
+			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
+//			operation.
 		}
-		return 0;
+		return -1;
 	}
 
 	@Override

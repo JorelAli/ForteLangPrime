@@ -4,7 +4,7 @@ Library Sample {
 
 } {
 
-	infix bind (>>=) <Bool> -> <Bool> -> <Type> = true;
+	infix 2 bind (>>=) <Bool> -> <Bool> -> <Type> = true;
 
 	## Record type declaration
 	@Equatable

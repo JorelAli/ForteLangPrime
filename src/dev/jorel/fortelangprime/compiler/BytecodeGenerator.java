@@ -3,16 +3,22 @@ package dev.jorel.fortelangprime.compiler;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import dev.jorel.fortelangprime.ast.FLPFunction;
 import dev.jorel.fortelangprime.ast.FLPLibrary;
 import dev.jorel.fortelangprime.ast.RecordTypeDeclaration;
+import dev.jorel.fortelangprime.ast.operation.CustomOperation;
+import dev.jorel.fortelangprime.ast.types.Type;
+import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
+import dev.jorel.fortelangprime.parser.util.Pair;
+import dev.jorel.fortelangprime.parser.util.StreamUtils;
 
 public class BytecodeGenerator implements Opcodes {
 	
@@ -59,26 +65,21 @@ public class BytecodeGenerator implements Opcodes {
 			}
 		}
 		
-		this.compiledData = generateBytecode(lib.name + ".flp", null, lib.name, lib.functions, lib.typeDeclarations);
+		this.compiledData = generateBytecode(null, lib);
 	}
 	
 	public void writeToFile(File parentFolder) throws IOException {
 		Files.write(new File(parentFolder, lib.name + ".class").toPath(), compiledData);
 	}
 	
-	private byte[] generateBytecode(String fileName, String metadata, String libName, List<FLPFunction> functions, List<RecordTypeDeclaration> typeDecls) {
+	private byte[] generateBytecode(String metadata, FLPLibrary lib) {
+		String fileName = lib.name + ".flp"; 
 		
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, libName, null, "java/lang/Object", null);
+		classWriter.visit(javaVersion, ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE, lib.name, null, "java/lang/Object", null);
 		classWriter.visitSource(fileName, metadata);
 		
-		for(FLPFunction f : functions) {
-			f.emit(classWriter, context);
-		}
-		
-		for(RecordTypeDeclaration r : typeDecls) {
-			r.emit(classWriter, context);
-		}		
+		lib.thingsToEmit.forEach(e -> e.emit(classWriter, context));
 			
 		classWriter.visitEnd();
 		return classWriter.toByteArray();
