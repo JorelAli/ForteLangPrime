@@ -1,5 +1,6 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.Label;
@@ -118,31 +119,40 @@ public class ExprBinaryOp implements Expr {
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		List<ShuntingYardable> es = ShuntingYard.doShuntingYard(ShuntingYard.flatten(this));
-		for(ShuntingYardable e : es) {
-			if(e instanceof Expr) {
+		for (int i = 0; i < es.size(); i++) {
+			ShuntingYardable e = es.get(i);
+			if(e instanceof ExprBinaryOp) {
+				emitOperationNew(methodVisitor, context, (ExprBinaryOp) e);
+			} else {
 				((Expr) e).emit(methodVisitor, context);
-			} else if(e instanceof Operation) {
-				emitOperationNew(methodVisitor, context, (Operation) e);
 			}
 		}	
 	}
 	
-	public void emitOperationNew(MethodVisitor methodVisitor, UniversalContext context, Operation op) {
+	public static boolean eqInt(int a, int b) {
+		int n = a;
+		boolean bl = a == b;
+		int n2 = b;
+		return a == b;
+	}
+	
+	public void emitOperationNew(MethodVisitor methodVisitor, UniversalContext context, ExprBinaryOp binop) {
+		Operation op = binop.getOperation();
 		if(op.isStandard()) {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());
 			switch(operation) {
 				case EQUALS: {
-//					left.emit(methodVisitor, context);
-//					right.emit(methodVisitor, context);
+					binop.left.emit(methodVisitor, context);
+					binop.right.emit(methodVisitor, context);
 					Label end = new Label();
 					Label ifEqual = new Label();
 					
-					if(left.getType(context).comparingInstruction() == IF_ACMPEQ) {
+					if(binop.getLeft().getType(context).comparingInstruction() == IF_ACMPEQ) {
 						methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
 						methodVisitor.visitJumpInsn(IFNE, ifEqual);
 					} else {
-						methodVisitor.visitJumpInsn(left.getType(context).comparingInstruction(), ifEqual);
+						methodVisitor.visitJumpInsn(binop.getLeft().getType(context).comparingInstruction(), ifEqual);
 					}
 					methodVisitor.visitInsn(ICONST_0);
 					methodVisitor.visitJumpInsn(GOTO, end);
@@ -164,9 +174,6 @@ public class ExprBinaryOp implements Expr {
 				methodVisitor.visitInsn(IDIV);
 				break;
 			case POW:
-				left.emit(methodVisitor, context);
-				methodVisitor.visitInsn(I2D);
-				right.emit(methodVisitor, context);
 				methodVisitor.visitInsn(I2D);
 				methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "pow", "(DD)D", false);
 				methodVisitor.visitInsn(D2I);
@@ -186,7 +193,7 @@ public class ExprBinaryOp implements Expr {
 	
 	
 	
-	public void emitOperation(MethodVisitor methodVisitor, UniversalContext context) {
+	private void emitOperation(MethodVisitor methodVisitor, UniversalContext context) {
 		if(op.isStandard()) {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());

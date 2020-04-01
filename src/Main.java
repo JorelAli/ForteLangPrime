@@ -43,6 +43,10 @@ public class Main {
 		System.out.println(Sample.ooo());
 	}
 	
+	public static int pow(int a, int b) {
+		return (int) Math.pow(a, b);
+	}
+	
 	
 	
 }
