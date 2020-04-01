@@ -1,6 +1,6 @@
 package dev.jorel.fortelangprime.ast.operation;
 
-import static dev.jorel.fortelangprime.parser.ForteLangPrimeParserConstants.EQUALS_EQUALS;
+import static dev.jorel.fortelangprime.parser.ForteLangPrimeParserConstants.*;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -9,7 +9,12 @@ import dev.jorel.fortelangprime.compiler.UniversalContext;
 
 public enum StandardOperation implements Operation {
 	
-	EQUALS(EQUALS_EQUALS);
+	EQUALS(EQUALS_EQUALS),
+	MULTIPLY(STAR),
+	DIVIDE(SLASH),
+	SUBTRACT(MINUS),
+	ADD(PLUS),
+	POW(HAT);
 	
 	private int kind;
 	

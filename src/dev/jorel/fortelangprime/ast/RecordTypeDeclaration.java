@@ -48,7 +48,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 	
 	@Override
 	public void emit(ClassWriter parentClassWriter, UniversalContext context) {
-		FLPCompiler.log("Emitting record declaration " + name);
+		FLPCompiler.log("\nEmitting record declaration " + name);
 		String innerClassName = context.getLibraryName() + "$" + name;
 
 		parentClassWriter.visitInnerClass(innerClassName, context.getLibraryName(), name, ACC_PUBLIC | ACC_STATIC);

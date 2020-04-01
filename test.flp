@@ -56,4 +56,13 @@ Library Sample {
 	testCustomOperator <Bool> = true >>= false;
 
 	infix 2 bind (>>=) <Bool> -> <Bool> -> <Bool> = true;
+
+	mul a<Int> -> b<Int> -> <Int> = a * b;
+	pow a<Int> -> b<Int> -> <Int> = a ^ b;
+	
+	## Testing the order of operations
+	## Don't expect (l2r): 5 - 2 => 3 * 3 => 9 + 4 => 13
+	## Don't expect (r2l): 3 + 4 => 2 * 7 => 5 - 14 => -9
+	## Expect 3 (5 - 6 => -1 + 4 => 3)
+	ooo <Int> = 5 - 2 * 3 + 4; 
 }

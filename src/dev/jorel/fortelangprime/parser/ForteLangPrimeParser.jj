@@ -85,6 +85,9 @@ TOKEN : {
 TOKEN : { 
 		< CONCAT : "++" > 
 	|	< PLUS : "+" >
+	| 	< MINUS : "-" >
+	| 	< SLASH : "/" >
+	|  	< HAT : "^" >
 	|	< ROUGHLY_EQUALS : "~=" >
 	|	< EQUALS_EQUALS : "==" >
 }
@@ -352,11 +355,23 @@ private Expr innerExpression(boolean withBrackets) : {
 	| expr = recordExpr()
 	)
 	( LOOKAHEAD(2)
-		( op = < EQUALS_EQUALS > | op = < CUSTOM_OPERATOR > )
+		( op = standardOperation() | op = < CUSTOM_OPERATOR > )
 		secondaryExpr = expression()
 		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind, op.image), withBrackets);}
 	)?
 	{ return expr; }
+}
+
+private Token standardOperation() : {
+	Token t;
+} {
+	( t = < EQUALS_EQUALS >
+	| t = < STAR >
+	| t = < SLASH >
+	| t = < MINUS >
+	| t = < PLUS >
+	| t = < HAT >	)
+	{ return t; }
 }
 
 private ExprRecordConstruction recordExpr() : {  

@@ -8,6 +8,7 @@ import dev.jorel.fortelangprime.ast.operation.Operation;
 import dev.jorel.fortelangprime.ast.operation.StandardOperation;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
+import dev.jorel.fortelangprime.ast.types.TypeInt;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
@@ -35,6 +36,10 @@ public class ExprBinaryOp implements Expr {
 			switch(operation) {
 			case EQUALS:
 				return new TypeBool();
+			case MULTIPLY:
+				return new TypeInt(); //TODO: TypeInt for now, won't be for long
+			default:
+				break;
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -54,6 +59,12 @@ public class ExprBinaryOp implements Expr {
 					throw new TypeException("Left is " + left.getType(context).getInternalType() + " but right is " + right.getType(context).getInternalType());
 				}
 				return new TypeBool();
+			case DIVIDE:
+			case ADD:
+			case SUBTRACT:
+			case POW:
+			case MULTIPLY:
+				return new TypeInt();
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -90,25 +101,61 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());
 			switch(operation) {
-			case EQUALS:
+				case EQUALS: {
+					left.emit(methodVisitor, context);
+					right.emit(methodVisitor, context);
+					Label end = new Label();
+					Label ifEqual = new Label();
+					
+					if(left.getType(context).comparingInstruction() == IF_ACMPEQ) {
+						methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
+						methodVisitor.visitJumpInsn(IFNE, ifEqual);
+					} else {
+						methodVisitor.visitJumpInsn(left.getType(context).comparingInstruction(), ifEqual);
+					}
+					methodVisitor.visitInsn(ICONST_0);
+					methodVisitor.visitJumpInsn(GOTO, end);
+					
+					methodVisitor.visitLabel(ifEqual);
+					methodVisitor.visitInsn(ICONST_1);
+					
+					methodVisitor.visitLabel(end);
+					break;
+				}
+				case MULTIPLY: {
+					left.emit(methodVisitor, context);
+					right.emit(methodVisitor, context);
+					methodVisitor.visitInsn(IMUL);
+					break;
+				}
+			case ADD:
 				left.emit(methodVisitor, context);
 				right.emit(methodVisitor, context);
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				if(left.getType(context).comparingInstruction() == IF_ACMPEQ) {
-					methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
-					methodVisitor.visitJumpInsn(IFNE, ifEqual);
-				} else {
-					methodVisitor.visitJumpInsn(left.getType(context).comparingInstruction(), ifEqual);
-				}
-				methodVisitor.visitInsn(ICONST_0);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_1);
-				
-				methodVisitor.visitLabel(end);
+				methodVisitor.visitInsn(IADD);
+				break;
+			case DIVIDE:
+				left.emit(methodVisitor, context);
+				right.emit(methodVisitor, context);
+				methodVisitor.visitInsn(IDIV);
+				break;
+			case POW:
+				left.emit(methodVisitor, context);
+				methodVisitor.visitInsn(I2D);
+				right.emit(methodVisitor, context);
+				methodVisitor.visitInsn(I2D);
+				methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "pow", "(DD)D", false);
+				methodVisitor.visitInsn(D2I);
+				//
+//				int d = (int) Math.pow(2, 30);
+//				methodVisitor.visitInsn(IINC);
+				break;
+			case SUBTRACT:
+				left.emit(methodVisitor, context);
+				right.emit(methodVisitor, context);
+				methodVisitor.visitInsn(ISUB);
+				break;
+			default:
+				break;
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -126,6 +173,11 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			switch(operation) {
 			case EQUALS:
+			case MULTIPLY:
+			case DIVIDE:
+			case ADD:
+			case SUBTRACT:
+			case POW:
 				return IRETURN;
 			}
 		} else {

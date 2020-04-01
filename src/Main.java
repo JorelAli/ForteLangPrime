@@ -38,6 +38,9 @@ public class Main {
 		
 		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
 		System.out.println(Sample.testCustomOperator());
+		System.out.println(Sample.mul(2, 20));
+		System.out.println(Sample.pow(2, 16));
+		System.out.println(Sample.ooo());
 	}
 	
 	
