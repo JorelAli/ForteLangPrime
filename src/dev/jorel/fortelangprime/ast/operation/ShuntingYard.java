@@ -20,8 +20,8 @@ public class ShuntingYard implements Opcodes {
 			tokens.add(new LeftBracket());
 		}
 		
-		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
-			// Right
+		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
+			// Poop out the right first
 			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
 				if(op.getRight() instanceof ExprBinaryOp) {
 					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
@@ -30,7 +30,7 @@ public class ShuntingYard implements Opcodes {
 				}
 			}
 		} else {
-			// Left
+			// Poop out the left first
 			if(op.getLeft() instanceof ExprBinaryOp) {
 				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
 			} else {
@@ -44,15 +44,15 @@ public class ShuntingYard implements Opcodes {
 		
 		tokens.add(op);
 		
-		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
-			// Left
+		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
+			// Poop out the left first
 			if(op.getLeft() instanceof ExprBinaryOp) {
 				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
 			} else {
 				tokens.add(op.getLeft());
 			}
 		} else {
-			// Right
+			// Poop out the right first
 			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
 				if(op.getRight() instanceof ExprBinaryOp) {
 					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
