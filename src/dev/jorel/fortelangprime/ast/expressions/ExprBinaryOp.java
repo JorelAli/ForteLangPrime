@@ -58,6 +58,11 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			switch(operation) {
 			case EQUALS:
+			case NE:
+			case LE:
+			case GE:
+			case LT:
+			case GT:
 				return new TypeBool();
 				
 			case MULTIPLY:
@@ -68,9 +73,11 @@ public class ExprBinaryOp implements Expr {
 			case MODULO:
 				if(this.left.getType(context).getInternalType() == InternalType.INTEGER) {
 					return new TypeInt();
-				} 
-//				System.out.println(this.right.getType(context).getInternalType());
-				return new TypeDouble(); //TODO: TypeInt for now, won't be for long
+				} else { 
+					return new TypeDouble();
+				}
+			case PIPE2RIGHT:
+				return this.right.getType(context);
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -213,8 +220,10 @@ public class ExprBinaryOp implements Expr {
 				methodVisitor.visitInsn(IOR);
 				break;
 			case PIPE2LEFT:
+				// x |> f = f x.
 				break;
 			case PIPE2RIGHT:
+				// f <| x = f x
 				break;
 			default:
 				break;
@@ -283,6 +292,8 @@ public class ExprBinaryOp implements Expr {
 			case AND:
 			case OR:
 				return IRETURN;
+			case PIPE2RIGHT:
+				return this.right.getType(context).returnType();
 			default:
 				break;
 			}

@@ -22,7 +22,7 @@
 				"match": ""
 			}, {
 				"name": "keyword.control.fortelangprime",
-				"match": "\\||->|\\b(if|then|else)\\b"
+				"match": "\\|>|<\\||\\||->|\\b(if|then|else)\\b"
 			}, {
 				"name": "keyword.other.fortelangprime",
 				"match": "@Equatable|@Printable|\\b(infix|type|import|export)\\b"

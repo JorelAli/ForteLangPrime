@@ -88,4 +88,10 @@ public class Tests {
 		assertEquals(19.1 % 1.2, Sample.doubleMod(19.1D, 1.2D), 0.001D);
 	}
 	
+	@Test
+	public void testPipes() {
+		assertFalse(Sample.pipeline());
+		assertTrue(Sample.secondPipeline());
+	}
+	
 }
