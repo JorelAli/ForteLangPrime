@@ -81,4 +81,8 @@ Library Sample {
 
 	doubleTest <Double> = 123.2;
 	doubleAdd a<Double> -> b<Double> -> <Double> = a + b;
+	doubleSub a<Double> -> b<Double> -> <Double> = a - b;
+	doubleMul a<Double> -> b<Double> -> <Double> = a * b;
+	doubleDiv a<Double> -> b<Double> -> <Double> = a / b;
+	doubleMod a<Double> -> b<Double> -> <Double> = a % b;
 }

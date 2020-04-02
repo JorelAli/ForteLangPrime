@@ -81,6 +81,11 @@ public class Tests {
 	@Test
 	public void testDoubles() {
 		assertEquals(123.2D, Sample.doubleTest(), 0);
+		assertEquals(20.2D, Sample.doubleAdd(19.1D, 1.1D), 0.001D);
+		assertEquals(15.3D, Sample.doubleSub(16.1D, 0.8D), 0.001D);
+		assertEquals(19.1D * 112.1D, Sample.doubleMul(19.1D, 112.1D), 0.001D);
+		assertEquals(19.1 / 1.2, Sample.doubleDiv(19.1D, 1.2D), 0.001D);
+		assertEquals(19.1 % 1.2, Sample.doubleMod(19.1D, 1.2D), 0.001D);
 	}
 	
 }

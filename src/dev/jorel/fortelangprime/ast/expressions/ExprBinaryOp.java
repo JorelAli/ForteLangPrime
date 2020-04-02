@@ -204,7 +204,7 @@ public class ExprBinaryOp implements Expr {
 				simpleJump(methodVisitor, IF_ICMPLT, false);
 				break;
 			case MODULO:
-				methodVisitor.visitInsn(IREM);
+				methodVisitor.visitInsn(useDouble ? DREM : IREM);
 				break;
 			case NE:
 				simpleEquality(methodVisitor, binop, context, true);
