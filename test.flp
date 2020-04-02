@@ -207,14 +207,14 @@ Library Sample {
 		|> not 
 		|> not;
 
-	revPipeline <Bool> = 
-		not <| true;
+	## revPipeline <Bool> = 
+	## 	not <| true;
 
 
 	infixl 1 implies (==>) a<Bool> -> b<Bool> -> <Bool> = 
 		b || not a;
 
-	## infixl 1 implies2 (~~>) a<Bool> -> b<Bool> -> <Bool> = 
-	## 	not a || b;
+	infixl 1 implies2 (~~>) a<Bool> -> b<Bool> -> <Bool> = 
+		not a || b;
 
 }

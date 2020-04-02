@@ -60,11 +60,11 @@ public class ShuntingYard implements Opcodes {
 		}
 		
 		// Left expression 
-		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-			flattenRight(op, tokens);
-		} else {
+//		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
+//			flattenRight(op, tokens);
+//		} else {
 			flattenLeft(op, tokens);
-		}
+//		}
 		
 		// Left expression casting checks
 		if(op.getOperation() == StandardOperation.POW) {
@@ -75,11 +75,11 @@ public class ShuntingYard implements Opcodes {
 		tokens.add(op);
 		
 		// Right expression
-		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-			flattenLeft(op, tokens);
-		} else {
+//		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
+//			flattenLeft(op, tokens);
+//		} else {
 			flattenRight(op, tokens);
-		}
+//		}
 		
 		if(op.hasBrackets()) {
 			tokens.add(new RightBracket());

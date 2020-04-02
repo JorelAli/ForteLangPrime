@@ -133,7 +133,7 @@ public class ExprVariable implements Expr {
 
 	private void emitShuntingYard(MethodVisitor methodVisitor, UniversalContext context) {
 		List<ShuntingYardable> tokens = new ArrayList<>();
-		tokens.add(new ExprVariable(lineNumber, name, parentFunctionName, new ArrayList<>()));
+//		tokens.add(new ExprVariable(lineNumber, name, parentFunctionName, new ArrayList<>()));
 		for(Expr e : params) {
 			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
 				tokens.addAll(ShuntingYard.flatten((ExprBinaryOp) e));
@@ -141,9 +141,20 @@ public class ExprVariable implements Expr {
 				tokens.add(e);
 			}
 		}
+		
+		List<Expr> newExprs = new ArrayList<>();
+		for(int i = 0; i < params.size(); i++) {
+			newExprs.add((Expr) tokens.remove(0));
+		}
+		tokens.add(0, new ExprVariable(lineNumber, name, parentFunctionName, newExprs));
+		
 		tokens = ShuntingYard.doShuntingYard(tokens);
-		for(ShuntingYardable d : tokens) {
-			((Expr) d).emit(methodVisitor, context);
+		for(ShuntingYardable e : tokens) {
+			if(e instanceof ExprBinaryOp) {
+				((ExprBinaryOp) e).emitOperationNew(methodVisitor, context, (ExprBinaryOp) e);
+			} else {
+				((Expr) e).emit(methodVisitor, context);
+			}
 		}
 	}
 	
@@ -153,6 +164,7 @@ public class ExprVariable implements Expr {
 		
 		for(Expr e : params) {
 			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
+				System.out.println("!! " + this);
 				emitShuntingYard(methodVisitor, context);
 				return;
 			}

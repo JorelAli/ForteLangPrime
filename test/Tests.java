@@ -101,6 +101,11 @@ public class Tests {
 		assertFalse(Sample.implies(true, false));
 		assertTrue(Sample.implies(false, true));
 		assertTrue(Sample.implies(false, false));
+		
+		assertTrue(Sample.implies2(true, true));
+		assertFalse(Sample.implies2(true, false));
+		assertTrue(Sample.implies2(false, true));
+		assertTrue(Sample.implies2(false, false));
 	}
 	
 }
