@@ -11,6 +11,7 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
@@ -172,7 +173,13 @@ public class RecordTypeDeclaration implements CodeableClass {
 			methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
 			methodVisitor.visitVarInsn(ALOAD, 2);
 			methodVisitor.visitFieldInsn(GETFIELD, internalName, pair.first(), pair.second().toBytecodeString(context));
-			methodVisitor.visitJumpInsn(pair.second().comparingInstruction(), keepGoing);
+			
+			if(pair.second().getInternalType() == InternalType.DOUBLE) {
+				methodVisitor.visitInsn(DCMPL);
+				methodVisitor.visitJumpInsn(IFEQ, keepGoing);
+			} else {
+				methodVisitor.visitJumpInsn(pair.second().comparingInstruction(), keepGoing);
+			}
 			
 			methodVisitor.visitLabel(earlyReturn);
 			methodVisitor.visitInsn(ICONST_0);

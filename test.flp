@@ -217,4 +217,14 @@ Library Sample {
 	infixl 1 implies2 (~~>) a<Bool> -> b<Bool> -> <Bool> = 
 		not a || b;
 
+
+	@Equatable
+	type DoubleType = {
+		value<Double>;
+	}
+
+	mkDoubleType <DoubleType> = {
+		value = 20.0;
+	};
+
 }

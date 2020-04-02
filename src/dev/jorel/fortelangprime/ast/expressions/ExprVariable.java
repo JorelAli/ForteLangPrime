@@ -133,7 +133,6 @@ public class ExprVariable implements Expr {
 
 	private void emitShuntingYard(MethodVisitor methodVisitor, UniversalContext context) {
 		List<ShuntingYardable> tokens = new ArrayList<>();
-//		tokens.add(new ExprVariable(lineNumber, name, parentFunctionName, new ArrayList<>()));
 		for(Expr e : params) {
 			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
 				tokens.addAll(ShuntingYard.flatten((ExprBinaryOp) e));
@@ -142,6 +141,7 @@ public class ExprVariable implements Expr {
 			}
 		}
 		
+		//TODO: This might stronk because the cast a few lines below might fail
 		List<Expr> newExprs = new ArrayList<>();
 		for(int i = 0; i < params.size(); i++) {
 			newExprs.add((Expr) tokens.remove(0));

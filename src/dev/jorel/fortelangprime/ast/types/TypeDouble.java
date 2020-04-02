@@ -36,9 +36,8 @@ public class TypeDouble implements Type {
 	
 	@Override
 	public int comparingInstruction() {
-		System.out.println("CompDoub");
-		return -1;
-//		return IF_CMPEQ;
+		System.out.println("CompDoub <--");
+		return DCMPL;
 	}
 	
 	@Override

@@ -108,4 +108,10 @@ public class Tests {
 		assertTrue(Sample.implies2(false, false));
 	}
 	
+	@Test
+	public void doubleEqualityInRecordType() {
+		System.out.println(Sample.mkDoubleType().equals(Sample.mkDoubleType()));
+		assertEquals(Sample.mkDoubleType(), Sample.mkDoubleType());
+	}
+	
 }

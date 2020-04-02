@@ -9,7 +9,6 @@ import org.objectweb.asm.Opcodes;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.expressions.ExprBinaryOp;
 import dev.jorel.fortelangprime.ast.expressions.ExprInternalCast;
-import dev.jorel.fortelangprime.ast.expressions.ExprVariable;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.LeftBracket;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.RightBracket;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
@@ -20,17 +19,7 @@ public class ShuntingYard implements Opcodes {
 		if(op.getOperation() != StandardOperation.ACCESSRECORD) {
 			if(op.getRight() instanceof ExprBinaryOp) {
 				tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
-//			} else if(op.getRight() instanceof ExprVariable) {
-//				ExprVariable var = (ExprVariable) op.getRight();
-//				for(Expr e : var.getParams()) {
-//					if(e instanceof ExprBinaryOp) {
-//						tokens.addAll(flatten((ExprBinaryOp) e));
-//					} else {
-//						tokens.add(e);
-//					}
-//				}
-			} 
-			else {
+			} else {
 				tokens.add(op.getRight());
 			}
 		}
@@ -39,17 +28,7 @@ public class ShuntingYard implements Opcodes {
 	private static void flattenLeft(ExprBinaryOp op, List<ShuntingYardable> tokens) {
 		if(op.getLeft() instanceof ExprBinaryOp) {
 			tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
-//		} else if(op.getRight() instanceof ExprVariable) {
-//			ExprVariable var = (ExprVariable) op.getRight();
-//			for(Expr e : var.getParams()) {
-//				if(e instanceof ExprBinaryOp) {
-//					tokens.addAll(flatten((ExprBinaryOp) e));
-//				} else {
-//					tokens.add(e);
-//				}
-//			}
-		} 
-		else {
+		} else {
 			tokens.add(op.getLeft());
 		}
 	}
@@ -95,8 +74,7 @@ public class ShuntingYard implements Opcodes {
 		Stack<ShuntingYardable> operatorStack = new Stack<>();
 		
 		while(!elements.isEmpty()) {
-			ShuntingYardable element = elements.get(0);
-			elements.remove(0);
+			ShuntingYardable element = elements.remove(0);
 			if(element instanceof ExprBinaryOp) {
 				Operation operation = (Operation) ((ExprBinaryOp) element).getOperation();
 				while(!operatorStack.isEmpty() && !(operatorStack.peek() instanceof LeftBracket) &&
