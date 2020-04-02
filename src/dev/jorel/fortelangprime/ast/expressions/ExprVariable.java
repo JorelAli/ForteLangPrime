@@ -31,6 +31,10 @@ public class ExprVariable implements Expr {
 		return this.name;
 	}
 	
+	public List<Expr> getParams() {
+		return this.params;
+	}
+	
 	public String getParentFunctionName() {
 		return this.parentFunctionName;
 	}

@@ -72,7 +72,19 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		body.emit(methodVisitor, context);
 	}
+	
+	public Type getReturnType() {
+		return this.returnType;
+	}
 
+	public Pair<String, Type> getLeftType() {
+		return this.leftType;
+	}
+	
+	public Pair<String, Type> getRightType() {
+		return this.rightType;
+	}
+	
 	@Override
 	public int returnType(UniversalContext context) {
 		return returnType.returnType();

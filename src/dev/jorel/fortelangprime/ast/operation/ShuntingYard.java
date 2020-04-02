@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.expressions.ExprBinaryOp;
 import dev.jorel.fortelangprime.ast.expressions.ExprInternalCast;
+import dev.jorel.fortelangprime.ast.expressions.ExprVariable;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.LeftBracket;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.RightBracket;
 
@@ -18,7 +19,17 @@ public class ShuntingYard implements Opcodes {
 		if(op.getOperation() != StandardOperation.ACCESSRECORD) {
 			if(op.getRight() instanceof ExprBinaryOp) {
 				tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
-			} else {
+//			} else if(op.getRight() instanceof ExprVariable) {
+//				ExprVariable var = (ExprVariable) op.getRight();
+//				for(Expr e : var.getParams()) {
+//					if(e instanceof ExprBinaryOp) {
+//						tokens.addAll(flatten((ExprBinaryOp) e));
+//					} else {
+//						tokens.add(e);
+//					}
+//				}
+			} 
+			else {
 				tokens.add(op.getRight());
 			}
 		}
@@ -27,7 +38,17 @@ public class ShuntingYard implements Opcodes {
 	private static void flattenLeft(ExprBinaryOp op, List<ShuntingYardable> tokens) {
 		if(op.getLeft() instanceof ExprBinaryOp) {
 			tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
-		} else {
+//		} else if(op.getRight() instanceof ExprVariable) {
+//			ExprVariable var = (ExprVariable) op.getRight();
+//			for(Expr e : var.getParams()) {
+//				if(e instanceof ExprBinaryOp) {
+//					tokens.addAll(flatten((ExprBinaryOp) e));
+//				} else {
+//					tokens.add(e);
+//				}
+//			}
+		} 
+		else {
 			tokens.add(op.getLeft());
 		}
 	}

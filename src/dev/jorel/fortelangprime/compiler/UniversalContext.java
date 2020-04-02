@@ -58,6 +58,11 @@ public class UniversalContext {
 			}
 		}
 		customOperations.add(op);
+		
+		List<Pair<String, Type>> paramTypes = new ArrayList<>();
+		paramTypes.add(op.getLeftType());
+		paramTypes.add(op.getRightType());
+		functions.put(op.getInternalName(), new TypeFunction(op.getReturnType(), paramTypes));
 	}
 	
 	public CustomOperation searchCustomOperation(String opToken) {
