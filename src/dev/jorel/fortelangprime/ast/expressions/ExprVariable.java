@@ -1,10 +1,13 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
 
+import dev.jorel.fortelangprime.ast.operation.ShuntingYard;
+import dev.jorel.fortelangprime.ast.operation.ShuntingYardable;
 import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
@@ -25,6 +28,11 @@ public class ExprVariable implements Expr {
 		this.name = name;
 		this.parentFunctionName = parentFunctionName;
 		this.params = params;
+	}
+	
+	@Override
+	public String toString() {
+		return name + (params.isEmpty() ? "" : params); 
 	}
 	
 	public String getName() {
@@ -123,9 +131,32 @@ public class ExprVariable implements Expr {
 		return index;
 	}
 
+	private void emitShuntingYard(MethodVisitor methodVisitor, UniversalContext context) {
+		List<ShuntingYardable> tokens = new ArrayList<>();
+		tokens.add(new ExprVariable(lineNumber, name, parentFunctionName, new ArrayList<>()));
+		for(Expr e : params) {
+			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
+				tokens.addAll(ShuntingYard.flatten((ExprBinaryOp) e));
+			} else {
+				tokens.add(e);
+			}
+		}
+		tokens = ShuntingYard.doShuntingYard(tokens);
+		for(ShuntingYardable d : tokens) {
+			((Expr) d).emit(methodVisitor, context);
+		}
+	}
+	
 	@Override
 	public void emit(MethodVisitor methodVisitor, UniversalContext context) {
 		Type paramType = getType(context);
+		
+		for(Expr e : params) {
+			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
+				emitShuntingYard(methodVisitor, context);
+				return;
+			}
+		}
 		
 		if(paramType.getInternalType() == InternalType.FUNCTION) {
 			FLPCompiler.log("Emitting function call " + name);

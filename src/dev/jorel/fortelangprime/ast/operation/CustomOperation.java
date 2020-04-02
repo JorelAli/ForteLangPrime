@@ -37,6 +37,11 @@ public class CustomOperation implements Operation, CodeableMethod, CodeableClass
 	}
 	
 	@Override
+	public String toString() {
+		return operatorToken;
+	}
+	
+	@Override
 	public int getPrecedence() {
 		return this.precedence;
 	}

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import dev.jorel.fortelangprime.compiler.UniversalContext;
+import dev.jorel.fortelangprime.parser.ForteLangPrimeParserConstants;
 
 public enum StandardOperation implements Operation {
 	
@@ -48,6 +49,11 @@ public enum StandardOperation implements Operation {
 		this.kind = kind;
 		this.precedence = precedence;
 		this.associativity = associativity;
+	}
+	
+	@Override
+	public String toString() {
+		return ForteLangPrimeParserConstants.tokenImage[kind];
 	}
 	
 	public static StandardOperation from(int kind) {

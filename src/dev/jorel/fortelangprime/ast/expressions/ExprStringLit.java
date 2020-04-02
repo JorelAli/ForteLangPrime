@@ -17,6 +17,11 @@ public class ExprStringLit implements Expr {
 		this.lineNumber = lineNumber;
 		this.value = value;
 	}
+	
+	@Override
+	public String toString() {
+		return value;
+	}
 
 	@Override
 	public Type getType(UniversalContext context) {

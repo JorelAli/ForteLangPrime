@@ -18,6 +18,11 @@ public class ExprBoolLit implements Expr {
 		this.value = value;
 	}
 	
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
+	
 	public boolean getValue() {
 		return this.value;
 	}	

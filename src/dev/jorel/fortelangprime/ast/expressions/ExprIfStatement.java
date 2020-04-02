@@ -23,6 +23,11 @@ public class ExprIfStatement implements Expr {
 		this.ifTrue = ifTrue;
 		this.ifFalse = ifFalse;
 	}
+	
+	@Override
+	public String toString() {
+		return "if " + condition + " then " + ifTrue + " else " + ifFalse;
+	}
 
 	@Override
 	public Type getType(UniversalContext context) {

@@ -36,6 +36,11 @@ public class ExprBinaryOp implements Expr {
 		this.hasBrackets = hasBrackets;
 	}
 	
+	@Override
+	public String toString() {
+		return String.valueOf(op); //"(" + left + " " + op + " " + right + ")";
+	}
+	
 	public Operation getOperation() {
 		return this.op;
 	}

@@ -89,7 +89,7 @@ public class ShuntingYard implements Opcodes {
 	}
 	
 	public static List<ShuntingYardable> doShuntingYard(List<ShuntingYardable> elements) {
-		
+		System.out.println(elements);
 		List<ShuntingYardable> outputQueue = new ArrayList<>();
 		Stack<ShuntingYardable> operatorStack = new Stack<>();
 		
@@ -122,6 +122,7 @@ public class ShuntingYard implements Opcodes {
 			outputQueue.add(operatorStack.pop());
 		}
 		
+		System.out.println(" => " + outputQueue);
 		return outputQueue;
 	}
 	
