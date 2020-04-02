@@ -49,9 +49,6 @@ Library Sample {
 
 	and a<Bool> -> b<Bool> -> <Bool> = if not a then false else if not b then false else true;
 
-	pipeline <Bool> = true |> not;
-	secondPipeline <Bool> = true |> not |> not;
-
 	eqInt a<Int> -> b<Int> 		 -> <Bool> = a == b;
 	eqStr a<String> -> b<String> -> <Bool> = a == b;
 	eqBool a<Bool> -> b<Bool> 	 -> <Bool> = a == b;
@@ -88,4 +85,8 @@ Library Sample {
 	doubleMul a<Double> -> b<Double> -> <Double> = a * b;
 	doubleDiv a<Double> -> b<Double> -> <Double> = a / b;
 	doubleMod a<Double> -> b<Double> -> <Double> = a % b;
+
+	pipeline <Bool> = true |> not;
+	secondPipeline <Bool> = true |> not |> not;
+	revPipeline <Bool> = not <| true;
 }

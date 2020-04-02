@@ -92,6 +92,7 @@ public class Tests {
 	public void testPipes() {
 		assertFalse(Sample.pipeline());
 		assertTrue(Sample.secondPipeline());
+		assertFalse(Sample.revPipeline());
 	}
 	
 }

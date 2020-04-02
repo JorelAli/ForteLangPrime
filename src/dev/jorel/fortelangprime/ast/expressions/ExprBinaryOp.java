@@ -78,6 +78,8 @@ public class ExprBinaryOp implements Expr {
 				}
 			case PIPE2RIGHT:
 				return this.right.getType(context);
+			case PIPE2LEFT:
+				return this.left.getType(context);
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -294,6 +296,8 @@ public class ExprBinaryOp implements Expr {
 				return IRETURN;
 			case PIPE2RIGHT:
 				return this.right.getType(context).returnType();
+			case PIPE2LEFT:
+				return this.left.getType(context).returnType();
 			default:
 				break;
 			}

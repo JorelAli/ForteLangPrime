@@ -20,10 +20,22 @@ public class ShuntingYard implements Opcodes {
 			tokens.add(new LeftBracket());
 		}
 		
-		if(op.getLeft() instanceof ExprBinaryOp) {
-			tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
+		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
+			// Right
+			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
+				if(op.getRight() instanceof ExprBinaryOp) {
+					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
+				} else {
+					tokens.add(op.getRight());
+				}
+			}
 		} else {
-			tokens.add(op.getLeft());
+			// Left
+			if(op.getLeft() instanceof ExprBinaryOp) {
+				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
+			} else {
+				tokens.add(op.getLeft());
+			}
 		}
 		
 		if(op.getOperation() == StandardOperation.POW) {
@@ -31,13 +43,23 @@ public class ShuntingYard implements Opcodes {
 		}
 		
 		tokens.add(op);
-
-		if(op.getOperation() != StandardOperation.ACCESSRECORD) {
-		if(op.getRight() instanceof ExprBinaryOp) {
-			tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
+		
+		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
+			// Left
+			if(op.getLeft() instanceof ExprBinaryOp) {
+				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
+			} else {
+				tokens.add(op.getLeft());
+			}
 		} else {
-			tokens.add(op.getRight());
-		}
+			// Right
+			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
+				if(op.getRight() instanceof ExprBinaryOp) {
+					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
+				} else {
+					tokens.add(op.getRight());
+				}
+			}
 		}
 		
 		if(op.hasBrackets()) {
