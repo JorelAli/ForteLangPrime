@@ -90,8 +90,8 @@ public class Tests {
 	
 	@Test
 	public void testPipes() {
-//		assertFalse(Sample.pipeline());
-//		assertTrue(Sample.secondPipeline());
+		assertFalse(Sample.pipeline());
+		assertTrue(Sample.secondPipeline());
 //		assertFalse(Sample.revPipeline());
 	}
 	

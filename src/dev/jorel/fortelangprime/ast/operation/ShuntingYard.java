@@ -12,6 +12,7 @@ import dev.jorel.fortelangprime.ast.expressions.ExprInternalCast;
 import dev.jorel.fortelangprime.ast.expressions.ExprVariable;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.LeftBracket;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.RightBracket;
+import dev.jorel.fortelangprime.compiler.FLPCompiler;
 
 public class ShuntingYard implements Opcodes {
 	
@@ -60,11 +61,11 @@ public class ShuntingYard implements Opcodes {
 		}
 		
 		// Left expression 
-//		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-//			flattenRight(op, tokens);
-//		} else {
+		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
+			flattenRight(op, tokens);
+		} else {
 			flattenLeft(op, tokens);
-//		}
+		}
 		
 		// Left expression casting checks
 		if(op.getOperation() == StandardOperation.POW) {
@@ -75,11 +76,11 @@ public class ShuntingYard implements Opcodes {
 		tokens.add(op);
 		
 		// Right expression
-//		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-//			flattenLeft(op, tokens);
-//		} else {
+		if(op.getOperation() == StandardOperation.PIPE2LEFT) {
+			flattenLeft(op, tokens);
+		} else {
 			flattenRight(op, tokens);
-//		}
+		}
 		
 		if(op.hasBrackets()) {
 			tokens.add(new RightBracket());
@@ -89,7 +90,7 @@ public class ShuntingYard implements Opcodes {
 	}
 	
 	public static List<ShuntingYardable> doShuntingYard(List<ShuntingYardable> elements) {
-		System.out.println(elements);
+		String result = "Reordering params " + elements + " => ";
 		List<ShuntingYardable> outputQueue = new ArrayList<>();
 		Stack<ShuntingYardable> operatorStack = new Stack<>();
 		
@@ -122,7 +123,7 @@ public class ShuntingYard implements Opcodes {
 			outputQueue.add(operatorStack.pop());
 		}
 		
-		System.out.println(" => " + outputQueue);
+		FLPCompiler.log(result + outputQueue);
 		return outputQueue;
 	}
 	

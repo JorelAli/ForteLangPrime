@@ -164,7 +164,6 @@ public class ExprVariable implements Expr {
 		
 		for(Expr e : params) {
 			if(e.getInternalType() == ExpressionType.BINARY_OPERATION) {
-				System.out.println("!! " + this);
 				emitShuntingYard(methodVisitor, context);
 				return;
 			}
