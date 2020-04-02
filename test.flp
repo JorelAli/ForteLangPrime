@@ -4,7 +4,6 @@ Library Sample {
 
 } {
 
-
 	## Record type declaration
 	@Equatable
 	@Printable
@@ -40,7 +39,7 @@ Library Sample {
 	red <Color> = { red = 255; green = 0; blue = 0; };
 	green <Color> = { green = 255; red = 0; blue = 0; };
 
-	greenInt <Int> = { red = 255; green = 0; blue = 0; }.green;
+	greenInt <Int> = { red = 255; green = 0; blue = 0; }.red;
 
 	## Record updating using the red function as a base
 	yellow <Color> = { red | green = 255; };
@@ -54,6 +53,11 @@ Library Sample {
 	eqStr a<String> -> b<String> -> <Bool> = a == b;
 	eqBool a<Bool> -> b<Bool> 	 -> <Bool> = a == b;
 	eqColor a<Color> -> b<Color> -> <Bool> = a == b;
+
+	neqInt a<Int> -> b<Int> 	  -> <Bool> = a != b;
+	neqStr a<String> -> b<String> -> <Bool> = a != b;
+	neqBool a<Bool> -> b<Bool> 	  -> <Bool> = a != b;
+	neqColor a<Color> -> b<Color> -> <Bool> = a != b;
 
 	testCustomOperator <Bool> = true >>= false;
 
@@ -70,5 +74,8 @@ Library Sample {
 	## Expect 3 (5 - 6 => -1 + 4 => 3)
 	ooo <Int> = 5 - 2 * 3 + 4; 
 
-	## testConditionGt <Bool> = 2 > 3;
+	gt a<Int> -> b<Int> -> <Bool> = a > b;
+	lt a<Int> -> b<Int> -> <Bool> = a < b;
+	ge a<Int> -> b<Int> -> <Bool> = a >= b;
+	le a<Int> -> b<Int> -> <Bool> = a <= b;
 }

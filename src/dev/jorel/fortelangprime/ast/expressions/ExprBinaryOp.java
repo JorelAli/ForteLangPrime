@@ -17,7 +17,6 @@ import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
-import dev.jorel.fortelangprime.util.Pair;
 
 public class ExprBinaryOp implements Expr {
 	
@@ -136,31 +135,12 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());
 			switch(operation) {
-				case EQUALS: {
-//					binop.left.emit(methodVisitor, context);
-//					binop.right.emit(methodVisitor, context);
-					Label end = new Label();
-					Label ifEqual = new Label();
-					
-					if(binop.getLeft().getType(context).comparingInstruction() == IF_ACMPEQ) {
-						methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
-						methodVisitor.visitJumpInsn(IFNE, ifEqual);
-					} else {
-						methodVisitor.visitJumpInsn(binop.getLeft().getType(context).comparingInstruction(), ifEqual);
-					}
-					methodVisitor.visitInsn(ICONST_0);
-					methodVisitor.visitJumpInsn(GOTO, end);
-					
-					methodVisitor.visitLabel(ifEqual);
-					methodVisitor.visitInsn(ICONST_1);
-					
-					methodVisitor.visitLabel(end);
-					break;
-				}
-				case MULTIPLY: {
-					methodVisitor.visitInsn(IMUL);
-					break;
-				}
+			case EQUALS:
+				simpleEquality(methodVisitor, binop, context, false);
+				break;
+			case MULTIPLY:
+				methodVisitor.visitInsn(IMUL);
+				break;
 			case ADD:
 				methodVisitor.visitInsn(IADD);
 				break;
@@ -190,82 +170,23 @@ public class ExprBinaryOp implements Expr {
 				break;
 			case CONS:
 				break;
-			case GE: {
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				methodVisitor.visitJumpInsn(IF_ICMPGE, ifEqual);
-				methodVisitor.visitInsn(ICONST_0);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_1);
-				
-				methodVisitor.visitLabel(end);
+			case GE:
+				simpleJump(methodVisitor, IF_ICMPGE, false);
 				break;
-			}
-			case GT: {
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				methodVisitor.visitJumpInsn(IF_ICMPGT, ifEqual);
-				methodVisitor.visitInsn(ICONST_0);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_1);
-				
-				methodVisitor.visitLabel(end);
+			case GT: 
+				simpleJump(methodVisitor, IF_ICMPGT, false);
 				break;
-			}
-			case LE: {
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				methodVisitor.visitJumpInsn(IF_ICMPLE, ifEqual);
-				methodVisitor.visitInsn(ICONST_0);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_1);
-				
-				methodVisitor.visitLabel(end);
+			case LE: 
+				simpleJump(methodVisitor, IF_ICMPLE, false);
 				break;
-			}
-			case LT: {
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				methodVisitor.visitJumpInsn(IF_ICMPLT, ifEqual);
-				methodVisitor.visitInsn(ICONST_0);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_1);
-				
-				methodVisitor.visitLabel(end);
+			case LT: 
+				simpleJump(methodVisitor, IF_ICMPLT, false);
 				break;
-			}
 			case MODULO:
 				methodVisitor.visitInsn(IREM);
 				break;
 			case NE:
-				Label end = new Label();
-				Label ifEqual = new Label();
-				
-				if(binop.getLeft().getType(context).comparingInstruction() == IF_ACMPEQ) {
-					methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
-					methodVisitor.visitJumpInsn(IFNE, ifEqual);
-				} else {
-					methodVisitor.visitJumpInsn(binop.getLeft().getType(context).comparingInstruction(), ifEqual);
-				}
-				methodVisitor.visitInsn(ICONST_1);
-				methodVisitor.visitJumpInsn(GOTO, end);
-				
-				methodVisitor.visitLabel(ifEqual);
-				methodVisitor.visitInsn(ICONST_0);
-				
-				methodVisitor.visitLabel(end);
+				simpleEquality(methodVisitor, binop, context, true);
 				break;
 			case OR:
 				methodVisitor.visitInsn(IOR);
@@ -283,30 +204,66 @@ public class ExprBinaryOp implements Expr {
 			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), operation.getInternalName(), operation.getTypeDescriptor(context), true);
 		}
 	}
+	
+	private void simpleEquality(MethodVisitor methodVisitor, ExprBinaryOp binop, UniversalContext context, boolean notEquals) {
+		int jumpInsn = IFNE;
+		
+		if(binop.getLeft().getType(context).comparingInstruction() == IF_ACMPEQ) {
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
+		} else {
+			jumpInsn = binop.getLeft().getType(context).comparingInstruction();
+		}
+		
+		simpleJump(methodVisitor, jumpInsn, notEquals);
+	}
+	
+	private void simpleJump(MethodVisitor methodVisitor, int jumpInsn, boolean inverted) {
+		Label end = new Label();
+		Label ifEqual = new Label();
+		
+		methodVisitor.visitJumpInsn(jumpInsn, ifEqual);
+		methodVisitor.visitInsn(inverted ? ICONST_1 : ICONST_0);
+		methodVisitor.visitJumpInsn(GOTO, end);
+		
+		methodVisitor.visitLabel(ifEqual);
+		methodVisitor.visitInsn(inverted ? ICONST_0 : ICONST_1);
+		
+		methodVisitor.visitLabel(end);
+	}
 
 	@Override
 	public int returnType(UniversalContext context) {
 		if(op.isStandard()) {
 			StandardOperation operation = (StandardOperation) op;
 			switch(operation) {
-			case EQUALS:
 			case MULTIPLY:
 			case DIVIDE:
 			case ADD:
 			case SUBTRACT:
 			case POW:
+			case MODULO:
 				return IRETURN;
 			case ACCESSRECORD:
 				return ((TypeRecord) this.left.getType(context)).getTypes()
 					.stream()
 					.filter(p -> p.first().equals(((ExprVariable) this.right).getName()))
 					.findFirst().get().second().returnType();
+			case EQUALS:
+			case GT:
+			case GE:
+			case LT:
+			case LE:
+			case NE:
+			case AND:
+			case OR:
+				return IRETURN;
+			default:
+				break;
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
 			return operation.returnType(context);
 		}
-//		return IRETURN;
 		throw new RuntimeException("Invalid return type " + op);
 	}
 
