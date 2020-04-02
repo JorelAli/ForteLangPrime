@@ -89,6 +89,7 @@ public class FLPFunction implements CodeableClass {
 		methodVisitor.visitLineNumber(body.getLineNumber(), lineNumber);
 		
 		body.emit(methodVisitor, context);
+//		System.out.println(name + body.getInternalType() " -> " + body.returnType(context));
 		methodVisitor.visitInsn(body.returnType(context));
 		
 		Label variableTypes = new Label();

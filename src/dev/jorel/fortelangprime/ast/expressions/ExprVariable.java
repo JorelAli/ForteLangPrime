@@ -133,8 +133,14 @@ public class ExprVariable implements Expr {
 			FLPCompiler.log("Emitting function call invocation");
 			methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), name, tf.toBytecodeString(context), true);
 		} else {
-			FLPCompiler.log("Emitting parameter from location function (indexed: " + getIndex(context) + ")");
-			methodVisitor.visitVarInsn(paramType.loadInstruction(), getIndex(context));
+			int index = getIndex(context);
+			if(paramType.getInternalType() == InternalType.DOUBLE) {
+				FLPCompiler.log("Doubling index for double value");
+				index *= 2;
+			}
+				
+			FLPCompiler.log("Emitting parameter from location function (indexed: " + index + ")");
+			methodVisitor.visitVarInsn(paramType.loadInstruction(), index);
 		}
 	}
 

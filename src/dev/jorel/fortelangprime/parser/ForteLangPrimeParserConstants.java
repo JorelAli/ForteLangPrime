@@ -85,47 +85,49 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int TYPE_BOOL = 37;
   /** RegularExpression Id. */
-  int TYPE_STRING = 38;
+  int TYPE_DOUBLE = 38;
   /** RegularExpression Id. */
-  int TYPE = 39;
+  int TYPE_STRING = 39;
   /** RegularExpression Id. */
-  int IF = 40;
+  int TYPE = 40;
   /** RegularExpression Id. */
-  int THEN = 41;
+  int IF = 41;
   /** RegularExpression Id. */
-  int ELSE = 42;
+  int THEN = 42;
   /** RegularExpression Id. */
-  int INFIX = 43;
+  int ELSE = 43;
   /** RegularExpression Id. */
-  int INFIXL = 44;
+  int INFIX = 44;
   /** RegularExpression Id. */
-  int INFIXR = 45;
+  int INFIXL = 45;
   /** RegularExpression Id. */
-  int TRUE = 46;
+  int INFIXR = 46;
   /** RegularExpression Id. */
-  int FALSE = 47;
+  int TRUE = 47;
   /** RegularExpression Id. */
-  int PANIC = 48;
+  int FALSE = 48;
   /** RegularExpression Id. */
-  int LIBRARY = 49;
+  int PANIC = 49;
   /** RegularExpression Id. */
-  int SCRIPT = 50;
+  int LIBRARY = 50;
   /** RegularExpression Id. */
-  int EXPORT = 51;
+  int SCRIPT = 51;
   /** RegularExpression Id. */
-  int IMPORT = 52;
+  int EXPORT = 52;
   /** RegularExpression Id. */
-  int AS = 53;
+  int IMPORT = 53;
   /** RegularExpression Id. */
-  int VAR_NAME = 54;
+  int AS = 54;
   /** RegularExpression Id. */
-  int INT_LITERAL = 55;
+  int VAR_NAME = 55;
   /** RegularExpression Id. */
-  int NUMBER = 56;
+  int INT_LITERAL = 56;
   /** RegularExpression Id. */
-  int STRING = 57;
+  int NUMBER = 57;
   /** RegularExpression Id. */
-  int CUSTOM_OPERATOR = 58;
+  int STRING = 58;
+  /** RegularExpression Id. */
+  int CUSTOM_OPERATOR = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -172,6 +174,7 @@ public interface ForteLangPrimeParserConstants {
     "\"||\"",
     "\"Int\"",
     "\"Bool\"",
+    "\"Double\"",
     "\"String\"",
     "\"type\"",
     "\"if\"",
@@ -198,11 +201,11 @@ public interface ForteLangPrimeParserConstants {
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
-    "<token of kind 64>",
+    "<token of kind 65>",
     "\"#[\"",
     "\"#[\"",
     "\"]#\"",
-    "<token of kind 68>",
+    "<token of kind 69>",
   };
 
 }

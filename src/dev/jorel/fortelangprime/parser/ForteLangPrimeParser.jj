@@ -102,7 +102,8 @@ TOKEN : {
 // Types (and type-related keywords)
 TOKEN : { 
 		< TYPE_INT : "Int" > 
-	|	< TYPE_BOOL : "Bool" > 
+	|	< TYPE_BOOL : "Bool" >
+	|	< TYPE_DOUBLE : "Double" >  
 	|	< TYPE_STRING : "String" >
 	|	< TYPE : "type" >
 }
@@ -354,6 +355,7 @@ private Expr innerExpression(boolean withBrackets) : {
   	Token op;
 } {
 	( expr = integer()
+	| expr = doubleVal()
 	| expr = bool()
 	| expr = string()
 	| expr = panic()
@@ -450,6 +452,13 @@ private ExprIntLit integer() : {
   	{ return new ExprIntLit(t.beginLine, Integer.parseInt(t.image)); }	
 }
 
+private ExprDoubleLit doubleVal() : {
+  	Token t;
+} {
+  	t = < NUMBER >
+  	{ return new ExprDoubleLit(t.beginLine, Double.parseDouble(t.image)); }	
+}
+
 private ExprBoolLit bool() : {
 	Token t;
 	boolean value;
@@ -509,6 +518,7 @@ private Type type() : {
 	( < TYPE_INT > { type = new TypeInt(); }
 	| < TYPE_STRING > { type = new TypeString(); }
 	| < TYPE_BOOL > { type = new TypeBool(); }
+	| < TYPE_DOUBLE > { type = new TypeDouble(); }
 	//TODO: Add generic to this constructor
 	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
 	)

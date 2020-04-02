@@ -15,7 +15,7 @@ import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 public class Tests {
 	
 	static {
-		FLPCompiler.VERBOSE = false;
+//		FLPCompiler.VERBOSE = false;
 		for(File file : new File(".").listFiles(f -> f.toString().endsWith("flp"))) {
 			try {
 				new FLPCompiler(file, new File("classfolder")).compile();
@@ -76,6 +76,11 @@ public class Tests {
 		
 		assertTrue(Sample.le(5, 10));
 		assertTrue(Sample.le(5, 5));
+	}
+	
+	@Test
+	public void testDoubles() {
+		assertEquals(123.2D, Sample.doubleTest(), 0);
 	}
 	
 }

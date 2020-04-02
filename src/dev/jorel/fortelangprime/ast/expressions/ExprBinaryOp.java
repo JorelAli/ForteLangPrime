@@ -10,8 +10,10 @@ import dev.jorel.fortelangprime.ast.operation.Operation;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYard;
 import dev.jorel.fortelangprime.ast.operation.ShuntingYardable;
 import dev.jorel.fortelangprime.ast.operation.StandardOperation;
+import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
+import dev.jorel.fortelangprime.ast.types.TypeDouble;
 import dev.jorel.fortelangprime.ast.types.TypeInt;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
@@ -57,16 +59,24 @@ public class ExprBinaryOp implements Expr {
 			switch(operation) {
 			case EQUALS:
 				return new TypeBool();
+				
 			case MULTIPLY:
-				return new TypeInt(); //TODO: TypeInt for now, won't be for long
-			default:
-				break;
+			case DIVIDE:
+			case ADD:
+			case SUBTRACT:
+			case POW:
+			case MODULO:
+				if(this.left.getType(context).getInternalType() == InternalType.INTEGER) {
+					return new TypeInt();
+				} 
+//				System.out.println(this.right.getType(context).getInternalType());
+				return new TypeDouble(); //TODO: TypeInt for now, won't be for long
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
 			return operation.getReturnType(context);
 		}
-		
+		System.out.println("BUSTED TYPE FOR BINOP: " + op);
 		return null;
 	}
 	
@@ -134,26 +144,37 @@ public class ExprBinaryOp implements Expr {
 		if(op.isStandard()) {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());
+			
+			InternalType lit = binop.left.getType(context).getInternalType();
+//			if(binop.right.getType(context) == null) {
+//				System.out.println("Debugging weird garb: " + binop.right.toString());
+//			}
+			InternalType rit = binop.right.getType(context).getInternalType();
+			
+			boolean useDouble = lit == InternalType.DOUBLE && rit == InternalType.DOUBLE;
+			
+//			System.out.println(binop.left.getType(context) + " " + binop.op + " " +binop.right.getType(context));
+			
 			switch(operation) {
 			case EQUALS:
 				simpleEquality(methodVisitor, binop, context, false);
 				break;
 			case MULTIPLY:
-				methodVisitor.visitInsn(IMUL);
+				methodVisitor.visitInsn(useDouble ? DMUL : IMUL);
 				break;
 			case ADD:
-				methodVisitor.visitInsn(IADD);
+				methodVisitor.visitInsn(useDouble ? DADD : IADD);
 				break;
 			case DIVIDE:
-				methodVisitor.visitInsn(IDIV);
+				methodVisitor.visitInsn(useDouble ? DDIV : IDIV);
 				break;
 			case POW:
-				methodVisitor.visitInsn(I2D);
+				if(!useDouble) methodVisitor.visitInsn(I2D);
 				methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "pow", "(DD)D", false);
-				methodVisitor.visitInsn(D2I);
+				if(!useDouble) methodVisitor.visitInsn(D2I);
 				break;
 			case SUBTRACT:
-				methodVisitor.visitInsn(ISUB);
+				methodVisitor.visitInsn(useDouble ? DSUB : ISUB);
 				break;
 			case ACCESSRECORD:
 				
@@ -242,7 +263,12 @@ public class ExprBinaryOp implements Expr {
 			case SUBTRACT:
 			case POW:
 			case MODULO:
-				return IRETURN;
+				if(this.left.getType(context).getInternalType() == InternalType.INTEGER) {
+					return IRETURN;
+				}  else {
+					return DRETURN;
+				}
+//				return IRETURN;
 			case ACCESSRECORD:
 				return ((TypeRecord) this.left.getType(context)).getTypes()
 					.stream()

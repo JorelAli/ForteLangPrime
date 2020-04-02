@@ -78,4 +78,7 @@ Library Sample {
 	lt a<Int> -> b<Int> -> <Bool> = a < b;
 	ge a<Int> -> b<Int> -> <Bool> = a >= b;
 	le a<Int> -> b<Int> -> <Bool> = a <= b;
+
+	doubleTest <Double> = 123.2;
+	doubleAdd a<Double> -> b<Double> -> <Double> = a + b;
 }
