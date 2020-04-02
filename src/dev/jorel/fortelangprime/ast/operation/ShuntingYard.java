@@ -14,52 +14,50 @@ import dev.jorel.fortelangprime.ast.operation.ShuntingYardable.RightBracket;
 
 public class ShuntingYard implements Opcodes {
 	
+	private static void flattenRight(ExprBinaryOp op, List<ShuntingYardable> tokens) {
+		if(op.getOperation() != StandardOperation.ACCESSRECORD) {
+			if(op.getRight() instanceof ExprBinaryOp) {
+				tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
+			} else {
+				tokens.add(op.getRight());
+			}
+		}
+	}
+	
+	private static void flattenLeft(ExprBinaryOp op, List<ShuntingYardable> tokens) {
+		if(op.getLeft() instanceof ExprBinaryOp) {
+			tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
+		} else {
+			tokens.add(op.getLeft());
+		}
+	}
+	
 	public static List<ShuntingYardable> flatten(ExprBinaryOp op) {
 		List<ShuntingYardable> tokens = new ArrayList<>();
 		if(op.hasBrackets()) {
 			tokens.add(new LeftBracket());
 		}
 		
+		// Left expression 
 		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-			// Poop out the right first
-			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
-				if(op.getRight() instanceof ExprBinaryOp) {
-					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
-				} else {
-					tokens.add(op.getRight());
-				}
-			}
+			flattenRight(op, tokens);
 		} else {
-			// Poop out the left first
-			if(op.getLeft() instanceof ExprBinaryOp) {
-				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
-			} else {
-				tokens.add(op.getLeft());
-			}
+			flattenLeft(op, tokens);
 		}
 		
+		// Left expression casting checks
 		if(op.getOperation() == StandardOperation.POW) {
 			tokens.add(new ExprInternalCast(I2D));
 		}
 		
+		// Operation
 		tokens.add(op);
 		
+		// Right expression
 		if(op.getOperation().getAssociativity() == Associativity.RIGHT) {
-			// Poop out the left first
-			if(op.getLeft() instanceof ExprBinaryOp) {
-				tokens.addAll(flatten((ExprBinaryOp) op.getLeft()));
-			} else {
-				tokens.add(op.getLeft());
-			}
+			flattenLeft(op, tokens);
 		} else {
-			// Poop out the right first
-			if(op.getOperation() != StandardOperation.ACCESSRECORD) {
-				if(op.getRight() instanceof ExprBinaryOp) {
-					tokens.addAll(flatten((ExprBinaryOp) op.getRight()));
-				} else {
-					tokens.add(op.getRight());
-				}
-			}
+			flattenRight(op, tokens);
 		}
 		
 		if(op.hasBrackets()) {

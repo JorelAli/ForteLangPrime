@@ -438,7 +438,7 @@ private ExprIfStatement ifStatement() : {
 } {
   	t = < IF >
   	a = expression()
-  	< THEN >
+  	( < COLON > | < THEN > )
   	b = expression()
   	< ELSE >
   	c = expression()

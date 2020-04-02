@@ -12,61 +12,151 @@ Library Sample {
 		green<Int>;
 		blue<Int>;
 	}
+	
 
 	## Basic functions (returning simple parameters)
-	justTwo <Int> = 2;
-	aString <String> = "hello";
-	someBool <Bool> = true;
-	panicTest <Bool> = panic;
+	justTwo <Int> = 
+		2;
+
+	aString <String> = 
+		"hello";
+
+	someBool <Bool> = 
+		true;
+
+	panicTest <Bool> = 
+		panic;
+
 
 	## Functions with parameters
-	paramFunction <Int> -> <Int> = 2;
-	identity a<Int> -> <Int> = a;
-	identity1 a3<Bool> -> <Bool> = a3;
-	identity2 a2<String> -> <String> = a2;
-	multiParam a1<Int> -> a2<String> -> <String> = a2;
+	paramFunction <Int> -> <Int> = 
+		2;
+
+	identity a <Int> -> <Int> = 
+		a;
+
+	identity1 a3 <Bool> -> <Bool> = 
+		a3;
+
+	identity2 a2 <String> -> <String> = 
+		a2;
+
+	multiParam a1 <Int> -> a2 <String> -> <String> = 
+		a2;
+
 
 	## Generics
-	<T> id a<T> -> <T> = a;
+	<T> id a <T> -> <T> = 
+		a;
+
 
 	## Useful functions
-	not input<Bool> -> <Bool> = if input then false else true;
+	not input<Bool> -> <Bool> = 
+		if input then
+			false 
+		else 
+			true;
+
 
 	## If statements
-	alwaysFalse <Bool> = if true then if true then false else true else true;
+	alwaysFalse <Bool> = 
+		if true then
+			if true then 
+				false 
+			else
+				true 
+		else 
+			true;
+
 
 	## Fully defined records
-	red <Color> = { red = 255; green = 0; blue = 0; };
-	green <Color> = { green = 255; red = 0; blue = 0; };
+	red <Color> = { 
+		red = 255; 
+		green = 0; 
+		blue = 0; 
+	};
 
-	greenInt <Int> = { red = 255; green = 0; blue = 0; }.red;
+	green <Color> = { 
+		green = 255; 
+		red = 0; 
+		blue = 0; 
+	};
+
+	greenInt <Int> = { 
+		red = 255; 
+		green = 0; 
+		blue = 0; 
+	}.green;
+
 
 	## Record updating using the red function as a base
-	yellow <Color> = { red | green = 255; };
+	yellow <Color> = { red | 
+		green = 255; 
+	};
 
-	someOtherBool <Bool> = someBool;
-	someOtherOtherBool <Bool> = identity1 someBool;
+	someOtherBool <Bool> = 
+		someBool;
 
-	and a<Bool> -> b<Bool> -> <Bool> = if not a then false else if not b then false else true;
+	someOtherOtherBool <Bool> = 
+		identity1 someBool;
 
-	eqInt a<Int> -> b<Int> 		 -> <Bool> = a == b;
-	eqStr a<String> -> b<String> -> <Bool> = a == b;
-	eqBool a<Bool> -> b<Bool> 	 -> <Bool> = a == b;
-	eqColor a<Color> -> b<Color> -> <Bool> = a == b;
+	and a<Bool> -> b<Bool> -> <Bool> = 
+		if not a then 
+			false 
+		else 
+			if not b then 
+				false 
+			else 
+				true;
 
-	neqInt a<Int> -> b<Int> 	  -> <Bool> = a != b;
-	neqStr a<String> -> b<String> -> <Bool> = a != b;
-	neqBool a<Bool> -> b<Bool> 	  -> <Bool> = a != b;
-	neqColor a<Color> -> b<Color> -> <Bool> = a != b;
 
-	testCustomOperator <Bool> = true >>= false;
+	#[ Equality tests for various types ]#
+	eqInt a<Int> -> b<Int> -> <Bool> = 
+		a == b;
 
-	infix 2 bind (>>=) <Bool> -> <Bool> -> <Bool> = true;
+	eqStr a<String> -> b<String> -> <Bool> = 
+		a == b;
 
-	mul a<Int> -> b<Int> -> <Int> = a * b;
-	pow a<Int> -> b<Int> -> <Int> = a ^ b;
-	add a<Int> -> b<Int> -> <Int> = a + b;
-	sub a<Int> -> b<Int> -> <Int> = a - b;
+	eqBool a<Bool> -> b<Bool> -> <Bool> = 
+		a == b;
+
+	eqColor a<Color> -> b<Color> -> <Bool> = 
+		a == b;
+
+	neqInt a<Int> -> b<Int> -> <Bool> = 
+		a != b;
+
+	neqStr a<String> -> b<String> -> <Bool> = 
+		a != b;
+
+	neqBool a<Bool> -> b<Bool> -> <Bool> = 
+		a != b;
+
+	neqColor a<Color> -> b<Color> -> <Bool> = 
+		a != b;
+
+
+	## Custom operators
+	testCustomOperator <Bool> = 
+		true >>= false;
+
+	infix 2 bind (>>=) <Bool> -> <Bool> -> <Bool> = 
+		true;
+
+
+	## Integer math operators
+	mul a<Int> -> b<Int> -> <Int> = 
+		a * b;
+
+	pow a<Int> -> b<Int> -> <Int> =
+		a ^ b;
+
+	add a<Int> -> b<Int> -> <Int> = 
+		a + b;
+
+	sub a<Int> -> b<Int> -> <Int> = 
+		a - b;
+
 
 	## Testing the order of operations
 	## Don't expect (l2r): 5 - 2 => 3 * 3 => 9 + 4 => 13
@@ -74,19 +164,49 @@ Library Sample {
 	## Expect 3 (5 - 6 => -1 + 4 => 3)
 	ooo <Int> = 5 - 2 * 3 + 4; 
 
-	gt a<Int> -> b<Int> -> <Bool> = a > b;
-	lt a<Int> -> b<Int> -> <Bool> = a < b;
-	ge a<Int> -> b<Int> -> <Bool> = a >= b;
-	le a<Int> -> b<Int> -> <Bool> = a <= b;
 
+	## Integer math comparators
+	gt a <Int> -> b <Int> -> <Bool> = 
+		a > b;
+
+	lt a <Int> -> b <Int> -> <Bool> = 
+		a < b;
+
+	ge a <Int> -> b <Int> -> <Bool> = 
+		a >= b;
+
+	le a <Int> -> b <Int> -> <Bool> = 
+		a <= b;
+
+
+	## Double operator testing
 	doubleTest <Double> = 123.2;
-	doubleAdd a<Double> -> b<Double> -> <Double> = a + b;
-	doubleSub a<Double> -> b<Double> -> <Double> = a - b;
-	doubleMul a<Double> -> b<Double> -> <Double> = a * b;
-	doubleDiv a<Double> -> b<Double> -> <Double> = a / b;
-	doubleMod a<Double> -> b<Double> -> <Double> = a % b;
+	doubleAdd a<Double> -> b<Double> -> <Double> = 
+		a + b;
 
-	pipeline <Bool> = true |> not;
-	secondPipeline <Bool> = true |> not |> not;
-	revPipeline <Bool> = not <| true;
+	doubleSub a<Double> -> b<Double> -> <Double> = 
+		a - b;
+
+	doubleMul a<Double> -> b<Double> -> <Double> = 
+		a * b;
+
+	doubleDiv a<Double> -> b<Double> -> <Double> = 
+		a / b;
+
+	doubleMod a<Double> -> b<Double> -> <Double> = 
+		a % b;
+
+
+	## Pipe testing
+	pipeline <Bool> = 
+		true 
+		|> not;
+
+	secondPipeline <Bool> = 
+		true 
+		|> not 
+		|> not;
+
+	revPipeline <Bool> = 
+		not <| true;
 }
