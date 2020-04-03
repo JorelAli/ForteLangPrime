@@ -1,6 +1,7 @@
 package dev.jorel.fortelangprime.ast.types;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.util.Pair;
@@ -45,12 +46,43 @@ public class TypeFunction implements Type {
 		return result.toString();
 	}
 	
+	/**
+	 * Use getReturnType(context) instead
+	 * @return
+	 */
+	@Deprecated
 	public Type getReturnType() {
 		return returnType;
 	}
+	
+	public Type getReturnType(UniversalContext context) {
+		if(returnType.getInternalType() == InternalType.NAMED_GENERIC) {
+			return context.getRecordType(((TypeNamedGeneric) returnType).getName());
+		}
+		return this.returnType;
+	}
 
+	/**
+	 * Use getParams(context) instead
+	 * @return
+	 */
+	@Deprecated
 	public List<Pair<String, Type>> getParams() {
 		return params;
+	}
+	
+	public List<Pair<String, Type>> getParams(UniversalContext context) {
+		ListIterator<Pair<String, Type>> li = this.params.listIterator();
+		while(li.hasNext()) {
+			Pair<String, Type> next = li.next();
+			if(next.second().getInternalType() == InternalType.NAMED_GENERIC) {
+				TypeNamedGeneric tng = (TypeNamedGeneric) next.second();
+				if(!tng.isGeneric()) {
+					li.set(Pair.of(next.first(), context.getRecordType(tng.getName())));
+				}
+			}
+		}
+		return this.params;
 	}
 
 	@Override

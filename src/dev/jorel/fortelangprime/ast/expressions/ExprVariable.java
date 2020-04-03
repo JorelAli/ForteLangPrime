@@ -52,7 +52,7 @@ public class ExprVariable implements Expr {
 
 	@Override
 	public Type getType(UniversalContext context) {
-		Optional<Pair<String, Type>> localType = context.getFunction(parentFunctionName).getParams().stream()
+		Optional<Pair<String, Type>> localType = context.getFunction(parentFunctionName).getParams(context).stream()
 			.filter(p -> p.first().equals(name)).findFirst();
 		
 		// Search local scope
@@ -79,7 +79,7 @@ public class ExprVariable implements Expr {
 		}
 		
 		//Search local scope
-		if(context.getFunction(parentFunctionName).getParams().stream()
+		if(context.getFunction(parentFunctionName).getParams(context).stream()
 			.filter(p -> p.first().equals(name))
 			.findFirst().isPresent()) {
 			inLocalScope = true;
@@ -88,17 +88,17 @@ public class ExprVariable implements Expr {
 		if(functionFound || inLocalScope) {
 			Type result = getType(context);
 			if(result == null) {
-				throw new TypeException("Type for variable " + lineNumber + " couldn't be found");
+				throw new TypeException(lineNumber, "Type for variable " + name + " couldn't be found");
 			}
 			return result;
 		} else {
 			if(!inLocalScope) {
-				throw new TypeException("Parameter " + name + " has no locatable type in function " + parentFunctionName);
+				throw new TypeException(lineNumber, "Parameter " + name + " has no locatable type in function " + parentFunctionName);
 			}
 			if(!functionFound) {
-				throw new TypeException("Function " + name + " can't be found in the file");
+				throw new TypeException(lineNumber, "Function " + name + " can't be found in the file");
 			}
-			throw new TypeException("Honestly, I have no idea what happened here");
+			throw new TypeException(lineNumber, "Honestly, I have no idea what happened here");
 		}
 	}
 
@@ -124,7 +124,7 @@ public class ExprVariable implements Expr {
 	
 	public int getIndex(UniversalContext context) {
 		int index = 0;
-		for(Pair<String, Type> pair : context.getFunction(parentFunctionName).getParams()) {
+		for(Pair<String, Type> pair : context.getFunction(parentFunctionName).getParams(context)) {
 			if(pair.first().equals(name)) {
 				break;
 			} else {

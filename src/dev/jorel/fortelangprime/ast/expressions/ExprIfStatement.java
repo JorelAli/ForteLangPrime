@@ -42,11 +42,11 @@ public class ExprIfStatement implements Expr {
 		if(condition.typeCheck(context).getInternalType() != InternalType.BOOLEAN) {
 			if(condition.typeCheck(context).getInternalType() == InternalType.FUNCTION) {
 				TypeFunction tf = (TypeFunction) condition.typeCheck(context);
-				if(tf.getReturnType().getInternalType() != InternalType.BOOLEAN) {
-					throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+				if(tf.getReturnType(context).getInternalType() != InternalType.BOOLEAN) {
+					throw new TypeException(lineNumber, "Condition is not a boolean");
 				}
 			} else {
-				throw new TypeException("Condition on " + condition.getLineNumber() + " is not a boolean");
+				throw new TypeException(lineNumber, "Condition is not a boolean");
 			}
 		}
 		if(ifTrue.getInternalType() != ifFalse.getInternalType()) {
@@ -59,7 +59,7 @@ public class ExprIfStatement implements Expr {
 			builder.append(":");
 			builder.append(ifFalse.getInternalType());
 			builder.append(" are different types");
-			throw new TypeException(builder.toString());
+			throw new TypeException(lineNumber, builder.toString());
 		}
 		return getType(context);
 	}

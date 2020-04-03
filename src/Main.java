@@ -30,21 +30,21 @@ public class Main {
 //		System.out.println(Sample.equality(2, 2));
 //		System.out.println(Sample.equality(2, 1));
 		
-		System.out.println(Sample.eqInt(2, 2));
-		System.out.println(Sample.eqInt(2, 3));
-		
-		System.out.println(Sample.eqStr("hello", "hello"));
-		System.out.println(Sample.eqStr("hello", "world"));
-		
-		System.out.println(Sample.eqBool(true, true));
-		System.out.println(Sample.eqBool(true, false));
-		
-		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
-		System.out.println(Sample.testCustomOperator());
-		System.out.println(Sample.mul(2, 20));
-		System.out.println(Sample.pow(2, 16));
-		System.out.println(Sample.ooo());
-		System.out.println(Sample.greenInt());
+//		System.out.println(Sample.eqInt(2, 2));
+//		System.out.println(Sample.eqInt(2, 3));
+//		
+//		System.out.println(Sample.eqStr("hello", "hello"));
+//		System.out.println(Sample.eqStr("hello", "world"));
+//		
+//		System.out.println(Sample.eqBool(true, true));
+//		System.out.println(Sample.eqBool(true, false));
+//		
+//		System.out.println(Sample.eqColor(Sample.red(), Sample.red()));
+//		System.out.println(Sample.testCustomOperator());
+//		System.out.println(Sample.mul(2, 20));
+//		System.out.println(Sample.pow(2, 16));
+//		System.out.println(Sample.ooo());
+//		System.out.println(Sample.greenInt());
 		
 	}
 	

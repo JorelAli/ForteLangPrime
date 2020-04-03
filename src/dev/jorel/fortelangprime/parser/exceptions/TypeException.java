@@ -7,8 +7,8 @@ public class TypeException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TypeException(String message) {
-		super(message);
+	public TypeException(int lineNumber, String message) {
+		super("Type error on line " + lineNumber + ": " + message);
 	}
 
 }

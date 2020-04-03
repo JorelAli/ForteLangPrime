@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.objectweb.asm.MethodVisitor;
 
 import dev.jorel.fortelangprime.ast.types.Type;
-import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
@@ -54,11 +53,11 @@ public class ExprRecordConstruction implements Expr {
 		if(base != null) {
 			ExprVariable baseVar = (ExprVariable) base;
 			baseVar.typeCheck(context);
-			TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
-			TypeRecord tr = (TypeRecord) context.getRecordType(tng.getName());
+//			TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);
+			TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);//(TypeRecord) context.getRecordType(tng.getName());
 			
 			if(tr == null) {
-				throw new TypeException("Record type has not been declared on line " + baseVar.getLineNumber());
+				throw new TypeException(baseVar.getLineNumber(), "Record type has not been declared");
 			}
 			
 			// Yeah, I know a set would be better, but for pretty-printing it's better
@@ -72,11 +71,11 @@ public class ExprRecordConstruction implements Expr {
 					}
 					if(pair.first().equals(expectPair.first())) {
 						if(expectPair.second().getInternalType() != pair.second().getType(context).getInternalType()) {
-							throw new TypeException("Mismatched types on line " + lineNumber);
+							throw new TypeException(lineNumber, "Mismatched types");
 						}
 					}
 					if(!names.contains(pair.first())) {
-						throw new TypeException("Parameter " + pair.first() + " is not present in { " + names.stream().collect(Collectors.joining(", ")) + " }");
+						throw new TypeException(lineNumber, "Parameter " + pair.first() + " is not present in { " + names.stream().collect(Collectors.joining(", ")) + " }");
 					}
 				}
 			}
@@ -85,9 +84,7 @@ public class ExprRecordConstruction implements Expr {
 		} else {
 			Type type = getType(context);
 			if(type == null) {
-				throw new TypeException("Error on line " +
-					lineNumber + 
-					" Record type { " + 
+				throw new TypeException(lineNumber, "Record type { " + 
 					values.stream().map(p -> p.first() + "<" + p.second().getType(context).getInternalType() + ">").collect(Collectors.joining("; ")) + " } has not been declared");
 			}
 			return type;
@@ -138,8 +135,11 @@ public class ExprRecordConstruction implements Expr {
 			if(base.getInternalType() == ExpressionType.VARIABLE) {
 				ExprVariable baseVar = (ExprVariable) base;
 				FLPCompiler.log("Emitting record update using " + baseVar.getName());
-				TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
-				TypeRecord tr = (TypeRecord) context.getRecordType(tng.getName());
+//				TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
+				TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);//context.getRecordType(tng.getName());
+				
+//				System.out.println("Very Important Nonsense ---");
+//				System.out.println(tng.getName() + " c.f. " + tr.getName());
 				
 				FLPCompiler.log("Reordering record parameters to match type");
 				List<String> orderedNames = tr.getTypes().stream().map(Pair::first).collect(Collectors.toList()); 
@@ -158,8 +158,8 @@ public class ExprRecordConstruction implements Expr {
 				methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), baseVar.getName(), "()L" + context.getLibraryName() + tr.toBytecodeString(context), true);
 				methodVisitor.visitVarInsn(ASTORE, 0);
 				
-				FLPCompiler.log("Loading instance of " + tng.getName());
-				methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + tng.getName());
+				FLPCompiler.log("Loading instance of " + tr.getName());
+				methodVisitor.visitTypeInsn(NEW, context.getLibraryName() + "$" + tr.getName());
 				methodVisitor.visitInsn(DUP);
 				
 				for (int i = 0; i < newExprs.size(); i++) {
@@ -168,7 +168,7 @@ public class ExprRecordConstruction implements Expr {
 					if(pair == null) {
 						FLPCompiler.log("Loading local parameter " + expectedPair.first() + " from base");
 						methodVisitor.visitVarInsn(ALOAD, 0);
-						methodVisitor.visitFieldInsn(GETFIELD, context.getLibraryName() + "$" + tng.getName(), expectedPair.first(), expectedPair.second().toBytecodeString(context));
+						methodVisitor.visitFieldInsn(GETFIELD, context.getLibraryName() + "$" + tr.getName(), expectedPair.first(), expectedPair.second().toBytecodeString(context));
 					} else {
 						FLPCompiler.log("Loading parameter " + pair.first());
 						pair.second().emit(methodVisitor, context);
@@ -176,8 +176,8 @@ public class ExprRecordConstruction implements Expr {
 				}
 				
 				String paramSignature = tr.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
-				FLPCompiler.log("Calling constructor for " + tng.getName());
-				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tng.getName(), "<init>", "(" + paramSignature + ")V", false);
+				FLPCompiler.log("Calling constructor for " + tr.getName());
+				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tr.getName(), "<init>", "(" + paramSignature + ")V", false);
 //				methodVisitor.visitInsn(ARETURN);
 //				methodVisitor.visitMaxs(0, 0);
 //				methodVisitor.visitEnd();

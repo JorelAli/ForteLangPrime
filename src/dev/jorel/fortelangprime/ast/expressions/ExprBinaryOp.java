@@ -108,8 +108,8 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			switch(operation) {
 			case EQUALS:
-				if(left.typeCheck(context).getInternalType() != right.typeCheck(context).getInternalType()) {
-					throw new TypeException("Left is " + left.getType(context).getInternalType() + " but right is " + right.getType(context).getInternalType());
+				if(this.left.typeCheck(context).getInternalType() != this.right.typeCheck(context).getInternalType()) {
+					throw new TypeException(lineNumber, "Left is " + left.getType(context).getInternalType() + " but right is " + right.getType(context).getInternalType());
 				}
 				return new TypeBool();
 			case DIVIDE:
@@ -118,6 +118,42 @@ public class ExprBinaryOp implements Expr {
 			case POW:
 			case MULTIPLY:
 				return new TypeInt();
+			case ACCESSRECORD:
+				
+				// Right has to be a variable
+				// { var = 2; }.var
+				
+				if(this.right.getInternalType() != ExpressionType.VARIABLE) {
+					throw new TypeException(lineNumber, "Thing on the right has to be a variable name to access a record!");
+				}
+				ExprVariable exprVar = (ExprVariable) this.right;
+				
+				// Left has to be of type type record
+				Type leftType = this.left.getType(context);
+				TypeRecord tr = null;
+				if(leftType.getInternalType() == InternalType.FUNCTION) {
+					leftType = ((TypeFunction) leftType).getReturnType();
+					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
+						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
+					}
+				} else if(leftType.getInternalType() == InternalType.RECORD) {
+					tr = (TypeRecord) leftType;
+				} 
+				if(tr == null) {
+					throw new RuntimeException("Invalid state (compilation bug): " + leftType.getInternalType());
+				}
+//				System.out.println(tr.getTypes());
+//				TypeRecord leftType = (TypeRecord) binop.left.getType(context);
+				String classOwner = context.getLibraryName() + "$" + tr.getName();
+				Optional<Pair<String, Type>> potentialDescriptor = tr.getTypes().stream()
+					.filter(p -> p.first().equals(exprVar.getName())).findFirst();
+				String descriptor = null;
+				if(!potentialDescriptor.isPresent()) {
+					throw new RuntimeException("[TODO: Move error message to typechecker] Invalid type at line " + lineNumber + ", could not find " + exprVar.getName() + " in type " + tr.getName());
+				} else {
+					descriptor = potentialDescriptor.get().second().toBytecodeString(context);
+				}
+//				methodVisitor.visitFieldInsn(GETFIELD, classOwner, exprVar.getName(), descriptor);
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);

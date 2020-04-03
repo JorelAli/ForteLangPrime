@@ -24,6 +24,9 @@ public class Tests {
 			}
 		}
 	}
+	
+	@Test
+	public void empty() { }
 
 	@Test
 	public void testEquality() {
