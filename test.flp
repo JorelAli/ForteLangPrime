@@ -219,12 +219,15 @@ Library Sample {
 
 
 	@Equatable
+	@Printable
 	type DoubleType = {
 		value<Double>;
+		value2<Double>;
 	}
 
 	mkDoubleType <DoubleType> = {
 		value = 20.0;
+		value2 = 3.0;
 	};
 
 }

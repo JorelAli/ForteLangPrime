@@ -113,4 +113,9 @@ public class Tests {
 		assertEquals(Sample.mkDoubleType(), Sample.mkDoubleType());
 	}
 	
+	@Test
+	public void doublePrinting() {
+		System.out.println(Sample.mkDoubleType().toString());
+	}
+	
 }

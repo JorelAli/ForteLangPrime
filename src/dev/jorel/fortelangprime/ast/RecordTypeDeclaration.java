@@ -81,6 +81,9 @@ public class RecordTypeDeclaration implements CodeableClass {
 			for(Pair<String, Type> pair : recordType.getTypes()) {
 				methodVisitor.visitVarInsn(ALOAD, 0);
 				methodVisitor.visitVarInsn(pair.second().loadInstruction(), index++);
+				if(pair.second().loadInstruction() == DLOAD) {
+					index++;
+				}
 				FLPCompiler.log("Assigning " + pair.first() + " to parameter at index " + index);
 				methodVisitor.visitFieldInsn(PUTFIELD, innerClassName, pair.first(), pair.second().toBytecodeString(context));
 			}
