@@ -10,6 +10,9 @@ import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
+/**
+ * An if statement. if a then b else c
+ */
 public class ExprIfStatement implements Expr {
 	
 	private int lineNumber;

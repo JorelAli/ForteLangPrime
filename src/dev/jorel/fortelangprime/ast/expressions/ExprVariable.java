@@ -16,6 +16,9 @@ import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.util.Pair;
 
+/**
+ * Variables, such as myVar, as well as function calls, such as: not a
+ */
 public class ExprVariable implements Expr {
 	
 	private int lineNumber;

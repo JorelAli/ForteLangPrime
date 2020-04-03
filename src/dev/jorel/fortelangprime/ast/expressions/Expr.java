@@ -21,9 +21,18 @@ public interface Expr extends CodeableMethod, ShuntingYardable {
 	 */
 	public Type typeCheck(UniversalContext context) throws TypeException; 
 	
+	/**
+	 * Unused for now - designed for higher order functions
+	 * @return
+	 */
 	public boolean isReducable();
 	public Expr substitute(String name, Expr val);
 	public Expr deepCopy();
+	
+	/**
+	 * Gets the internal type of this expression. Used for comparing expressions
+	 * @return
+	 */
 	public ExpressionType getInternalType();
 	
 }

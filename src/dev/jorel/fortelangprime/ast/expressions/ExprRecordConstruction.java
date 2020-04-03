@@ -15,7 +15,16 @@ import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 import dev.jorel.fortelangprime.util.Pair;
 import dev.jorel.fortelangprime.util.StreamUtils;
 
-//Constructing a full record (not using record updating { blah | x = 2 })
+/**
+ * Constructing a full record such as
+ * {
+ * 	  a = 2;
+ * }
+ * 
+ * or record updating:
+ * 
+ * { x | b = 2; }
+ */
 public class ExprRecordConstruction implements Expr {
 	
 	private int lineNumber;

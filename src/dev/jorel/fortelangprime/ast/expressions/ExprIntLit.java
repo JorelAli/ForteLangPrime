@@ -8,6 +8,9 @@ import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
+/**
+ * Integers (e.g. 1, 230, -10)
+ */
 public class ExprIntLit implements Expr {
 	
 	private int lineNumber;

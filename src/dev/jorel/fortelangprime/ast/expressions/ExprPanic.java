@@ -7,6 +7,9 @@ import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
+/**
+ * The panic operator (like undefined in Haskell)
+ */
 public class ExprPanic implements Expr {
 	
 	private int lineNumber;

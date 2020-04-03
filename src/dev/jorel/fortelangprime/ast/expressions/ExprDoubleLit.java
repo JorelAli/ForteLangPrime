@@ -7,6 +7,9 @@ import dev.jorel.fortelangprime.ast.types.TypeDouble;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
+/**
+ * A double literal (a number with a . in the middle!)
+ */
 public class ExprDoubleLit implements Expr {
 	
 	private int lineNumber;

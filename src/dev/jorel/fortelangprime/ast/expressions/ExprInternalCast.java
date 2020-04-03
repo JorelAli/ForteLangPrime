@@ -6,6 +6,9 @@ import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
+/**
+ * An internal cast. Used to cast integers to doubles (for example)
+ */
 public class ExprInternalCast implements Expr {
 
 	private final int castOpcode;
