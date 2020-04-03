@@ -34,6 +34,8 @@ public class ExprRecordConstruction implements Expr {
 		for(Pair<String, Expr> pair : values) {
 			types.add(Pair.of(pair.first(), pair.second().getType(context)));
 		}
+//		types.stream().map(p -> p.first() + p.second().getInternalType()).forEach(System.out::println);
+//		System.out.println();
 		return context.getRecordTypeMatching(types);
 	}
 
@@ -74,7 +76,10 @@ public class ExprRecordConstruction implements Expr {
 		} else {
 			Type type = getType(context);
 			if(type == null) {
-				throw new TypeException(lineNumber + " Record type with parameters " + values.stream().map(Pair::first).collect(Collectors.joining(", ")) + " has not been declared");
+				throw new TypeException("Error on line " +
+					lineNumber + 
+					" Record type { " + 
+					values.stream().map(p -> p.first() + "<" + p.second().getType(context).getInternalType() + ">").collect(Collectors.joining("; ")) + " } has not been declared");
 			}
 			return type;
 		}

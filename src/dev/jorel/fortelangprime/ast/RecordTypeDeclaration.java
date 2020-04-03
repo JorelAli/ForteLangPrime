@@ -57,7 +57,7 @@ public class RecordTypeDeclaration implements CodeableClass {
 		FLPCompiler.log("Creating inner class " + context.getLibraryName() + "$" + name);
 		ClassWriter innerClassWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		innerClassWriter.visitInnerClass(innerClassName, context.getLibraryName(), name, ACC_PUBLIC | ACC_STATIC);
-		innerClassWriter.visit(context.getJavaVersion(), ACC_PUBLIC, innerClassName, null, "java/lang/Object", null);
+		innerClassWriter.visit(context.getJavaVersion(), ACC_PUBLIC | ACC_SUPER, innerClassName, null, "java/lang/Object", null);
 		
 		// Write public final fields
 		FieldVisitor fieldVisitor;

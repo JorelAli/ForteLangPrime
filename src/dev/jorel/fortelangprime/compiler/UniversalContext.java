@@ -91,10 +91,23 @@ public class UniversalContext {
 	}
 	
 	public Type getRecordTypeMatching(List<Pair<String, Type>> types) {
-		//TODO: This is currently a trash implementation just for testing for now
-		for(Entry<String, TypeRecord> entry : recordTypes.entrySet()) {
+		main: for(Entry<String, TypeRecord> entry : recordTypes.entrySet()) {
 			Set<String> keysInContext = entry.getValue().getTypes().stream().map(Pair::first).collect(Collectors.toSet());
 			Set<String> keysInCheck = types.stream().map(Pair::first).collect(Collectors.toSet());
+			
+			List<Type> typesInContext = entry.getValue().getTypes().stream().map(Pair::second).collect(Collectors.toList());
+			List<Type> typesInCheck = types.stream().map(Pair::second).collect(Collectors.toList());
+			
+			if(typesInContext.size() == typesInCheck.size())  {
+				for (int i = 0; i < typesInContext.size(); i++) {
+					Type t = typesInContext.get(i);
+					Type t2 = typesInCheck.get(i);
+					if(t.getInternalType() != t2.getInternalType()) {
+						continue main;
+					}
+				}
+			}
+			
 			if(keysInCheck.equals(keysInContext)) {
 				return entry.getValue();
 			}

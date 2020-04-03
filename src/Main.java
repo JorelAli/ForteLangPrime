@@ -6,6 +6,9 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		
+		//flags: ACC_PUBLIC, ACC_SUPER
+		//flags: ACC_PUBLIC, ACC_INTERFACE, ACC_ABSTRACT
+		
 //		dev.jorel.fortelangprime.Main.printHelp();
 		
 		File[] files = new File(".").listFiles(f -> f.toString().endsWith("flp"));
@@ -42,7 +45,10 @@ public class Main {
 		System.out.println(Sample.pow(2, 16));
 		System.out.println(Sample.ooo());
 		System.out.println(Sample.greenInt());
+		
 	}
+	
+	
 	
 	
 	

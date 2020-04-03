@@ -7,14 +7,11 @@ import static dev.jorel.fortelangprime.util.ConsoleColors.TAB;
 import static dev.jorel.fortelangprime.util.ConsoleColors.YELLOW;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.checkerframework.checker.units.qual.s;
 
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.util.Levenshtein;

@@ -15,7 +15,7 @@ import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 public class Tests {
 	
 	static {
-//		FLPCompiler.VERBOSE = false;
+		FLPCompiler.VERBOSE = false;
 		for(File file : new File(".").listFiles(f -> f.toString().endsWith("flp"))) {
 			try {
 				new FLPCompiler(file, new File("classfolder")).compile();
@@ -110,7 +110,6 @@ public class Tests {
 	
 	@Test
 	public void doubleEqualityInRecordType() {
-		System.out.println(Sample.mkDoubleType().equals(Sample.mkDoubleType()));
 		assertEquals(Sample.mkDoubleType(), Sample.mkDoubleType());
 	}
 	
