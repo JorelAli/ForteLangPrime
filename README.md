@@ -50,6 +50,90 @@ ForteLang′ also plans on having the following features:
 
 -----
 
+# Syntax (currently available)
+
+For a quick example of existing features, refer to the [test.flp](https://github.com/JorelAli/ForteLangPrime/blob/master/test.flp) file
+
+## Library declaration
+
+Libraries are declared as follows:
+
+```haskell
+Library LibraryName {
+    ## Exports
+} {
+    ## Declarations
+}
+```
+
+### Exports
+
+Exports are added using the `export` keyword and are used to export function names. They require a semicolon at the end. For example:
+
+```haskell
+export myFunction;
+export myOtherFunction;
+```
+
+All functions can be exported using the `*` operator. For example:
+
+```haskell
+export *;
+```
+
+## Function declarations
+
+Function declarations are of the following formats:
+
+```haskell
+functionName <types> = <expression>;
+```
+
+Function types can be parameterised by an identifier or not. In this example, we represent a function that takes in an `Int` and returns and `Int`:
+
+```haskell
+## No parameter name
+functionName <Int> -> <Int> = ## Some expression
+
+## With parameter name
+functionName a<Int> -> <Int> = ## Some expression
+```
+
+Generic function declarations have to declare the name of the generic type:
+
+```haskell
+<T> functionName a<T> -> <T> = ## Some expression
+```
+
+Multiple generic types are separated with commas:
+
+```haskell
+<T, U> functionType a<T> -> b<U> -> <Bool> = ## Some expression
+```
+
+## Record type declarations
+
+Record types are declared as follows. Note how you _do not_ need a semicolon at the end:
+
+```haskell
+type MyRecord = {
+    value<Int>;
+    ## Etc.
+}
+```
+
+## Custom operator declarations
+
+Custom operators are declared as follows:
+
+```haskell
+infix 2 opName (<>) <Bool> -> <Bool> -> <Bool> = ## Some expression
+```
+
+The order of associativity is set by using `infix` (no associativity), `infixl` (left associativity) or `infixr` (right associativity). The number after that is the precendence (higher is more tightly binding). The operator is declared in brackets after the operator's name (which is used when exporting custom operator functions).
+
+-----
+
 # Syntax (preview)
 
 ## Library declaration
