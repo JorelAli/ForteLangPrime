@@ -88,6 +88,8 @@ Library Sample {
 		blue = 0; 
 	}.green;
 
+	recordAccessTest <Int> = green.green;
+
 
 	## Record updating using the red function as a base
 	yellow <Color> = { red | 

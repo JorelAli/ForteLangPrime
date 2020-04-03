@@ -1,6 +1,8 @@
 package dev.jorel.fortelangprime.ast.expressions;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -14,11 +16,14 @@ import dev.jorel.fortelangprime.ast.types.InternalType;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.TypeDouble;
+import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeInt;
+import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
+import dev.jorel.fortelangprime.util.Pair;
 
 /**
  * A binary operation of the form: a op b
@@ -162,43 +167,62 @@ public class ExprBinaryOp implements Expr {
 			StandardOperation operation = (StandardOperation) op;
 			FLPCompiler.log("Emitting standard operation " + operation.name());
 			
-			InternalType lit = binop.left.getType(context).getInternalType();
-//			if(binop.right.getType(context) == null) {
-//				System.out.println("Debugging weird garb: " + binop.right.toString());
-//			}
-			InternalType rit = binop.right.getType(context).getInternalType();
-			
-			boolean useDouble = lit == InternalType.DOUBLE && rit == InternalType.DOUBLE;
-			
-//			System.out.println(binop.left.getType(context) + " " + binop.op + " " +binop.right.getType(context));
-			
+			// We need to determine this lazily, so we use a supplier to do so
+			Supplier<Boolean> useDouble = () -> {
+				InternalType lit = binop.left.getType(context).getInternalType();
+				InternalType rit = binop.right.getType(context).getInternalType();
+				return lit == InternalType.DOUBLE && rit == InternalType.DOUBLE;
+			};
+				
 			switch(operation) {
 			case EQUALS:
 				simpleEquality(methodVisitor, binop, context, false);
 				break;
 			case MULTIPLY:
-				methodVisitor.visitInsn(useDouble ? DMUL : IMUL);
+				methodVisitor.visitInsn(useDouble.get() ? DMUL : IMUL);
 				break;
 			case ADD:
-				methodVisitor.visitInsn(useDouble ? DADD : IADD);
+				methodVisitor.visitInsn(useDouble.get() ? DADD : IADD);
 				break;
 			case DIVIDE:
-				methodVisitor.visitInsn(useDouble ? DDIV : IDIV);
+				methodVisitor.visitInsn(useDouble.get() ? DDIV : IDIV);
 				break;
 			case POW:
-				if(!useDouble) methodVisitor.visitInsn(I2D);
+				if(!useDouble.get()) methodVisitor.visitInsn(I2D);
 				methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "pow", "(DD)D", false);
-				if(!useDouble) methodVisitor.visitInsn(D2I);
+				if(!useDouble.get()) methodVisitor.visitInsn(D2I);
 				break;
 			case SUBTRACT:
-				methodVisitor.visitInsn(useDouble ? DSUB : ISUB);
+				methodVisitor.visitInsn(useDouble.get() ? DSUB : ISUB);
 				break;
 			case ACCESSRECORD:
 				
 				ExprVariable exprVar = (ExprVariable) binop.right;
-				TypeRecord leftType = (TypeRecord) binop.left.getType(context);
-				String classOwner = context.getLibraryName() + "$" + leftType.getName();
-				String descriptor = leftType.getTypes().stream().filter(p -> p.first().equals(exprVar.getName())).findFirst().get().second().toBytecodeString(context);
+				
+				Type leftType = binop.left.getType(context);
+				TypeRecord tr = null;
+				if(leftType.getInternalType() == InternalType.FUNCTION) {
+					leftType = ((TypeFunction) leftType).getReturnType();
+					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
+						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
+					}
+				} else if(leftType.getInternalType() == InternalType.RECORD) {
+					tr = (TypeRecord) leftType;
+				} 
+				if(tr == null) {
+					throw new RuntimeException("Invalid state (compilation bug): " + leftType.getInternalType());
+				}
+//				System.out.println(tr.getTypes());
+//				TypeRecord leftType = (TypeRecord) binop.left.getType(context);
+				String classOwner = context.getLibraryName() + "$" + tr.getName();
+				Optional<Pair<String, Type>> potentialDescriptor = tr.getTypes().stream()
+					.filter(p -> p.first().equals(exprVar.getName())).findFirst();
+				String descriptor = null;
+				if(!potentialDescriptor.isPresent()) {
+					throw new RuntimeException("[TODO: Move error message to typechecker] Invalid type at line " + lineNumber + ", could not find " + exprVar.getName() + " in type " + tr.getName());
+				} else {
+					descriptor = potentialDescriptor.get().second().toBytecodeString(context);
+				}
 				methodVisitor.visitFieldInsn(GETFIELD, classOwner, exprVar.getName(), descriptor);
 				break;
 			case AND:
@@ -221,7 +245,7 @@ public class ExprBinaryOp implements Expr {
 				simpleJump(methodVisitor, IF_ICMPLT, false);
 				break;
 			case MODULO:
-				methodVisitor.visitInsn(useDouble ? DREM : IREM);
+				methodVisitor.visitInsn(useDouble.get() ? DREM : IREM);
 				break;
 			case NE:
 				simpleEquality(methodVisitor, binop, context, true);
@@ -289,7 +313,22 @@ public class ExprBinaryOp implements Expr {
 				}
 //				return IRETURN;
 			case ACCESSRECORD:
-				return ((TypeRecord) this.left.getType(context)).getTypes()
+				
+				Type leftType = left.getType(context);
+				TypeRecord tr = null;
+				if(leftType.getInternalType() == InternalType.FUNCTION) {
+					leftType = ((TypeFunction) leftType).getReturnType();
+					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
+						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
+					}
+				} else if(leftType.getInternalType() == InternalType.RECORD) {
+					tr = (TypeRecord) leftType;
+				} 
+				if(tr == null) {
+					throw new RuntimeException("Invalid state 2 (compilation bug): " + leftType.getInternalType());
+				}
+				
+				return tr.getTypes()
 					.stream()
 					.filter(p -> p.first().equals(((ExprVariable) this.right).getName()))
 					.findFirst().get().second().returnType();

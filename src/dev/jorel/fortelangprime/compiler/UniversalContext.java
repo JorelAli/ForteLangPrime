@@ -86,7 +86,7 @@ public class UniversalContext {
 		this.recordTypes.put(recordName, type);
 	}
 	
-	public Type getRecordType(String recordName) {
+	public TypeRecord getRecordType(String recordName) {
 		return this.recordTypes.get(recordName);
 	}
 	
