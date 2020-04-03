@@ -24,9 +24,6 @@ public class Tests {
 			}
 		}
 	}
-	
-	@Test
-	public void empty() { }
 
 	@Test
 	public void testEquality() {
@@ -109,6 +106,8 @@ public class Tests {
 		assertFalse(Sample.implies2(true, false));
 		assertTrue(Sample.implies2(false, true));
 		assertTrue(Sample.implies2(false, false));
+		
+		assertFalse(Sample.impliesTest(true, false));
 	}
 	
 	@Test

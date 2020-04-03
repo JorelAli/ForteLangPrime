@@ -219,6 +219,9 @@ Library Sample {
 	infixl 1 implies2 (~~>) a<Bool> -> b<Bool> -> <Bool> = 
 		not a || b;
 
+	impliesTest a<Bool> -> b<Bool> -> <Bool> =
+		a ==> b;
+
 
 	@Equatable
 	@Printable
