@@ -132,28 +132,17 @@ public class ExprBinaryOp implements Expr {
 				Type leftType = this.left.getType(context);
 				TypeRecord tr = null;
 				if(leftType.getInternalType() == InternalType.FUNCTION) {
-					leftType = ((TypeFunction) leftType).getReturnType();
-					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
-						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
-					}
+					tr = (TypeRecord) ((TypeFunction) leftType).getReturnType(context);
 				} else if(leftType.getInternalType() == InternalType.RECORD) {
 					tr = (TypeRecord) leftType;
-				} 
-				if(tr == null) {
-					throw new RuntimeException("Invalid state (compilation bug): " + leftType.getInternalType());
-				}
-//				System.out.println(tr.getTypes());
-//				TypeRecord leftType = (TypeRecord) binop.left.getType(context);
-				String classOwner = context.getLibraryName() + "$" + tr.getName();
+				}				
 				Optional<Pair<String, Type>> potentialDescriptor = tr.getTypes().stream()
 					.filter(p -> p.first().equals(exprVar.getName())).findFirst();
-				String descriptor = null;
 				if(!potentialDescriptor.isPresent()) {
-					throw new RuntimeException("[TODO: Move error message to typechecker] Invalid type at line " + lineNumber + ", could not find " + exprVar.getName() + " in type " + tr.getName());
+					throw new TypeException(lineNumber, "Could not find " + exprVar.getName() + " in type " + tr.getName());
 				} else {
-					descriptor = potentialDescriptor.get().second().toBytecodeString(context);
+					return potentialDescriptor.get().second();
 				}
-//				methodVisitor.visitFieldInsn(GETFIELD, classOwner, exprVar.getName(), descriptor);
 			}
 		} else {
 			CustomOperation operation = (CustomOperation) (op.isUnresolved() ? op.resolve(context) : op);
@@ -238,10 +227,7 @@ public class ExprBinaryOp implements Expr {
 				Type leftType = binop.left.getType(context);
 				TypeRecord tr = null;
 				if(leftType.getInternalType() == InternalType.FUNCTION) {
-					leftType = ((TypeFunction) leftType).getReturnType();
-					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
-						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
-					}
+					tr = (TypeRecord) ((TypeFunction) leftType).getReturnType(context);
 				} else if(leftType.getInternalType() == InternalType.RECORD) {
 					tr = (TypeRecord) leftType;
 				} 
@@ -353,10 +339,7 @@ public class ExprBinaryOp implements Expr {
 				Type leftType = left.getType(context);
 				TypeRecord tr = null;
 				if(leftType.getInternalType() == InternalType.FUNCTION) {
-					leftType = ((TypeFunction) leftType).getReturnType();
-					if(leftType.getInternalType() == InternalType.NAMED_GENERIC) {
-						tr = context.getRecordType(((TypeNamedGeneric) leftType).getName());
-					}
+					tr = (TypeRecord) ((TypeFunction) leftType).getReturnType(context);
 				} else if(leftType.getInternalType() == InternalType.RECORD) {
 					tr = (TypeRecord) leftType;
 				} 

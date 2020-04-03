@@ -1,5 +1,6 @@
 package dev.jorel.fortelangprime.ast.types;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -72,17 +73,20 @@ public class TypeFunction implements Type {
 	}
 	
 	public List<Pair<String, Type>> getParams(UniversalContext context) {
-		ListIterator<Pair<String, Type>> li = this.params.listIterator();
+		List<Pair<String, Type>> newList = new ArrayList<>(this.params);
+		ListIterator<Pair<String, Type>> li = newList.listIterator();
 		while(li.hasNext()) {
 			Pair<String, Type> next = li.next();
 			if(next.second().getInternalType() == InternalType.NAMED_GENERIC) {
 				TypeNamedGeneric tng = (TypeNamedGeneric) next.second();
-				if(!tng.isGeneric()) {
-					li.set(Pair.of(next.first(), context.getRecordType(tng.getName())));
+//				System.out.println("TNG -> " + tng.getName());
+				Type result = context.getRecordType(tng.getName());
+				if(result != null) {
+					li.set(Pair.of(next.first(), result));
 				}
 			}
 		}
-		return this.params;
+		return newList;
 	}
 
 	@Override

@@ -155,7 +155,7 @@ public class ExprRecordConstruction implements Expr {
 				}
 				FLPCompiler.log("Invoking base function");
 				//TODO: This is only temporarily (), it will have to include function params later
-				methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), baseVar.getName(), "()L" + context.getLibraryName() + tr.toBytecodeString(context), true);
+				methodVisitor.visitMethodInsn(INVOKESTATIC, context.getLibraryName(), baseVar.getName(), "()" + tr.toBytecodeString(context), true);
 				methodVisitor.visitVarInsn(ASTORE, 0);
 				
 				FLPCompiler.log("Loading instance of " + tr.getName());

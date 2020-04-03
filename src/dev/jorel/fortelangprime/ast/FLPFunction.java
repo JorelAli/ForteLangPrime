@@ -75,7 +75,7 @@ public class FLPFunction implements CodeableClass {
 				StringBuilder result = new StringBuilder("(");
 				typeFunction.getParams().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
 				result.append(")");
-				result.append("L" + context.getLibraryName() + context.getRecordType(s).toBytecodeString(context));
+				result.append(context.getRecordType(s).toBytecodeString(context));
 				returnTypeString = result.toString(); 
 			}
 		}

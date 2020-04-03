@@ -30,7 +30,7 @@ public class TypeRecord implements Type {
 
 	@Override
 	public String toBytecodeString(UniversalContext context) {
-		return "$" + name + ";";
+		return "L" + context.getLibraryName() + "$" + name + ";";
 	}
 
 	@Override
