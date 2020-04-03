@@ -518,6 +518,15 @@ private Type type() : {
 	| < TYPE_DOUBLE > { type = new TypeDouble(); }
 	//TODO: Add generic to this constructor
 	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
+	| 	< OPENBRACKET >
+		{ Type temp1; Type temp2; List<Type> right = new ArrayList<Type>(); }
+		temp1 = type()
+		(		  	< ARROW >
+			temp2 = type()
+			{ right.add(temp2); }
+		)+
+		< CLOSEBRACKET >
+		{ type = new TypeLambda(temp1, right); }
 	)
 	{ return type; }
 }
