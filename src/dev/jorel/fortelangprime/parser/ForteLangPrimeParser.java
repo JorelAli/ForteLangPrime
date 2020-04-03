@@ -770,6 +770,24 @@ return new TypeRecord(name, types);
     finally { jj_save(2, xla); }
   }
 
+  private boolean jj_3R_24()
+ {
+    if (jj_scan_token(NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_22()
+ {
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21()
+ {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
   private boolean jj_3R_20()
  {
     if (jj_3R_10()) return true;
@@ -940,43 +958,43 @@ return new TypeRecord(name, types);
  {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(32)) {
+    if (jj_scan_token(29)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(20)) {
+    if (jj_scan_token(17)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(23)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(22)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(21)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(24)) {
     jj_scanpos = xsp;
     if (jj_scan_token(26)) {
     jj_scanpos = xsp;
     if (jj_scan_token(25)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(24)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(27)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(29)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(28)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(7)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(23)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(33)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(18)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(19)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(31)) {
+    if (jj_scan_token(20)) {
     jj_scanpos = xsp;
     if (jj_scan_token(30)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(34)) {
+    if (jj_scan_token(15)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(35)) {
+    if (jj_scan_token(16)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(13)) {
+    if (jj_scan_token(28)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(14)) return true;
+    if (jj_scan_token(27)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(31)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(32)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(11)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(12)) return true;
     }
     }
     }
@@ -1027,27 +1045,9 @@ return new TypeRecord(name, types);
     xsp = jj_scanpos;
     if (jj_3R_8()) {
     jj_scanpos = xsp;
-    if (jj_scan_token(59)) return true;
+    if (jj_scan_token(56)) return true;
     }
     if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24()
- {
-    if (jj_scan_token(NUMBER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_22()
- {
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21()
- {
-    if (jj_3R_28()) return true;
     return false;
   }
 
@@ -1072,10 +1072,10 @@ return new TypeRecord(name, types);
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x640000,0x640000,0x0,0x100000,0x0,0x0,0x0,0x600000,0x600000,0x40000,0x400,0xa,0x8,0xff9c6080,0xff9c6080,0x0,0x80,0x0,0x0,0x200,0x40000,0x0,0x0,};
+      jj_la1_0 = new int[] {0xc8000,0xc8000,0x0,0x20000,0x0,0x0,0x0,0xc0000,0xc0000,0x8000,0x400,0xa,0x8,0xfff39880,0xfff39880,0x0,0x80,0x0,0x0,0x200,0x8000,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x807100,0x807100,0x100000,0x800000,0x7000,0x800000,0x800000,0x0,0x0,0x0,0x0,0x7838200,0x7838200,0x800000f,0xf,0x800000,0x400,0x18000,0x800000,0x0,0x0,0x8000f0,0x800000,};
+      jj_la1_1 = new int[] {0x100e20,0x100e20,0x20000,0x100000,0xe00,0x100000,0x100000,0x0,0x0,0x0,0x0,0xf07040,0xf07040,0x1000001,0x1,0x100000,0x80,0x3000,0x100000,0x0,0x0,0x10001e,0x100000,};
    }
    private static void jj_la1_init_2() {
       jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
@@ -1264,7 +1264,7 @@ return new TypeRecord(name, types);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[70];
+    boolean[] la1tokens = new boolean[67];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1284,7 +1284,7 @@ return new TypeRecord(name, types);
         }
       }
     }
-    for (int i = 0; i < 70; i++) {
+    for (int i = 0; i < 67; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -64,11 +64,8 @@ TOKEN : {
 	|	< SEMICOLON : ";" > 
 	|	< ARROW : "->" > 
 	|	< COMMA : "," > 
-	|	< FAT_ARROW : "=>" > 
-	|	< DOUBLE_ARROW : "->>" > 
 	|	< PLAY_BUTTON : "|>" >
-	|	< REVERSE_PLAY_BUTTON : "<|" >  
-	|	< GUARD : "?:" > 
+	|	< REVERSE_PLAY_BUTTON : "<|" >
 	|	< PIPE : "|" > 
 	|	< EQUALS : "=" > 
 	|	< LCHEVRON : "<" >

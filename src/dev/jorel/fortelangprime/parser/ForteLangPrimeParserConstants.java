@@ -31,103 +31,97 @@ public interface ForteLangPrimeParserConstants {
   /** RegularExpression Id. */
   int COMMA = 10;
   /** RegularExpression Id. */
-  int FAT_ARROW = 11;
+  int PLAY_BUTTON = 11;
   /** RegularExpression Id. */
-  int DOUBLE_ARROW = 12;
+  int REVERSE_PLAY_BUTTON = 12;
   /** RegularExpression Id. */
-  int PLAY_BUTTON = 13;
+  int PIPE = 13;
   /** RegularExpression Id. */
-  int REVERSE_PLAY_BUTTON = 14;
+  int EQUALS = 14;
   /** RegularExpression Id. */
-  int GUARD = 15;
+  int LCHEVRON = 15;
   /** RegularExpression Id. */
-  int PIPE = 16;
+  int RCHEVRON = 16;
   /** RegularExpression Id. */
-  int EQUALS = 17;
+  int STAR = 17;
   /** RegularExpression Id. */
-  int LCHEVRON = 18;
+  int PRINTABLE = 18;
   /** RegularExpression Id. */
-  int RCHEVRON = 19;
+  int EQUATABLE = 19;
   /** RegularExpression Id. */
-  int STAR = 20;
+  int CONCAT = 20;
   /** RegularExpression Id. */
-  int PRINTABLE = 21;
+  int PLUS = 21;
   /** RegularExpression Id. */
-  int EQUATABLE = 22;
+  int MINUS = 22;
   /** RegularExpression Id. */
-  int CONCAT = 23;
+  int SLASH = 23;
   /** RegularExpression Id. */
-  int PLUS = 24;
+  int HAT = 24;
   /** RegularExpression Id. */
-  int MINUS = 25;
+  int MOD = 25;
   /** RegularExpression Id. */
-  int SLASH = 26;
+  int FULL_STOP = 26;
   /** RegularExpression Id. */
-  int HAT = 27;
+  int LESS_THAN_OR_EQUAL = 27;
   /** RegularExpression Id. */
-  int MOD = 28;
+  int GREATER_THAN_OR_EQUAL = 28;
   /** RegularExpression Id. */
-  int FULL_STOP = 29;
+  int EQUALS_EQUALS = 29;
   /** RegularExpression Id. */
-  int LESS_THAN_OR_EQUAL = 30;
+  int NOT_EQUALS = 30;
   /** RegularExpression Id. */
-  int GREATER_THAN_OR_EQUAL = 31;
+  int AND_AND = 31;
   /** RegularExpression Id. */
-  int EQUALS_EQUALS = 32;
+  int OR_OR = 32;
   /** RegularExpression Id. */
-  int NOT_EQUALS = 33;
+  int TYPE_INT = 33;
   /** RegularExpression Id. */
-  int AND_AND = 34;
+  int TYPE_BOOL = 34;
   /** RegularExpression Id. */
-  int OR_OR = 35;
+  int TYPE_DOUBLE = 35;
   /** RegularExpression Id. */
-  int TYPE_INT = 36;
+  int TYPE_STRING = 36;
   /** RegularExpression Id. */
-  int TYPE_BOOL = 37;
+  int TYPE = 37;
   /** RegularExpression Id. */
-  int TYPE_DOUBLE = 38;
+  int IF = 38;
   /** RegularExpression Id. */
-  int TYPE_STRING = 39;
+  int THEN = 39;
   /** RegularExpression Id. */
-  int TYPE = 40;
+  int ELSE = 40;
   /** RegularExpression Id. */
-  int IF = 41;
+  int INFIX = 41;
   /** RegularExpression Id. */
-  int THEN = 42;
+  int INFIXL = 42;
   /** RegularExpression Id. */
-  int ELSE = 43;
+  int INFIXR = 43;
   /** RegularExpression Id. */
-  int INFIX = 44;
+  int TRUE = 44;
   /** RegularExpression Id. */
-  int INFIXL = 45;
+  int FALSE = 45;
   /** RegularExpression Id. */
-  int INFIXR = 46;
+  int PANIC = 46;
   /** RegularExpression Id. */
-  int TRUE = 47;
+  int LIBRARY = 47;
   /** RegularExpression Id. */
-  int FALSE = 48;
+  int SCRIPT = 48;
   /** RegularExpression Id. */
-  int PANIC = 49;
+  int EXPORT = 49;
   /** RegularExpression Id. */
-  int LIBRARY = 50;
+  int IMPORT = 50;
   /** RegularExpression Id. */
-  int SCRIPT = 51;
+  int AS = 51;
   /** RegularExpression Id. */
-  int EXPORT = 52;
+  int VAR_NAME = 52;
   /** RegularExpression Id. */
-  int IMPORT = 53;
+  int INT_LITERAL = 53;
   /** RegularExpression Id. */
-  int AS = 54;
+  int NUMBER = 54;
   /** RegularExpression Id. */
-  int VAR_NAME = 55;
+  int STRING = 55;
   /** RegularExpression Id. */
-  int INT_LITERAL = 56;
-  /** RegularExpression Id. */
-  int NUMBER = 57;
-  /** RegularExpression Id. */
-  int STRING = 58;
-  /** RegularExpression Id. */
-  int CUSTOM_OPERATOR = 59;
+  int CUSTOM_OPERATOR = 56;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -147,11 +141,8 @@ public interface ForteLangPrimeParserConstants {
     "\";\"",
     "\"->\"",
     "\",\"",
-    "\"=>\"",
-    "\"->>\"",
     "\"|>\"",
     "\"<|\"",
-    "\"?:\"",
     "\"|\"",
     "\"=\"",
     "\"<\"",
@@ -201,11 +192,11 @@ public interface ForteLangPrimeParserConstants {
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
-    "<token of kind 65>",
+    "<token of kind 62>",
     "\"#[\"",
     "\"#[\"",
     "\"]#\"",
-    "<token of kind 69>",
+    "<token of kind 66>",
   };
 
 }
