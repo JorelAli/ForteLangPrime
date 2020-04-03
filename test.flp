@@ -4,7 +4,7 @@ Library Sample {
 
 } {
 
-	## Record type declaration
+	## -- Record type declaration
 	@Equatable
 	@Printable
 	type Color = {
@@ -14,7 +14,7 @@ Library Sample {
 	}
 
 
-	## Basic functions (returning simple parameters)
+	## -- Basic functions (returning simple parameters)
 	justTwo <Int> = 
 		2;
 
@@ -28,7 +28,7 @@ Library Sample {
 		panic;
 
 
-	## Functions with parameters
+	## -- Functions with parameters
 	paramFunction <Int> -> <Int> = 
 		2;
 
@@ -45,12 +45,12 @@ Library Sample {
 		a2;
 
 
-	## Generics
+	## -- Generics
 	<T> id a <T> -> <T> = 
 		a;
 
 
-	## Useful functions
+	## -- Useful functions
 	not input<Bool> -> <Bool> = 
 		if input then
 			false 
@@ -58,7 +58,7 @@ Library Sample {
 			true;
 
 
-	## If statements
+	## -- If statements
 	alwaysFalse <Bool> = 
 		if true then
 			if true then 
@@ -69,7 +69,7 @@ Library Sample {
 			true;
 
 
-	## Fully defined records
+	## -- Fully defined records
 	red <Color> = { 
 		red = 255; 
 		green = 0; 
@@ -91,7 +91,7 @@ Library Sample {
 	recordAccessTest <Int> = green.green;
 
 
-	## Record updating using the red function as a base
+	## -- Record updating using the red function as a base
 	yellow <Color> = { red | 
 		green = 255; 
 	};
@@ -112,7 +112,7 @@ Library Sample {
 				true;
 
 
-	#[ Equality tests for various types ]#
+	## -- Equality tests for various types
 	eqInt a<Int> -> b<Int> -> <Bool> = 
 		a == b;
 
@@ -138,7 +138,7 @@ Library Sample {
 		a != b;
 
 
-	## Custom operators
+	## -- Custom operators
 	testCustomOperator <Bool> = 
 		true >>= false;
 
@@ -146,7 +146,7 @@ Library Sample {
 		true;
 
 
-	## Integer math operators
+	## -- Integer math operators
 	mul a<Int> -> b<Int> -> <Int> = 
 		a * b;
 
@@ -160,14 +160,14 @@ Library Sample {
 		a - b;
 
 
-	## Testing the order of operations
-	## Don't expect (l2r): 5 - 2 => 3 * 3 => 9 + 4 => 13
-	## Don't expect (r2l): 3 + 4 => 2 * 7 => 5 - 14 => -9
-	## Expect 3 (5 - 6 => -1 + 4 => 3)
+	## -- Testing the order of operations
+	## -- Don't expect (l2r): 5 - 2 => 3 * 3 => 9 + 4 => 13
+	## -- Don't expect (r2l): 3 + 4 => 2 * 7 => 5 - 14 => -9
+	## -- Expect 3 (5 - 6 => -1 + 4 => 3)
 	ooo <Int> = 5 - 2 * 3 + 4; 
 
 
-	## Integer math comparators
+	## -- Integer math comparators
 	gt a <Int> -> b <Int> -> <Bool> = 
 		a > b;
 
@@ -181,7 +181,7 @@ Library Sample {
 		a <= b;
 
 
-	## Double operator testing
+	## -- Double operator testing
 	doubleTest <Double> = 123.2;
 	doubleAdd a<Double> -> b<Double> -> <Double> = 
 		a + b;
@@ -199,7 +199,7 @@ Library Sample {
 		a % b;
 
 
-	## Pipe testing
+	## -- Pipe testing
 	pipeline <Bool> = 
 		true 
 		|> not;
