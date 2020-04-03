@@ -135,11 +135,7 @@ public class ExprRecordConstruction implements Expr {
 			if(base.getInternalType() == ExpressionType.VARIABLE) {
 				ExprVariable baseVar = (ExprVariable) base;
 				FLPCompiler.log("Emitting record update using " + baseVar.getName());
-//				TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType();
-				TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);//context.getRecordType(tng.getName());
-				
-//				System.out.println("Very Important Nonsense ---");
-//				System.out.println(tng.getName() + " c.f. " + tr.getName());
+				TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);
 				
 				FLPCompiler.log("Reordering record parameters to match type");
 				List<String> orderedNames = tr.getTypes().stream().map(Pair::first).collect(Collectors.toList()); 
@@ -178,9 +174,6 @@ public class ExprRecordConstruction implements Expr {
 				String paramSignature = tr.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 				FLPCompiler.log("Calling constructor for " + tr.getName());
 				methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + tr.getName(), "<init>", "(" + paramSignature + ")V", false);
-//				methodVisitor.visitInsn(ARETURN);
-//				methodVisitor.visitMaxs(0, 0);
-//				methodVisitor.visitEnd();
 			} else {
 				//wtf?
 			}
@@ -205,9 +198,6 @@ public class ExprRecordConstruction implements Expr {
 			String paramSignature = recordType.getTypes().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).collect(Collectors.joining());
 			FLPCompiler.log("Calling constructor for " + name);
 			methodVisitor.visitMethodInsn(INVOKESPECIAL, context.getLibraryName() + "$" + name, "<init>", "(" + paramSignature + ")V", false);
-//			methodVisitor.visitInsn(ARETURN);
-//			methodVisitor.visitMaxs(0, 0);
-//			methodVisitor.visitEnd();
 		}
 	}
 

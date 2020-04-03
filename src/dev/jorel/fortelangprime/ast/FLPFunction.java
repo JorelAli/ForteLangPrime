@@ -68,12 +68,12 @@ public class FLPFunction implements CodeableClass {
 		}
 		
 		String returnTypeString = typeFunction.toBytecodeString(context);
-		if(typeFunction.getReturnType() instanceof TypeNamedGeneric) {
-			String s = ((TypeNamedGeneric) typeFunction.getReturnType()).getName();
+		if(typeFunction.getReturnType(context) instanceof TypeNamedGeneric) {
+			String s = ((TypeNamedGeneric) typeFunction.getReturnType(context)).getName();
 			if(context.getRecordType(s) != null) {
 				
 				StringBuilder result = new StringBuilder("(");
-				typeFunction.getParams().stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
+				typeFunction.getParams(context).stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
 				result.append(")");
 				result.append(context.getRecordType(s).toBytecodeString(context));
 				returnTypeString = result.toString(); 
@@ -95,7 +95,7 @@ public class FLPFunction implements CodeableClass {
 		Label variableTypes = new Label();
 		methodVisitor.visitLabel(variableTypes);
 		int index = 0;
-		for(Pair<String, Type> e : typeFunction.getParams()) {
+		for(Pair<String, Type> e : typeFunction.getParams(context)) {
 			if(e.first() == null) {
 				index++;
 				continue;

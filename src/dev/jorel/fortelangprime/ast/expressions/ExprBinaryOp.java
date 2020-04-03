@@ -18,7 +18,6 @@ import dev.jorel.fortelangprime.ast.types.TypeBool;
 import dev.jorel.fortelangprime.ast.types.TypeDouble;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
 import dev.jorel.fortelangprime.ast.types.TypeInt;
-import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
 import dev.jorel.fortelangprime.ast.types.TypeRecord;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
