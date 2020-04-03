@@ -115,7 +115,7 @@ public class Tests {
 	
 	@Test
 	public void doublePrinting() {
-		System.out.println(Sample.mkDoubleType().toString());
+		assertEquals("{ value = 20.0; value2 = 3.0; }<DoubleType>", Sample.mkDoubleType().toString());
 	}
 	
 }
