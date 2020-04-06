@@ -235,4 +235,8 @@ Library Tests {
 		value2 = 3.0;
 	};
 
+	fancyIf <Bool> = 
+		if true then false 
+		else true;
+
 }

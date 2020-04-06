@@ -676,10 +676,7 @@ private ExprIfStatement ifStatement() :
 {
   t = < IF > 
   a = expression()
-  (
-    < COLON >
-  | < THEN >
-  )
+  < THEN >
   b = expression() 
   < ELSE > 
   c = expression()
