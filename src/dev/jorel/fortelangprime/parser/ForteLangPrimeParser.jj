@@ -384,7 +384,7 @@ private AlgebraicDataType algebraicDataType() :
 {
   // TODO: Implement ADTs
   Token name;
-  List < String > values = new Arraylist < String > ();
+  List < String > values = new ArrayList < String > ();
   boolean printable = false;
   boolean equatable = false;
   String value;
@@ -417,8 +417,9 @@ private AlgebraicDataType algebraicDataType() :
       values.add(value);
     }
   )*
+  < SEMICOLON >
   {
-    return new AlgebraicDataType(name, values);
+    return new AlgebraicDataType(name.image, values);
   }
 }
 
