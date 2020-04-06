@@ -245,6 +245,7 @@ private FLPLibrary program() :
       thingsToEmit.add(thingToEmit);
     }
   | 
+    LOOKAHEAD(3)
     thingToEmit = typeDeclaration()
     {
       thingsToEmit.add(thingToEmit);
@@ -455,9 +456,11 @@ private String AlgebraicDataTypeValue() :
     token = < RCHEVRON >
     {
       builder.append(token.image);
-      return builder.toString();
     }
   )?
+  {
+    return builder.toString();
+  }
 }
 
 private RecordTypeDeclaration typeDeclaration() :
