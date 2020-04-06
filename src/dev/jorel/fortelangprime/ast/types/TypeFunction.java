@@ -57,8 +57,8 @@ public class TypeFunction implements Type {
 	
 	public Type getReturnType(UniversalContext context) {
 		//TODO: This might break? Maybe use a null check???
-		if(returnType.getInternalType() == InternalType.NAMED_GENERIC) {
-			this.returnType = context.getRecordType(((TypeNamedGeneric) returnType).getName());
+		if(returnType.getInternalType() == InternalType.GENERIC) {
+			this.returnType = context.getRecordType(((TypeGeneric) returnType).getName());
 		}
 		return this.returnType;
 	}
@@ -76,8 +76,8 @@ public class TypeFunction implements Type {
 		ListIterator<Pair<String, Type>> li = this.params.listIterator();
 		while(li.hasNext()) {
 			Pair<String, Type> next = li.next();
-			if(next.second().getInternalType() == InternalType.NAMED_GENERIC) {
-				TypeNamedGeneric tng = (TypeNamedGeneric) next.second();
+			if(next.second().getInternalType() == InternalType.GENERIC) {
+				TypeGeneric tng = (TypeGeneric) next.second();
 				Type result = context.getRecordType(tng.getName());
 				if(result != null) {
 					li.set(Pair.of(next.first(), result));

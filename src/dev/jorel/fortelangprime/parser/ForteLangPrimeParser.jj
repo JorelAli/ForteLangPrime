@@ -302,7 +302,7 @@ private RecordTypeDeclaration typeDeclaration() : {
 }
 
 private FLPFunction functionDeclaration() : {
-	List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
+	List<TypeGeneric> genericTypeDeclaration = new ArrayList<TypeGeneric>();
   	Token name;
   	Expr expr;
   	List<Pair<String, Type>> functionTypes;
@@ -322,16 +322,16 @@ private FLPFunction functionDeclaration() : {
 	{ return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr); }
 }
 
-private List<TypeNamedGeneric> genericTypeDeclaration() : {
+private List<TypeGeneric> genericTypeDeclaration() : {
 	Token t;
-	List<TypeNamedGeneric> genericNames = new ArrayList<TypeNamedGeneric>();
+	List<TypeGeneric> genericNames = new ArrayList<TypeGeneric>();
 } {
 	< LCHEVRON >
 	t = < VAR_NAME >
-	{ genericNames.add(new TypeNamedGeneric(t.image)); }
+	{ genericNames.add(new TypeGeneric(t.image)); }
 	(		< COMMA >
 		t = < VAR_NAME >
-		{ genericNames.add(new TypeNamedGeneric(t.image)); }
+		{ genericNames.add(new TypeGeneric(t.image)); }
 	)*
 	< RCHEVRON >
 	{ return genericNames; }
@@ -517,7 +517,7 @@ private Type type() : {
 	| < TYPE_BOOL > { type = new TypeBool(); }
 	| < TYPE_DOUBLE > { type = new TypeDouble(); }
 	//TODO: Add generic to this constructor
-	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeNamedGeneric(t.image); }
+	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeGeneric(t.image); }
 	| 	< OPENBRACKET >
 		{ Type temp1; Type temp2; List<Type> right = new ArrayList<Type>(); }
 		temp1 = type()

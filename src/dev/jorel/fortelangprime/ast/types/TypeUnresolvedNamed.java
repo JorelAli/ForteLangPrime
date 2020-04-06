@@ -2,14 +2,11 @@ package dev.jorel.fortelangprime.ast.types;
 
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 
-// This should ONLY be used for generics, during type checking these should
-// no longer be used for things such as return types for type functions
-//@Deprecated
-public class TypeNamedGeneric implements Type {
+public class TypeUnresolvedNamed implements Type {
 	
 	private String name;
 	
-	public TypeNamedGeneric(String name) {
+	public TypeUnresolvedNamed(String name) {
 		this.name = name;
 	}
 	
@@ -19,12 +16,12 @@ public class TypeNamedGeneric implements Type {
 
 	@Override
 	public InternalType getInternalType() {
-		return InternalType.NAMED_GENERIC;
+		return InternalType.UNRESOLVED_NAMED;
 	}
 
 	@Override
 	public String toBytecodeString(UniversalContext context) {
-		return "L" + context.getLibraryName() + "$" + name + ";";
+		throw new RuntimeException("Cannot return bytecode string of unresolved named type " + name);
 	}
 
 	@Override
@@ -39,12 +36,12 @@ public class TypeNamedGeneric implements Type {
 
 	@Override
 	public String toGenericBytecodeString(UniversalContext context) {
-		return "T" + name + ";";
+		throw new RuntimeException("Cannot return generic bytecode string of unresolved named type " + name);
 	}
 
 	@Override
 	public boolean isGeneric() {
-		return true;
+		return false;
 	}
 	
 	@Override

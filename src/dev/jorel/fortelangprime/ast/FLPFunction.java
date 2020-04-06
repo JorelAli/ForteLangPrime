@@ -9,7 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
-import dev.jorel.fortelangprime.ast.types.TypeNamedGeneric;
+import dev.jorel.fortelangprime.ast.types.TypeGeneric;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.util.Pair;
@@ -20,11 +20,11 @@ public class FLPFunction implements CodeableClass {
 	private final int lineNumber;
 	private final String name;
 	private final TypeFunction typeFunction;
-	private final List<TypeNamedGeneric> genericDeclarations;
+	private final List<TypeGeneric> genericDeclarations;
 	private final Expr body;
 	private boolean exported;
 	
-	public FLPFunction(int lineNumber, String name, TypeFunction typeFunction, List<TypeNamedGeneric> genericDeclarations, Expr body) {
+	public FLPFunction(int lineNumber, String name, TypeFunction typeFunction, List<TypeGeneric> genericDeclarations, Expr body) {
 		this.lineNumber = lineNumber;
 		this.name = name;
 		this.typeFunction = typeFunction;
@@ -57,7 +57,7 @@ public class FLPFunction implements CodeableClass {
 			genericSignature = null;
 		} else {
 			StringBuilder builder = new StringBuilder("<");
-			for(TypeNamedGeneric generic : genericDeclarations) {
+			for(TypeGeneric generic : genericDeclarations) {
 				builder.append(generic.getName());
 				builder.append(":");
 				builder.append(generic.toBytecodeString(context));
@@ -68,8 +68,8 @@ public class FLPFunction implements CodeableClass {
 		}
 		
 		String returnTypeString = typeFunction.toBytecodeString(context);
-		if(typeFunction.getReturnType(context) instanceof TypeNamedGeneric) {
-			String s = ((TypeNamedGeneric) typeFunction.getReturnType(context)).getName();
+		if(typeFunction.getReturnType(context) instanceof TypeGeneric) {
+			String s = ((TypeGeneric) typeFunction.getReturnType(context)).getName();
 			if(context.getRecordType(s) != null) {
 				
 				StringBuilder result = new StringBuilder("(");

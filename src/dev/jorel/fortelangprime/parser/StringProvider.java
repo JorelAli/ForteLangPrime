@@ -45,4 +45,4 @@ package dev.jorel.fortelangprime.parser;
 		}
 		
 	}
-/* JavaCC - OriginalChecksum=b807233c0f99df9d94c15f2ebb328f95 (do not edit this line) */
+/* JavaCC - OriginalChecksum=560e5fa8d72f1d71a4574d13c7bb1e81 (do not edit this line) */

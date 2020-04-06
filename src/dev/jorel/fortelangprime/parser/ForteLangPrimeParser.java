@@ -274,7 +274,7 @@ universalContext.addRecordType(name.image, type);
                 return new RecordTypeDeclaration(name.image, type, printable, equatable);
   }
 
-  final private FLPFunction functionDeclaration() throws ParseException {List<TypeNamedGeneric> genericTypeDeclaration = new ArrayList<TypeNamedGeneric>();
+  final private FLPFunction functionDeclaration() throws ParseException {List<TypeGeneric> genericTypeDeclaration = new ArrayList<TypeGeneric>();
         Token name;
         Expr expr;
         List<Pair<String, Type>> functionTypes;
@@ -299,11 +299,11 @@ tf = Converter.functionTypesToTypeFunction(functionTypes);
 return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr);
   }
 
-  final private List<TypeNamedGeneric> genericTypeDeclaration() throws ParseException {Token t;
-        List<TypeNamedGeneric> genericNames = new ArrayList<TypeNamedGeneric>();
+  final private List<TypeGeneric> genericTypeDeclaration() throws ParseException {Token t;
+        List<TypeGeneric> genericNames = new ArrayList<TypeGeneric>();
     jj_consume_token(LCHEVRON);
     t = jj_consume_token(VAR_NAME);
-genericNames.add(new TypeNamedGeneric(t.image));
+genericNames.add(new TypeGeneric(t.image));
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -317,7 +317,7 @@ genericNames.add(new TypeNamedGeneric(t.image));
       }
       jj_consume_token(COMMA);
       t = jj_consume_token(VAR_NAME);
-genericNames.add(new TypeNamedGeneric(t.image));
+genericNames.add(new TypeGeneric(t.image));
     }
     jj_consume_token(RCHEVRON);
 return genericNames;
@@ -709,7 +709,7 @@ type = new TypeDouble();
         jj_la1[20] = jj_gen;
         ;
       }
-type = new TypeNamedGeneric(t.image);
+type = new TypeGeneric(t.image);
       break;
       }
     case OPENBRACKET:{
