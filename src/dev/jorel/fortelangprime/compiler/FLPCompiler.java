@@ -14,60 +14,67 @@ import dev.jorel.fortelangprime.parser.exceptions.TypeException;
  * The main start point for compilation.
  */
 public class FLPCompiler {
-	
+
 	public static void log(String message) {
-		if(VERBOSE) System.out.println(message);
+		if (VERBOSE)
+			System.out.println(message);
 	}
-	
+
 	public static boolean VERBOSE = true;
 	private File flpFile;
 	private JavaVersion targetJavaVersion;
 	private File outputFolder;
-	
+
 	public FLPCompiler(File flpFile, JavaVersion targetJavaVersion, File outputFolder) {
 		this.flpFile = flpFile;
 		this.targetJavaVersion = targetJavaVersion;
 		this.outputFolder = outputFolder;
 	}
-	
+
 	public FLPCompiler(File flpFile, File outputFolder) {
 		this.flpFile = flpFile;
 		this.targetJavaVersion = JavaVersion.V_8;
 		this.outputFolder = outputFolder;
 	}
-	
+
 	public FLPCompiler(File flpFile, File outputFolder, boolean verbose) {
 		this.flpFile = flpFile;
 		this.targetJavaVersion = JavaVersion.V_8;
 		this.outputFolder = outputFolder;
 	}
-	
-	public void compile() throws FileNotFoundException, ParseException, IOException, CompilationException, TypeException {
+
+	public void compile() throws FileNotFoundException, IOException, CompilationException, TypeException {
 		FLPCompiler.log("Parsing file " + flpFile.toString());
-		FLPLibrary lib = ForteLangPrimeParser.parse(flpFile);
-		FLPCompiler.log("Parsing finished without any problems.\n");
-		
-		UniversalContext context = ForteLangPrimeParser.getUniversalContext();
-		context.setLibraryName(lib.name);
-		context.setJavaVersion(this.targetJavaVersion.getVersion());
-		context.setOutputDir(outputFolder);
-		
-		if(context.doesExportAll()) {
-			FLPCompiler.log("Exporting all declared functions");
-		}
-		
-		for(FLPFunction f : lib.functions) {
-			if(context.doesExportAll()) {
-				f.setPublic();
+		FLPLibrary lib;
+		try {
+			lib = ForteLangPrimeParser.parse(flpFile);
+
+			FLPCompiler.log("Parsing finished without any problems.\n");
+
+			UniversalContext context = ForteLangPrimeParser.getUniversalContext();
+			context.setLibraryName(lib.name);
+			context.setJavaVersion(this.targetJavaVersion.getVersion());
+			context.setOutputDir(outputFolder);
+
+			if (context.doesExportAll()) {
+				FLPCompiler.log("Exporting all declared functions");
 			}
-			FLPCompiler.log("Type checking function " + f.getName());
-			f.getFunctionBody().typeCheck(context);
+
+			for (FLPFunction f : lib.functions) {
+				if (context.doesExportAll()) {
+					f.setPublic();
+				}
+				FLPCompiler.log("Type checking function " + f.getName());
+				f.getFunctionBody().typeCheck(context);
+			}
+			FLPCompiler.log("");
+
+			BytecodeGenerator generator = new BytecodeGenerator(context, lib, this.targetJavaVersion);
+			generator.compile();
+			generator.writeToFile(this.outputFolder);
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 		}
-		FLPCompiler.log("");
-		
-		BytecodeGenerator generator = new BytecodeGenerator(context, lib, this.targetJavaVersion);
-		generator.compile();
-		generator.writeToFile(this.outputFolder);
 	}
 
 }
