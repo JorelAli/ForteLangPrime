@@ -34,7 +34,7 @@
 				"match": "(?<=type\\s)\\S+"
 			}, {
 				"name": "entity.name.type.fortelangprime",
-				"match": "<([A-Z]([a-zA-Z0-9])*)>"
+				"match": "<([A-Z]([a-zA-Z0-9])*)(,[A-Z]([a-zA-Z0-9])*)*>"
 			}, {
 				"name": "constant.language.fortelangprime",
 				"match": "\\b(true|false)\\b"
