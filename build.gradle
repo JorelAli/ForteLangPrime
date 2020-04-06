@@ -13,17 +13,24 @@ plugins {
 }
 
 dependencies {
-    //implementation 'com.google.guava:guava:26.0-jre'
 	compile group: 'org.ow2.asm', name: 'asm', version: '7.2'
 	compile files("classfolder")
 	
     testImplementation 'junit:junit:4.12'
+    testCompile files("test/testclassfolder")
 }
 
 repositories {
 	jcenter()
 	mavenCentral()
 }
+
+task precompileTest(type: JavaExec) {
+	classpath = sourceSets.test.runtimeClasspath
+	main = "PreTests"
+}
+
+tasks.test.dependsOn("precompileTest")
 
 test {
 	testLogging {

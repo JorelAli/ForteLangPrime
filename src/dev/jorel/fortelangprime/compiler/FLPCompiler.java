@@ -48,6 +48,10 @@ public class FLPCompiler {
 		FLPLibrary lib;
 		try {
 			lib = ForteLangPrimeParser.parse(flpFile);
+			
+			if(!flpFile.getName().substring(0, flpFile.getName().length() - 4).equals(lib.name)) {
+				throw new CompilationException("File name " + flpFile.getName() + " does not match name declared in program: " + lib.name);
+			}
 
 			FLPCompiler.log("Parsing finished without any problems.\n");
 
