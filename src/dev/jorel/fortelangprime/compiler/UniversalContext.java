@@ -87,7 +87,12 @@ public class UniversalContext {
 	}
 	
 	public TypeRecord getRecordType(String recordName) {
-		return this.recordTypes.get(recordName);
+		TypeRecord result = this.recordTypes.get(recordName);
+		if(result == null) {
+			throw new RuntimeException("Can't find " + recordName);
+		} else {
+			return result;
+		}
 	}
 	
 	public Type getRecordTypeMatching(List<Pair<String, Type>> types) {

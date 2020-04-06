@@ -7,11 +7,9 @@ import org.objectweb.asm.MethodVisitor;
 import dev.jorel.fortelangprime.ast.expressions.Expr;
 import dev.jorel.fortelangprime.ast.types.Type;
 import dev.jorel.fortelangprime.ast.types.TypeFunction;
-import dev.jorel.fortelangprime.ast.types.TypeGeneric;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.util.Pair;
-import dev.jorel.fortelangprime.util.StreamUtils;
 
 public class FLPFunction implements CodeableClass {
 
@@ -48,7 +46,7 @@ public class FLPFunction implements CodeableClass {
 	@Override
 	public void emit(ClassWriter classWriter, UniversalContext context) {
 		
-		String genericSignature = null;
+		String genericSignature = typeFunction.toGenericBytecodeString(context);
 //		if(genericDeclarations.size() == 0) {
 //			genericSignature = null;
 //		} else {
@@ -64,19 +62,9 @@ public class FLPFunction implements CodeableClass {
 //		}
 		
 		String returnTypeString = typeFunction.toBytecodeString(context);
-		if(typeFunction.getReturnType(context) instanceof TypeGeneric) {
-			String s = ((TypeGeneric) typeFunction.getReturnType(context)).getName();
-			if(context.getRecordType(s) != null) {
-				
-				StringBuilder result = new StringBuilder("(");
-				typeFunction.getParams(context).stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
-				result.append(")");
-				result.append(context.getRecordType(s).toBytecodeString(context));
-				returnTypeString = result.toString(); 
-			}
-		}
 
 		FLPCompiler.log("\nEmitting function " + name + " of type " + returnTypeString);
+		FLPCompiler.log("Using generic type function: " + typeFunction.toGenericBytecodeString(context));
 		MethodVisitor methodVisitor = classWriter.visitMethod((exported ? ACC_PUBLIC : ACC_PRIVATE) | ACC_STATIC, name, returnTypeString, genericSignature, null);
 		methodVisitor.visitCode();
 		

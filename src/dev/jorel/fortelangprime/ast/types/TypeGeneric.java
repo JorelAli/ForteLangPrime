@@ -21,7 +21,7 @@ public class TypeGeneric implements Type {
 
 	@Override
 	public String toBytecodeString(UniversalContext context) {
-		return "L" + context.getLibraryName() + "$" + name + ";";
+		return "Ljava/lang/Object;";
 	}
 
 	@Override

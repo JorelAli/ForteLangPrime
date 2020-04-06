@@ -2,6 +2,7 @@ package dev.jorel.fortelangprime.ast.types;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 import dev.jorel.fortelangprime.compiler.UniversalContext;
 import dev.jorel.fortelangprime.util.Pair;
@@ -32,18 +33,40 @@ public class TypeFunction implements Type {
 	}
 	
 	public String toGenericBytecodeString(UniversalContext context) {
-		StringBuilder result = new StringBuilder("(");
-		getParams(context).stream().map(Pair::second)
-			.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), StreamUtils.with(Type::toBytecodeString, context)))
-			.forEach(result::append);
-		result.append(")");
-		
-		if(getReturnType(context).isGeneric()) {
-			result.append(getReturnType(context).toGenericBytecodeString(context));
+		if(isGeneric()) {
+			
+			List<String> genericTypeNames = params.stream()
+				.map(Pair::second)
+				.filter(Type::isGeneric) // TODO: You already know that this gon fail with HO functions
+				.map(TypeGeneric.class::cast)
+				.map(TypeGeneric::getName)
+				.collect(Collectors.toList());
+			if(returnType.isGeneric()) {
+				genericTypeNames.add(((TypeGeneric) returnType).getName());
+			}
+			genericTypeNames = genericTypeNames.stream().distinct().collect(Collectors.toList());
+			
+			StringBuilder result = new StringBuilder("<");
+			for(String str : genericTypeNames) {
+				result.append(str);
+				result.append(":");
+				result.append("Ljava/lang/Object;");
+			}
+			result.append(">(");
+			getParams(context).stream().map(Pair::second)
+				.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), StreamUtils.with(Type::toBytecodeString, context)))
+				.forEach(result::append);
+			result.append(")");
+			
+			if(getReturnType(context).isGeneric()) {
+				result.append(getReturnType(context).toGenericBytecodeString(context));
+			} else {
+				result.append(getReturnType(context).toBytecodeString(context));
+			}
+			return result.toString();
 		} else {
-			result.append(getReturnType(context).toBytecodeString(context));
+			return null;
 		}
-		return result.toString();
 	}
 	
 	public Type getReturnType(UniversalContext context) {
@@ -80,7 +103,7 @@ public class TypeFunction implements Type {
 
 	@Override
 	public boolean isGeneric() {
-		return true;
+		return params.stream().map(Pair::second).filter(Type::isGeneric).findAny().isPresent() || returnType.isGeneric();
 	}
 	
 	@Override
