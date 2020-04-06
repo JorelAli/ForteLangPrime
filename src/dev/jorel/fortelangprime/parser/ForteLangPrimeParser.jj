@@ -1,12 +1,11 @@
-options {
-	STATIC = false;
-	JAVA_TEMPLATE_TYPE = "modern";
+options
+{
+  STATIC = false;
+  JAVA_TEMPLATE_TYPE = "modern";
 }
 
 PARSER_BEGIN(ForteLangPrimeParser)
-
 package dev.jorel.fortelangprime.parser;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
 import dev.jorel.fortelangprime.ast.*;
 import dev.jorel.fortelangprime.ast.expressions.*;
 import dev.jorel.fortelangprime.ast.types.*;
@@ -24,536 +22,853 @@ import dev.jorel.fortelangprime.ast.operation.*;
 import dev.jorel.fortelangprime.compiler.*;
 import dev.jorel.fortelangprime.util.*;
 
-public class ForteLangPrimeParser {
+public class ForteLangPrimeParser
+{
+  private static UniversalContext universalContext;
 
-  	private static UniversalContext universalContext;
-  	private static String currentFunctionName;
-	
-	public static FLPLibrary parse(String input) throws ParseException, IOException {
-		universalContext = new UniversalContext();
-		InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-		return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
-	}
+  private static String currentFunctionName;
 
-	public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException {
-		universalContext = new UniversalContext();
-	  	return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
-	}
+  public static FLPLibrary parse(String input) throws ParseException, IOException
+  {
+    universalContext = new UniversalContext();
+    InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
+    return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
+  }
 
-	public static UniversalContext getUniversalContext() {
-		return ForteLangPrimeParser.universalContext;
-	}
-	
+  public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException
+  {
+    universalContext = new UniversalContext();
+    return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
+  }
+
+  public static UniversalContext getUniversalContext()
+  {
+    return ForteLangPrimeParser.universalContext;
+  }
 }
 
 PARSER_END(ForteLangPrimeParser)
 
-TOKEN_MGR_DECLS : {
-    static int commentNesting = 0;
+TOKEN_MGR_DECLS :
+{
+  static int commentNesting = 0;
 }
 
 // Symbols
-TOKEN : {
-		< OPENBRACKET : "(" >
-	|	< CLOSEBRACKET : ")" >
-	|	< OPENCBRACE : "{" > 
-	|	< CLOSECBRACE : "}" > 
-	|	< OPENSBRACKET : "[" > 
-	|	< CLOSESBRACKET : "]" > 
-	|	< COLON : ":" > 
-	|	< SEMICOLON : ";" > 
-	|	< ARROW : "->" > 
-	|	< COMMA : "," > 
-	|	< PLAY_BUTTON : "|>" >
-	|	< REVERSE_PLAY_BUTTON : "<|" >
-	|	< PIPE : "|" > 
-	|	< EQUALS : "=" > 
-	|	< LCHEVRON : "<" >
-	|	< RCHEVRON : ">" >
-	|	< STAR : "*" >
+TOKEN :
+{
+  < OPENBRACKET : "(" >
+| 	< CLOSEBRACKET : ")" >
+| 	< OPENCBRACE : "{" >
+| 	< CLOSECBRACE : "}" >
+| 	< OPENSBRACKET : "[" >
+| 	< CLOSESBRACKET : "]" >
+| 	< COLON : ":" >
+| 	< SEMICOLON : ";" >
+| 	< ARROW : "->" >
+| 	< COMMA : "," >
+| 	< PLAY_BUTTON : "|>" >
+| 	< REVERSE_PLAY_BUTTON : "<|" >
+| 	< PIPE : "|" >
+| 	< EQUALS : "=" >
+| 	< LCHEVRON : "<" >
+| 	< RCHEVRON : ">" >
+| 	< STAR : "*" >
 }
 
 // Generators
-TOKEN : {
-		< PRINTABLE : "@Printable" >
-	|	< EQUATABLE : "@Equatable" >
+TOKEN :
+{
+  < PRINTABLE : "@Printable" >
+| 	< EQUATABLE : "@Equatable" >
 }
 
 // Operators
-TOKEN : { 
-		< CONCAT : "++" > 
-	|	< PLUS : "+" >
-	| 	< MINUS : "-" >
-	| 	< SLASH : "/" >
-	|  	< HAT : "^" >
-	| 	< MOD : "%" >
-	| 	< FULL_STOP : "." >
-	| 	< LESS_THAN_OR_EQUAL : "<=" >
-	| 	< GREATER_THAN_OR_EQUAL : ">=" > 
-	|	< EQUALS_EQUALS : "==" >
-	|	< NOT_EQUALS : "!=" >
-	|	< AND_AND : "&&" >
-	|	< OR_OR : "||" >
+TOKEN :
+{
+  < CONCAT : "++" >
+| 	< PLUS : "+" >
+| 	< MINUS : "-" >
+| 	< SLASH : "/" >
+| 	< HAT : "^" >
+| 	< MOD : "%" >
+| 	< FULL_STOP : "." >
+| 	< LESS_THAN_OR_EQUAL : "<=" >
+| 	< GREATER_THAN_OR_EQUAL : ">=" >
+| 	< EQUALS_EQUALS : "==" >
+| 	< NOT_EQUALS : "!=" >
+| 	< AND_AND : "&&" >
+| 	< OR_OR : "||" >
 }
 
 // Types (and type-related keywords)
-TOKEN : { 
-		< TYPE_INT : "Int" > 
-	|	< TYPE_BOOL : "Bool" >
-	|	< TYPE_DOUBLE : "Double" >  
-	|	< TYPE_STRING : "String" >
-	|	< TYPE : "type" >
+TOKEN :
+{
+  < TYPE_INT : "Int" >
+| 	< TYPE_BOOL : "Bool" >
+| 	< TYPE_DOUBLE : "Double" >
+| 	< TYPE_STRING : "String" >
+| 	< TYPE : "type" >
 }
 
 // Keywords (used in programming)
-TOKEN : { 
-		< IF : "if" > 
-	|	< THEN : "then" > 
-	|	< ELSE : "else" >
-	|	< INFIX : "infix">
-	|	< INFIXL : "infixl">
-	|	< INFIXR : "infixr">
+TOKEN :
+{
+  < IF : "if" >
+| 	< THEN : "then" >
+| 	< ELSE : "else" >
+| 	< INFIX : "infix" >
+| 	< INFIXL : "infixl" >
+| 	< INFIXR : "infixr" >
 }
 
 // Constants
-TOKEN : {
-		< TRUE : "true" > 
-	| 	< FALSE : "false" > 
-	| 	< PANIC : "panic" >
+TOKEN :
+{
+  < TRUE : "true" >
+| 	< FALSE : "false" >
+| 	< PANIC : "panic" >
 }
 
 // File Meta Keywords
-TOKEN : {
-		< LIBRARY : "Library" >
-	|	< SCRIPT : "Script" >
-	|	< EXPORT : "export" >
-	|	< IMPORT : "import" >  
-	|	< AS : "as" >
+TOKEN :
+{
+  < LIBRARY : "Library" >
+| 	< SCRIPT : "Script" >
+| 	< EXPORT : "export" >
+| 	< IMPORT : "import" >
+| 	< AS : "as" >
 }
 
 // Other
-TOKEN : { 
-		< VAR_NAME : ["A"-"Z", "a"-"z", "_"] (["A"-"Z", "a"-"z", "0"-"9", "_"])* > 
-	|	< INT_LITERAL : (["0"-"9"])+ > 
-	|	< NUMBER : (["0"-"9"])+ (["."])? (["0"-"9"])* > 
-	|	< STRING : "\"" ("\\" ~[] | ~["\"", "\\"])* "\"" >
-	|	< CUSTOM_OPERATOR : (["!", "#", "$", "%", "&", "*", "+", ".", "/", "<", "=", ">", "?", "@", "\\", "^", "|", "-", "~"])+>
+TOKEN :
+{
+  < VAR_NAME : [ "A"-"Z", "a"-"z", "_" ] ([ "A"-"Z", "a"-"z", "0"-"9", "_" ])* >
+| 	< INT_LITERAL : ([ "0"-"9" ])+ >
+| 	< NUMBER : ([ "0"-"9" ])+ ([ "." ])? ([ "0"-"9" ])* >
+| 	< STRING :
+    "\""
+    (
+      "\\" ~[ ]
+    | ~[ "\"", "\\" ]
+    )*
+    "\"" >
+| 	< CUSTOM_OPERATOR : ([ "!", "#", "$", "%", "&", "*", "+", ".", "/", "<", "=", ">", "?", "@", "\\", "^", "|", "-", "~" ])+ >
 }
 
 // Whitespace
-SKIP : {
-  		"\n"
-  	| 	"\r"
-  	| 	" "
-  	| 	"\t"
-  	| 	"\f"
+SKIP :
+{
+  "\n"
+| 	"\r"
+| 	" "
+| 	"\t"
+| 	"\f"
 }
 
 // Comments
-SKIP : {
-  		// Single-line comments
-		< "##" (~["\n", "\r"])* ("\n" | "\r" | "\r\n")>
-	| 	"#[" { commentNesting++; } : InsideMLC
+SKIP :
+{
+  // Single-line comments
+  < "##" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    ) >
+| 	"#["
+  {
+    commentNesting++;
+  }
+  : InsideMLC
 }
 
-<InsideMLC> SKIP : {
-		"#[" { commentNesting++; }
-    |	"]#" {
-				commentNesting--;
-				if (commentNesting == 0) {
-					SwitchTo(DEFAULT);
-				}
-			 }
+< InsideMLC >
+SKIP :
+{
+  "#["
+  {
+    commentNesting++;
+  }
+| 	"]#"
+  {
+    commentNesting--;
+    if (commentNesting == 0)
+    {
+      SwitchTo(DEFAULT);
+    }
+  }
 }
 
-<InsideMLC> MORE : {
-	<~[]>
+< InsideMLC >
+MORE :
+{
+  < ~[ ] >
 }
 
 /** Main endpoint */
-private FLPLibrary input() : { FLPLibrary lib; } {
-	lib = program()
-	<EOF>
-	{ return lib; }
+private FLPLibrary input() :
+{
+  FLPLibrary lib;
+}
+{
+  lib = program() 
+  < EOF >
+  {
+    return lib;
+  }
 }
 
-private FLPLibrary program() : {
-	Token name; List<String> exports;
-//	CustomOperation op;
-//	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
-//	List<RecordTypeDeclaration> typeDeclarations;
-//	List<FLPFunction> functions;
-	CodeableClass thingToEmit;
-	FLPFunction f;
-	List<CodeableClass> thingsToEmit = new ArrayList<CodeableClass>();
-} {
-  	< LIBRARY >
-	name = < VAR_NAME >
-	
-	< OPENCBRACE >
-	exports = exports()
-	< CLOSECBRACE >
-
-	< OPENCBRACE >
-
-	//TODO: Make it so you can put declarations anywhere, not just at the start of the file
-	(
-		thingToEmit = customOperator()
-		{ thingsToEmit.add(thingToEmit); }
-	|
-		 thingToEmit = typeDeclaration()
-		 { thingsToEmit.add(thingToEmit); }
-	|
-		thingToEmit = algebraicDataType()
-		{ thingsToEmit.add(thingToEmit); }
-	|
-		f = functionDeclaration()
-		{
-		  	for(CodeableClass c : thingsToEmit) {
-				if(c instanceof FLPFunction) {
-					FLPFunction function = (FLPFunction) c;
-					if(function.getName().equals(f.getName())) {
-						throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
-					}
-				}
-		  	}
-		  	thingsToEmit.add(f);
-		}
-	)*
-
-	< CLOSECBRACE >
-	{ return new FLPLibrary(name.image, exports, thingsToEmit); }
+private FLPLibrary program() :
+{
+  Token name;
+  List < String > exports;
+  //	CustomOperation op;
+  //	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
+  //	List<RecordTypeDeclaration> typeDeclarations;
+  //	List<FLPFunction> functions;
+  CodeableClass thingToEmit;
+  FLPFunction f;
+  List < CodeableClass > thingsToEmit = new ArrayList < CodeableClass > ();
+}
+{
+  < LIBRARY > 
+  name = < VAR_NAME > 
+  < OPENCBRACE > 
+  exports = exports() 
+  < CLOSECBRACE > 
+  < OPENCBRACE >
+  //TODO: Make it so you can put declarations anywhere, not just at the start of the file
+  (
+    thingToEmit = customOperator()
+    {
+      thingsToEmit.add(thingToEmit);
+    }
+  | 
+    thingToEmit = typeDeclaration()
+    {
+      thingsToEmit.add(thingToEmit);
+    }
+  | 
+    thingToEmit = algebraicDataType()
+    {
+      thingsToEmit.add(thingToEmit);
+    }
+  | 
+    f = functionDeclaration()
+    {
+      for (CodeableClass c : thingsToEmit)
+      {
+        if (c instanceof FLPFunction)
+        {
+          FLPFunction function = (FLPFunction) c;
+          if (function.getName().equals(f.getName()))
+          {
+            throw new ParseException("Tried to declare function " + f.getName() + " on line " + f.getLineNumber() + " but it has already been declared on line " + function.getLineNumber());
+          }
+        }
+      }
+      thingsToEmit.add(f);
+    }
+  )*
+  < CLOSECBRACE >
+  {
+    return new FLPLibrary(name.image, exports, thingsToEmit);
+  }
 }
 
-private List<String> exports() : { List<String> exports = new ArrayList<String>(); Token t; } {
-	(
-	  	< EXPORT >
-	  	(			t = < VAR_NAME > { exports.add(t.image); }
-		| 	< STAR > { universalContext.exportAll(); }
-		)
-	  	< SEMICOLON >
-	)*
-	{ return exports; }
+private List < String > exports() :
+{
+  List < String > exports = new ArrayList < String > ();
+  Token t;
+}
+{
+  (
+    < EXPORT >
+    (
+      t = < VAR_NAME >
+      {
+        exports.add(t.image);
+      }
+    | 	< STAR >
+      {
+        universalContext.exportAll();
+      }
+    )
+    < SEMICOLON >
+  )*
+  {
+    return exports;
+  }
 }
 
-private CustomOperation customOperator() : {
-	Token start;
-	Token t;
-	Token tempName;
-	
-	Associativity associativity;
-	int precedence;
-	String internalName;
-	String operatorToken;
-	Type type;
-	Pair<String, Type> leftType;
-	Pair<String, Type> rightType;
-	Type returnType;
-	Expr body;
-	
-} {
-	( start = < INFIX > { associativity = Associativity.NONE; }
-	| start = < INFIXR > { associativity = Associativity.RIGHT; }
-	| start = < INFIXL > { associativity = Associativity.LEFT; }
-	)
-	t = < INT_LITERAL > { precedence = Integer.parseInt(t.image); }
-	t = < VAR_NAME > { internalName = t.image; currentFunctionName = t.image; }
-	< OPENBRACKET >
-	t = < CUSTOM_OPERATOR > { operatorToken = t.image; }
-	< CLOSEBRACKET >
-
-	{ tempName = null; }
-	( tempName = < VAR_NAME > )?
-	< LCHEVRON >
-	type = type()
-	{ leftType = Pair.of(tempName == null ? null : tempName.image, type); }
-	< RCHEVRON >
-	< ARROW >
-	{ tempName = null; }
-	( tempName = < VAR_NAME > )?
-	< LCHEVRON >
-	type = type()
-	{ rightType = Pair.of(tempName == null ? null : tempName.image, type); }
-	< RCHEVRON >
-	< ARROW >
-	< LCHEVRON > returnType = type() < RCHEVRON >
-	< EQUALS >
-	body = expression()
-	< SEMICOLON >
-	{
-	  	CustomOperation result = new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body);
-		universalContext.addCustomOperation(result);
-		return result;
-	}
+private CustomOperation customOperator() :
+{
+  Token start;
+  Token t;
+  Token tempName;
+  Associativity associativity;
+  int precedence;
+  String internalName;
+  String operatorToken;
+  Type type;
+  Pair < String, Type > leftType;
+  Pair < String, Type > rightType;
+  Type returnType;
+  Expr body;
+}
+{
+  (
+    start = < INFIX >
+    {
+      associativity = Associativity.NONE;
+    }
+  | start = < INFIXR >
+    {
+      associativity = Associativity.RIGHT;
+    }
+  | start = < INFIXL >
+    {
+      associativity = Associativity.LEFT;
+    }
+  )
+  t = < INT_LITERAL >
+  {
+    precedence = Integer.parseInt(t.image);
+  }
+  t = < VAR_NAME >
+  {
+    internalName = t.image;
+    currentFunctionName = t.image;
+  }
+  < OPENBRACKET > 
+  t = < CUSTOM_OPERATOR >
+  {
+    operatorToken = t.image;
+  }
+  < CLOSEBRACKET >
+  {
+    tempName = null;
+  }
+  (tempName = < VAR_NAME >)? 
+  < LCHEVRON > 
+  type = type()
+  {
+    leftType = Pair.of(tempName == null ? null : tempName.image, type);
+  }
+  < RCHEVRON > 
+  < ARROW >
+  {
+    tempName = null;
+  }
+  (tempName = < VAR_NAME >)? 
+  < LCHEVRON > 
+  type = type()
+  {
+    rightType = Pair.of(tempName == null ? null : tempName.image, type);
+  }
+  < RCHEVRON > 
+  < ARROW > 
+  < LCHEVRON > returnType = type() < RCHEVRON > 
+  < EQUALS > 
+  body = expression() 
+  < SEMICOLON >
+  {
+    CustomOperation result = new CustomOperation(start.beginLine, associativity, precedence, internalName, operatorToken, leftType, rightType, returnType, body);
+    universalContext.addCustomOperation(result);
+    return result;
+  }
 }
 
-private AlgebraicDataType algebraicDataType() : {
-	// TODO: Implement ADTs
-} {
-	// Also TODO: Create a class AlgebraicDataType in some package. IDC where, as long as it exists
+private AlgebraicDataType algebraicDataType() :
+{
+  // TODO: Implement ADTs
+  Token name;
+  List < String > values = new Arraylist < String > ();
+  boolean printable = false;
+  boolean equatable = false;
+  String value;
+}
+{
+  // Also TODO: Create a class AlgebraicDataType in some package. IDC where, as long as it exists
+  (
+    < PRINTABLE >
+    {
+      printable = true;
+    }
+  | < EQUATABLE >
+    {
+      equatable = true;
+    }
+  )*
+  < TYPE > 
+  name = < VAR_NAME > 
+  < EQUALS >
+  (
+    value = AlgebraicDataTypeValue()
+    {
+      values.add(value);
+    }
+  )
+  (
+    < PIPE > 
+    value = AlgebraicDataTypeValue()
+    {
+      values.add(value);
+    }
+  )*
+  {
+    return new AlgebraicDataType(name, values);
+  }
 }
 
-private RecordTypeDeclaration typeDeclaration() : {
-	Token name;
-	TypeRecord type;
-	boolean printable = false;
-	boolean equatable = false;
-} {
-	(< PRINTABLE > { printable = true; } | < EQUATABLE > { equatable = true; })*
-	< TYPE >
-	name = < VAR_NAME >
-	< EQUALS >
-	type = recordType(name.image)
-	{
-		universalContext.addRecordType(name.image, type); 
-		return new RecordTypeDeclaration(name.image, type, printable, equatable);
-	}
+private String AlgebraicDataTypeValue() :
+{
+  StringBuilder builder = new StringBuilder();
+  Token token;
+}
+{
+  token = < VAR_NAME >
+  {
+    builder.append(token.image);
+  }
+  (
+    token = < LCHEVRON >
+    {
+      builder.append(token.image);
+    }
+    token = < VAR_NAME >
+    {
+      builder.append(token.image);
+    }
+    (
+      token = < COMMA >
+      {
+        builder.append(token.image);
+      }
+      token = < VAR_NAME >
+      {
+        builder.append(token.image);
+      }
+    )*
+    token = < RCHEVRON >
+    {
+      builder.append(token.image);
+      return builder.toString();
+    }
+  )?
 }
 
-private FLPFunction functionDeclaration() : {
-	List<TypeGeneric> genericTypeDeclaration = new ArrayList<TypeGeneric>();
-  	Token name;
-  	Expr expr;
-  	List<Pair<String, Type>> functionTypes;
-  	TypeFunction tf;
-} {
-  	(genericTypeDeclaration = genericTypeDeclaration())?
-	name = < VAR_NAME >
-	{ ForteLangPrimeParser.currentFunctionName = name.image; }
-	functionTypes = functionTypes()
-	{
-	  	tf = Converter.functionTypesToTypeFunction(functionTypes);
-	  	universalContext.addFunction(name.image, tf);
-	}
-	< EQUALS >
-	expr = expression()
-	< SEMICOLON >
-	{ return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr); }
+private RecordTypeDeclaration typeDeclaration() :
+{
+  Token name;
+  TypeRecord type;
+  boolean printable = false;
+  boolean equatable = false;
+}
+{
+  (
+    < PRINTABLE >
+    {
+      printable = true;
+    }
+  | < EQUATABLE >
+    {
+      equatable = true;
+    }
+  )*
+  < TYPE > 
+  name = < VAR_NAME > 
+  < EQUALS > 
+  type = recordType(name.image)
+  {
+    universalContext.addRecordType(name.image, type);
+    return new RecordTypeDeclaration(name.image, type, printable, equatable);
+  }
 }
 
-private List<TypeGeneric> genericTypeDeclaration() : {
-	Token t;
-	List<TypeGeneric> genericNames = new ArrayList<TypeGeneric>();
-} {
-	< LCHEVRON >
-	t = < VAR_NAME >
-	{ genericNames.add(new TypeGeneric(t.image)); }
-	(		< COMMA >
-		t = < VAR_NAME >
-		{ genericNames.add(new TypeGeneric(t.image)); }
-	)*
-	< RCHEVRON >
-	{ return genericNames; }
+private FLPFunction functionDeclaration() :
+{
+  List < TypeGeneric > genericTypeDeclaration = new ArrayList < TypeGeneric > ();
+  Token name;
+  Expr expr;
+  List < Pair < String, Type > > functionTypes;
+  TypeFunction tf;
+}
+{
+  (
+    genericTypeDeclaration = genericTypeDeclaration()
+  )?
+  name = < VAR_NAME >
+  {
+    ForteLangPrimeParser.currentFunctionName = name.image;
+  }
+  functionTypes = functionTypes()
+  {
+    tf = Converter.functionTypesToTypeFunction(functionTypes);
+    universalContext.addFunction(name.image, tf);
+  }
+  < EQUALS > 
+  expr = expression() 
+  < SEMICOLON >
+  {
+    return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr);
+  }
 }
 
-private Expr expression() : {
-  	Expr expr;
-} {
-  	( expr = innerExpression(false)
-  	| < OPENBRACKET > expr = innerExpression(true) < CLOSEBRACKET >
- 	)
-	{ return expr; }
+private List < TypeGeneric > genericTypeDeclaration() :
+{
+  Token t;
+  List < TypeGeneric > genericNames = new ArrayList < TypeGeneric > ();
+}
+{
+  < LCHEVRON > 
+  t = < VAR_NAME >
+  {
+    genericNames.add(new TypeGeneric(t.image));
+  }
+  (
+    < COMMA > 
+    t = < VAR_NAME >
+    {
+      genericNames.add(new TypeGeneric(t.image));
+    }
+  )*
+  < RCHEVRON >
+  {
+    return genericNames;
+  }
 }
 
-private Expr innerExpression(boolean withBrackets) : {
-  	Expr expr;
-  	Expr secondaryExpr;
-  	Token op;
-} {
-	( expr = integer()
-	| expr = doubleVal()
-	| expr = bool()
-	| expr = string()
-	| expr = panic()
-	| expr = variable()
-	| expr = ifStatement()
-	| expr = recordExpr()
-	)
-	( LOOKAHEAD(2)
-		( op = standardOperation() | op = < CUSTOM_OPERATOR > )
-		secondaryExpr = expression()
-		{ expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind, op.image), withBrackets);}
-	)?
-	{ return expr; }
+private Expr expression() :
+{
+  Expr expr;
+}
+{
+  (
+    expr = innerExpression(false)
+  | < OPENBRACKET > expr = innerExpression(true) < CLOSEBRACKET >
+  )
+  {
+    return expr;
+  }
 }
 
-private Token standardOperation() : {
-	Token t;
-} {
-	( t = < EQUALS_EQUALS >
-	| t = < STAR >
-	| t = < SLASH >
-	| t = < MINUS >
-	| t = < PLUS >
-	| t = < HAT >
-	| t = < FULL_STOP >
-	| t = < MOD >
-	| t = < COLON >
-	| t = < CONCAT >
-	| t = < NOT_EQUALS >
-	| t = < LCHEVRON >
-	| t = < RCHEVRON >
-	| t = < GREATER_THAN_OR_EQUAL >
-	| t = < LESS_THAN_OR_EQUAL >
-	| t = < AND_AND >
-	| t = < OR_OR >
-	| t = < PLAY_BUTTON >
-	| t = < REVERSE_PLAY_BUTTON >	)
-	{ return t; }
+private Expr innerExpression(boolean withBrackets) :
+{
+  Expr expr;
+  Expr secondaryExpr;
+  Token op;
+}
+{
+  (
+    expr = integer()
+  | expr = doubleVal()
+  | expr = bool()
+  | expr = string()
+  | expr = panic()
+  | expr = variable()
+  | expr = ifStatement()
+  | expr = recordExpr()
+  )
+  (
+    LOOKAHEAD(2)
+    (
+      op = standardOperation()
+    | op = < CUSTOM_OPERATOR >
+    )
+    secondaryExpr = expression()
+    {
+      expr = new ExprBinaryOp(op.beginLine, expr, secondaryExpr, Operation.from(op.kind, op.image), withBrackets);
+    }
+  )?
+  {
+    return expr;
+  }
 }
 
-private ExprRecordConstruction recordExpr() : {  
-	List<Pair<String, Expr>> values = new ArrayList<Pair<String, Expr>>();
-	Token startingToken;
-	Expr base = null;
-	Token t;
-	Expr expr;
-} {
-  	startingToken = < OPENCBRACE >
-  	( LOOKAHEAD(2)
-  	  	base = variable()
-  	 	< PIPE >  	  	)?
-	(
-		t = < VAR_NAME >
-		< EQUALS >
-		expr = expression()
-		< SEMICOLON >
-		{ values.add(Pair.of(t.image, expr)); }
-	)*
-	< CLOSECBRACE >
-	{ return new ExprRecordConstruction(startingToken.beginLine, base, values); }
+private Token standardOperation() :
+{
+  Token t;
+}
+{
+  (
+    t = < EQUALS_EQUALS >
+  | t = < STAR >
+  | t = < SLASH >
+  | t = < MINUS >
+  | t = < PLUS >
+  | t = < HAT >
+  | t = < FULL_STOP >
+  | t = < MOD >
+  | t = < COLON >
+  | t = < CONCAT >
+  | t = < NOT_EQUALS >
+  | t = < LCHEVRON >
+  | t = < RCHEVRON >
+  | t = < GREATER_THAN_OR_EQUAL >
+  | t = < LESS_THAN_OR_EQUAL >
+  | t = < AND_AND >
+  | t = < OR_OR >
+  | t = < PLAY_BUTTON >
+  | t = < REVERSE_PLAY_BUTTON >
+  )
+  {
+    return t;
+  }
 }
 
-private ExprVariable variable() : {
-  	Token t;
-  	List<Expr> expressions = new ArrayList<Expr>();
-  	Expr e;
-} {
-  	t = < VAR_NAME >
-  	( LOOKAHEAD(2)
-		e = expression()
-		{ expressions.add(e); }  	)*
-  	{ return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName, expressions); }
+private ExprRecordConstruction recordExpr() :
+{
+  List < Pair < String, Expr > > values = new ArrayList < Pair < String, Expr > > ();
+  Token startingToken;
+  Expr base = null;
+  Token t;
+  Expr expr;
+}
+{
+  startingToken = < OPENCBRACE >
+  (
+    LOOKAHEAD(2)
+    base = variable() 
+    < PIPE >	
+  )?
+  (
+    t = < VAR_NAME > 
+    < EQUALS > 
+    expr = expression() 
+    < SEMICOLON >
+    {
+      values.add(Pair.of(t.image, expr));
+    }
+  )*
+  < CLOSECBRACE >
+  {
+    return new ExprRecordConstruction(startingToken.beginLine, base, values);
+  }
 }
 
-private ExprIfStatement ifStatement() : {
-	Token t;
-  	Expr a;
-  	Expr b;
-  	Expr c;
-} {
-  	t = < IF >
-  	a = expression()
-  	( < COLON > | < THEN > )
-  	b = expression()
-  	< ELSE >
-  	c = expression()
-  	{ return new ExprIfStatement(t.beginLine, a, b, c); }
+private ExprVariable variable() :
+{
+  Token t;
+  List < Expr > expressions = new ArrayList < Expr > ();
+  Expr e;
+}
+{
+  t = < VAR_NAME >
+  (
+    LOOKAHEAD(2)
+    e = expression()
+    {
+      expressions.add(e);
+    }
+  )*
+  {
+    return new ExprVariable(t.beginLine, t.image, ForteLangPrimeParser.currentFunctionName, expressions);
+  }
 }
 
-private ExprIntLit integer() : {
-  	Token t;
-} {
-  	t = < INT_LITERAL >
-  	{ return new ExprIntLit(t.beginLine, Integer.parseInt(t.image)); }	
+private ExprIfStatement ifStatement() :
+{
+  Token t;
+  Expr a;
+  Expr b;
+  Expr c;
+}
+{
+  t = < IF > 
+  a = expression()
+  (
+    < COLON >
+  | < THEN >
+  )
+  b = expression() 
+  < ELSE > 
+  c = expression()
+  {
+    return new ExprIfStatement(t.beginLine, a, b, c);
+  }
 }
 
-private ExprDoubleLit doubleVal() : {
-  	Token t;
-} {
-  	t = < NUMBER >
-  	{ return new ExprDoubleLit(t.beginLine, Double.parseDouble(t.image)); }	
+private ExprIntLit integer() :
+{
+  Token t;
+}
+{
+  t = < INT_LITERAL >
+  {
+    return new ExprIntLit(t.beginLine, Integer.parseInt(t.image));
+  }	
 }
 
-private ExprBoolLit bool() : {
-	Token t;
-	boolean value;
-} {
-	( t = < TRUE > { value = true; }
-	| t = < FALSE > { value = false; }
-	) 
-	{ return new ExprBoolLit(t.beginLine, value); }
+private ExprDoubleLit doubleVal() :
+{
+  Token t;
+}
+{
+  t = < NUMBER >
+  {
+    return new ExprDoubleLit(t.beginLine, Double.parseDouble(t.image));
+  }	
 }
 
-private ExprStringLit string() : {
-  	Token t;
-} {
-  	t = < STRING >
-	{ return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1)); }
+private ExprBoolLit bool() :
+{
+  Token t;
+  boolean value;
+}
+{
+  (
+    t = < TRUE >
+    {
+      value = true;
+    }
+  | t = < FALSE >
+    {
+      value = false;
+    }
+  )
+  {
+    return new ExprBoolLit(t.beginLine, value);
+  }
 }
 
-private ExprPanic panic() : {
-	Token t;
-} {
-	t = < PANIC >
-	{ return new ExprPanic(t.beginLine); }
-} 
-
-private List<Pair<String, Type>> functionTypes() : {
-  	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
-  	List<Pair<String, Type>> otherTypes = new ArrayList<Pair<String, Type>>();
-	Type t;
-	Token varName;
-} {
-  	{ varName = null; }
-	(
-	  	varName = < VAR_NAME >
-	)?
-	< LCHEVRON >
-	t = type()
-	{
-	  	if(varName == null) {
-			types.add(Pair.of(null, t));
-	  	} else {
-			types.add(Pair.of(varName.image, t));
-	  	}
-	}
-	< RCHEVRON >
-	(
-		< ARROW >
-		otherTypes = functionTypes()
-		{ types.addAll(otherTypes); }
-	)?
-	{ return types; }
+private ExprStringLit string() :
+{
+  Token t;
+}
+{
+  t = < STRING >
+  {
+    return new ExprStringLit(t.beginLine, t.image.substring(1, t.image.length() - 1));
+  }
 }
 
-private Type type() : {
-	Token t;
-	Type type;
-} {
-	( < TYPE_INT > { type = new TypeInt(); }
-	| < TYPE_STRING > { type = new TypeString(); }
-	| < TYPE_BOOL > { type = new TypeBool(); }
-	| < TYPE_DOUBLE > { type = new TypeDouble(); }
-	//TODO: Add generic to this constructor
-	| t = < VAR_NAME > (< LCHEVRON > type() < RCHEVRON >)? { type = new TypeGeneric(t.image); }
-	| 	< OPENBRACKET >
-		{ Type temp1; Type temp2; List<Type> right = new ArrayList<Type>(); }
-		temp1 = type()
-		(		  	< ARROW >
-			temp2 = type()
-			{ right.add(temp2); }
-		)+
-		< CLOSEBRACKET >
-		{ type = new TypeLambda(temp1, right); }
-	)
-	{ return type; }
+private ExprPanic panic() :
+{
+  Token t;
+}
+{
+  t = < PANIC >
+  {
+    return new ExprPanic(t.beginLine);
+  }
 }
 
-private TypeRecord recordType(String name) : {
-	List<Pair<String, Type>> types = new ArrayList<Pair<String, Type>>();
-	Token t;
-	Type type;
-} {
-  	< OPENCBRACE >
-	(
-		t = < VAR_NAME >
-		< LCHEVRON >
-		type = type()
-		< RCHEVRON >
-		< SEMICOLON >
-		{ types.add(Pair.of(t.image, type)); }
-	)*
-	< CLOSECBRACE >
-	{ return new TypeRecord(name, types); }
+private List < Pair < String, Type > > functionTypes() :
+{
+  List < Pair < String, Type > > types = new ArrayList < Pair < String, Type > > ();
+  List < Pair < String, Type > > otherTypes = new ArrayList < Pair < String, Type > > ();
+  Type t;
+  Token varName;
+}
+{
+  {
+    varName = null;
+  }
+  (
+  varName = < VAR_NAME >
+  )? 
+  < LCHEVRON > 
+  t = type()
+  {
+    if (varName == null)
+    {
+      types.add(Pair.of(null, t));
+    }
+    else
+    {
+      types.add(Pair.of(varName.image, t));
+    }
+  }
+  < RCHEVRON >
+  (
+    < ARROW > 
+    otherTypes = functionTypes()
+    {
+      types.addAll(otherTypes);
+    }
+  )?
+  {
+    return types;
+  }
+}
+
+private Type type() :
+{
+  Token t;
+  Type type;
+}
+{
+  (
+    < TYPE_INT >
+    {
+      type = new TypeInt();
+    }
+  | < TYPE_STRING >
+    {
+      type = new TypeString();
+    }
+  | < TYPE_BOOL >
+    {
+      type = new TypeBool();
+    }
+  | < TYPE_DOUBLE >
+    {
+      type = new TypeDouble();
+    }
+    //TODO: Add generic to this constructor
+  | t = < VAR_NAME >
+    (
+      < LCHEVRON > type() < RCHEVRON >
+    )?
+    {
+      type = new TypeGeneric(t.image);
+    }
+  | 	< OPENBRACKET >
+    {
+      Type temp1;
+      Type temp2;
+      List < Type > right = new ArrayList < Type > ();
+    }
+    temp1 = type()
+    (
+      < ARROW > 
+      temp2 = type()
+      {
+        right.add(temp2);
+      }
+    )+
+    < CLOSEBRACKET >
+    {
+      type = new TypeLambda(temp1, right);
+    }
+  )
+  {
+    return type;
+  }
+}
+
+private TypeRecord recordType(String name) :
+{
+  List < Pair < String, Type > > types = new ArrayList < Pair < String, Type > > ();
+  Token t;
+  Type type;
+}
+{
+  < OPENCBRACE >
+  (
+    t = < VAR_NAME > 
+    < LCHEVRON > 
+    type = type() 
+    < RCHEVRON > 
+    < SEMICOLON >
+    {
+      types.add(Pair.of(t.image, type));
+    }
+  )*
+  < CLOSECBRACE >
+  {
+    return new TypeRecord(name, types);
+  }
 }
