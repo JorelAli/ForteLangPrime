@@ -36,7 +36,16 @@ public class Converter {
 			}
 			builder.withParam(pair.first(), type);
 		}
-		builder.returning(functionTypes.get(functionTypes.size() - 1).second());
+		
+		//Convert unresolved named into generics for return type
+		Type last = functionTypes.get(functionTypes.size() - 1).second();
+		if(last.getInternalType() == InternalType.UNRESOLVED_NAMED) {
+			TypeUnresolvedNamed named = (TypeUnresolvedNamed) last;
+			if(generics.contains(named.getName())) {
+				last = new TypeGeneric(named.getName());
+			}
+		}
+		builder.returning(last);
 		return builder.build();
 	}
 	

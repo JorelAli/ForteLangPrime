@@ -223,10 +223,6 @@ private FLPLibrary program() :
 {
   Token name;
   List < String > exports;
-  //	CustomOperation op;
-  //	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
-  //	List<RecordTypeDeclaration> typeDeclarations;
-  //	List<FLPFunction> functions;
   CodeableClass thingToEmit;
   FLPFunction f;
   List < CodeableClass > thingsToEmit = new ArrayList < CodeableClass > ();
@@ -238,7 +234,6 @@ private FLPLibrary program() :
   exports = exports() 
   < CLOSECBRACE > 
   < OPENCBRACE >
-  //TODO: Make it so you can put declarations anywhere, not just at the start of the file
   (
     thingToEmit = customOperator()
     {
@@ -391,7 +386,6 @@ private AlgebraicDataType algebraicDataType() :
   String value;
 }
 {
-  // Also TODO: Create a class AlgebraicDataType in some package. IDC where, as long as it exists
   (
     < PRINTABLE >
     {
@@ -406,14 +400,14 @@ private AlgebraicDataType algebraicDataType() :
   name = < VAR_NAME > 
   < EQUALS >
   (
-    value = AlgebraicDataTypeValue()
+    value = algebraicDataTypeValue()
     {
       values.add(value);
     }
   )
   (
     < PIPE > 
-    value = AlgebraicDataTypeValue()
+    value = algebraicDataTypeValue()
     {
       values.add(value);
     }
@@ -424,7 +418,7 @@ private AlgebraicDataType algebraicDataType() :
   }
 }
 
-private String AlgebraicDataTypeValue() :
+private String algebraicDataTypeValue() :
 {
   StringBuilder builder = new StringBuilder();
   Token token;
@@ -493,7 +487,7 @@ private RecordTypeDeclaration typeDeclaration() :
 
 private FLPFunction functionDeclaration() :
 {
-  List < TypeGeneric > genericTypeDeclaration = new ArrayList < TypeGeneric > ();
+  List < String > genericTypes = new ArrayList < String > ();
   Token name;
   Expr expr;
   List < Pair < String, Type > > functionTypes;
@@ -501,7 +495,7 @@ private FLPFunction functionDeclaration() :
 }
 {
   (
-    genericTypeDeclaration = genericTypeDeclaration()
+    genericTypes = genericTypeDeclaration()
   )?
   name = < VAR_NAME >
   {
@@ -509,33 +503,33 @@ private FLPFunction functionDeclaration() :
   }
   functionTypes = functionTypes()
   {
-    tf = Converter.functionTypesToTypeFunction(functionTypes);
+    tf = Converter.functionTypesToTypeFunction(functionTypes, genericTypes);
     universalContext.addFunction(name.image, tf);
   }
   < EQUALS > 
   expr = expression() 
   < SEMICOLON >
   {
-    return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr);
+    return new FLPFunction(name.beginLine, name.image, tf, expr);
   }
 }
 
-private List < TypeGeneric > genericTypeDeclaration() :
+private List < String > genericTypeDeclaration() :
 {
   Token t;
-  List < TypeGeneric > genericNames = new ArrayList < TypeGeneric > ();
+  List < String > genericNames = new ArrayList < String > ();
 }
 {
   < LCHEVRON > 
   t = < VAR_NAME >
   {
-    genericNames.add(new TypeGeneric(t.image));
+    genericNames.add(t.image);
   }
   (
     < COMMA > 
     t = < VAR_NAME >
     {
-      genericNames.add(new TypeGeneric(t.image));
+      genericNames.add(t.image);
     }
   )*
   < RCHEVRON >
@@ -827,7 +821,7 @@ private Type type() :
       < LCHEVRON > type() < RCHEVRON >
     )?
     {
-      type = new TypeGeneric(t.image);
+      type = new TypeUnresolvedNamed(t.image);
     }
   | 	< OPENBRACKET >
     {

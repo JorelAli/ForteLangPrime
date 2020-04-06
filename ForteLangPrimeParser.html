@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>BNF for ForteLangPrimeParser.jj </TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=CENTER>BNF for ForteLangPrimeParser.jj </H1>
+<H2 ALIGN=CENTER>TOKENS</H2>
+<TABLE>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Symbols
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;OPENBRACKET: "("&gt;
+| &lt;CLOSEBRACKET: ")"&gt;
+| &lt;OPENCBRACE: "{"&gt;
+| &lt;CLOSECBRACE: "}"&gt;
+| &lt;OPENSBRACKET: "["&gt;
+| &lt;CLOSESBRACKET: "]"&gt;
+| &lt;COLON: ":"&gt;
+| &lt;SEMICOLON: ";"&gt;
+| &lt;ARROW: "-&gt;"&gt;
+| &lt;COMMA: ","&gt;
+| &lt;PLAY_BUTTON: "|&gt;"&gt;
+| &lt;REVERSE_PLAY_BUTTON: "&lt;|"&gt;
+| &lt;PIPE: "|"&gt;
+| &lt;EQUALS: "="&gt;
+| &lt;LCHEVRON: "&lt;"&gt;
+| &lt;RCHEVRON: "&gt;"&gt;
+| &lt;STAR: "*"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Generators
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;PRINTABLE: "@Printable"&gt;
+| &lt;EQUATABLE: "@Equatable"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Operators
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;CONCAT: "++"&gt;
+| &lt;PLUS: "+"&gt;
+| &lt;MINUS: "-"&gt;
+| &lt;SLASH: "/"&gt;
+| &lt;HAT: "^"&gt;
+| &lt;MOD: "%"&gt;
+| &lt;FULL_STOP: "."&gt;
+| &lt;LESS_THAN_OR_EQUAL: "&lt;="&gt;
+| &lt;GREATER_THAN_OR_EQUAL: "&gt;="&gt;
+| &lt;EQUALS_EQUALS: "=="&gt;
+| &lt;NOT_EQUALS: "!="&gt;
+| &lt;AND_AND: "&amp;&amp;"&gt;
+| &lt;OR_OR: "||"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Types (and type-related keywords)
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;TYPE_INT: "Int"&gt;
+| &lt;TYPE_BOOL: "Bool"&gt;
+| &lt;TYPE_DOUBLE: "Double"&gt;
+| &lt;TYPE_STRING: "String"&gt;
+| &lt;TYPE: "type"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Keywords (used in programming)
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;IF: "if"&gt;
+| &lt;THEN: "then"&gt;
+| &lt;ELSE: "else"&gt;
+| &lt;INFIX: "infix"&gt;
+| &lt;INFIXL: "infixl"&gt;
+| &lt;INFIXR: "infixr"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Constants
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;TRUE: "true"&gt;
+| &lt;FALSE: "false"&gt;
+| &lt;PANIC: "panic"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// File Meta Keywords
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;LIBRARY: "Library"&gt;
+| &lt;SCRIPT: "Script"&gt;
+| &lt;EXPORT: "export"&gt;
+| &lt;IMPORT: "import"&gt;
+| &lt;AS: "as"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Other
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;VAR_NAME: ["A"-"Z","a"-"z","_"] (["A"-"Z","a"-"z","0"-"9","_"])*&gt;
+| &lt;INT_LITERAL: (["0"-"9"])+&gt;
+| &lt;NUMBER: (["0"-"9"])+ (["."])? (["0"-"9"])*&gt;
+| &lt;STRING: "\"" ("\\" ~[] | ~["\"","\\"])* "\""&gt;
+| &lt;CUSTOM_OPERATOR: (["!","#","$","%","&amp;","*","+",".","/","&lt;","=","&gt;","?","@","\\","^","|","-","~"])+&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Whitespace
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; SKIP : {
+"\n"
+| "\r"
+| " "
+| "\t"
+| "\f"
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+// Comments
+</PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; SKIP : {
+&lt;"##" (~["\n","\r"])* ("\n" | "\r" | "\r\n")&gt;
+| "#[" : InsideMLC
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;InsideMLC&gt; SKIP : {
+"#[" : {
+| "]#" : {
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;InsideMLC&gt; MORE : {
+&lt;~[]&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+</TABLE>
+<H2 ALIGN=CENTER>NON-TERMINALS</H2>
+<TABLE>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/** Main endpoint */</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">input</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod2">program</A> &lt;EOF&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">program</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;LIBRARY&gt; &lt;VAR_NAME&gt; &lt;OPENCBRACE&gt; <A HREF="#prod3">exports</A> &lt;CLOSECBRACE&gt; &lt;OPENCBRACE&gt; ( <A HREF="#prod4">customOperator</A> | <A HREF="#prod5">typeDeclaration</A> | <A HREF="#prod6">algebraicDataType</A> | <A HREF="#prod7">functionDeclaration</A> )* &lt;CLOSECBRACE&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">exports</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;EXPORT&gt; ( &lt;VAR_NAME&gt; | &lt;STAR&gt; ) &lt;SEMICOLON&gt; )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">customOperator</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;INFIX&gt; | &lt;INFIXR&gt; | &lt;INFIXL&gt; ) &lt;INT_LITERAL&gt; &lt;VAR_NAME&gt; &lt;OPENBRACKET&gt; &lt;CUSTOM_OPERATOR&gt; &lt;CLOSEBRACKET&gt; ( &lt;VAR_NAME&gt; )? &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; &lt;ARROW&gt; ( &lt;VAR_NAME&gt; )? &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; &lt;ARROW&gt; &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; &lt;EQUALS&gt; <A HREF="#prod9">expression</A> &lt;SEMICOLON&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">algebraicDataType</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;PRINTABLE&gt; | &lt;EQUATABLE&gt; )* &lt;TYPE&gt; &lt;VAR_NAME&gt; &lt;EQUALS&gt; ( <A HREF="#prod10">AlgebraicDataTypeValue</A> ) ( &lt;PIPE&gt; <A HREF="#prod10">AlgebraicDataTypeValue</A> )* &lt;SEMICOLON&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">AlgebraicDataTypeValue</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;VAR_NAME&gt; ( &lt;LCHEVRON&gt; &lt;VAR_NAME&gt; ( &lt;COMMA&gt; &lt;VAR_NAME&gt; )* &lt;RCHEVRON&gt; )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">typeDeclaration</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;PRINTABLE&gt; | &lt;EQUATABLE&gt; )* &lt;TYPE&gt; &lt;VAR_NAME&gt; &lt;EQUALS&gt; <A HREF="#prod11">recordType</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">functionDeclaration</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod12">genericTypeDeclaration</A> )? &lt;VAR_NAME&gt; <A HREF="#prod13">functionTypes</A> &lt;EQUALS&gt; <A HREF="#prod9">expression</A> &lt;SEMICOLON&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">genericTypeDeclaration</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;LCHEVRON&gt; &lt;VAR_NAME&gt; ( &lt;COMMA&gt; &lt;VAR_NAME&gt; )* &lt;RCHEVRON&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">expression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod14">innerExpression</A> | &lt;OPENBRACKET&gt; <A HREF="#prod14">innerExpression</A> &lt;CLOSEBRACKET&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">innerExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod15">integer</A> | <A HREF="#prod16">doubleVal</A> | <A HREF="#prod17">bool</A> | <A HREF="#prod18">string</A> | <A HREF="#prod19">panic</A> | <A HREF="#prod20">variable</A> | <A HREF="#prod21">ifStatement</A> | <A HREF="#prod22">recordExpr</A> ) ( ( <A HREF="#prod23">standardOperation</A> | &lt;CUSTOM_OPERATOR&gt; ) <A HREF="#prod9">expression</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod23">standardOperation</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;EQUALS_EQUALS&gt; | &lt;STAR&gt; | &lt;SLASH&gt; | &lt;MINUS&gt; | &lt;PLUS&gt; | &lt;HAT&gt; | &lt;FULL_STOP&gt; | &lt;MOD&gt; | &lt;COLON&gt; | &lt;CONCAT&gt; | &lt;NOT_EQUALS&gt; | &lt;LCHEVRON&gt; | &lt;RCHEVRON&gt; | &lt;GREATER_THAN_OR_EQUAL&gt; | &lt;LESS_THAN_OR_EQUAL&gt; | &lt;AND_AND&gt; | &lt;OR_OR&gt; | &lt;PLAY_BUTTON&gt; | &lt;REVERSE_PLAY_BUTTON&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod22">recordExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;OPENCBRACE&gt; ( <A HREF="#prod20">variable</A> &lt;PIPE&gt; )? ( &lt;VAR_NAME&gt; &lt;EQUALS&gt; <A HREF="#prod9">expression</A> &lt;SEMICOLON&gt; )* &lt;CLOSECBRACE&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod20">variable</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;VAR_NAME&gt; ( <A HREF="#prod9">expression</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod21">ifStatement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IF&gt; <A HREF="#prod9">expression</A> ( &lt;COLON&gt; | &lt;THEN&gt; ) <A HREF="#prod9">expression</A> &lt;ELSE&gt; <A HREF="#prod9">expression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">integer</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;INT_LITERAL&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">doubleVal</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;NUMBER&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">bool</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;TRUE&gt; | &lt;FALSE&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">string</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;STRING&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">panic</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;PANIC&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">functionTypes</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;VAR_NAME&gt; )? &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; ( &lt;ARROW&gt; <A HREF="#prod13">functionTypes</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">type</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;TYPE_INT&gt; | &lt;TYPE_STRING&gt; | &lt;TYPE_BOOL&gt; | &lt;TYPE_DOUBLE&gt; | &lt;VAR_NAME&gt; ( &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; )? | &lt;OPENBRACKET&gt; <A HREF="#prod8">type</A> ( &lt;ARROW&gt; <A HREF="#prod8">type</A> )+ &lt;CLOSEBRACKET&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">recordType</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;OPENCBRACE&gt; ( &lt;VAR_NAME&gt; &lt;LCHEVRON&gt; <A HREF="#prod8">type</A> &lt;RCHEVRON&gt; &lt;SEMICOLON&gt; )* &lt;CLOSECBRACE&gt;</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

@@ -48,10 +48,6 @@ return lib;
 
   final private FLPLibrary program() throws ParseException {Token name;
   List < String > exports;
-  //	CustomOperation op;
-  //	List<CustomOperation> customOperations = new ArrayList<CustomOperation>();
-  //	List<RecordTypeDeclaration> typeDeclarations;
-  //	List<FLPFunction> functions;
   CodeableClass thingToEmit;
   FLPFunction f;
   List < CodeableClass > thingsToEmit = new ArrayList < CodeableClass > ();
@@ -286,7 +282,7 @@ equatable = true;
     jj_consume_token(TYPE);
     name = jj_consume_token(VAR_NAME);
     jj_consume_token(EQUALS);
-    value = AlgebraicDataTypeValue();
+    value = algebraicDataTypeValue();
 values.add(value);
     label_4:
     while (true) {
@@ -300,14 +296,14 @@ values.add(value);
         break label_4;
       }
       jj_consume_token(PIPE);
-      value = AlgebraicDataTypeValue();
+      value = algebraicDataTypeValue();
 values.add(value);
     }
     jj_consume_token(SEMICOLON);
 return new AlgebraicDataType(name.image, values);
   }
 
-  final private String AlgebraicDataTypeValue() throws ParseException {StringBuilder builder = new StringBuilder();
+  final private String algebraicDataTypeValue() throws ParseException {StringBuilder builder = new StringBuilder();
   Token token;
     token = jj_consume_token(VAR_NAME);
 builder.append(token.image);
@@ -385,14 +381,14 @@ universalContext.addRecordType(name.image, type);
     return new RecordTypeDeclaration(name.image, type, printable, equatable);
   }
 
-  final private FLPFunction functionDeclaration() throws ParseException {List < TypeGeneric > genericTypeDeclaration = new ArrayList < TypeGeneric > ();
+  final private FLPFunction functionDeclaration() throws ParseException {List < String > genericTypes = new ArrayList < String > ();
   Token name;
   Expr expr;
   List < Pair < String, Type > > functionTypes;
   TypeFunction tf;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case LCHEVRON:{
-      genericTypeDeclaration = genericTypeDeclaration();
+      genericTypes = genericTypeDeclaration();
       break;
       }
     default:
@@ -402,19 +398,19 @@ universalContext.addRecordType(name.image, type);
     name = jj_consume_token(VAR_NAME);
 ForteLangPrimeParser.currentFunctionName = name.image;
     functionTypes = functionTypes();
-tf = Converter.functionTypesToTypeFunction(functionTypes);
+tf = Converter.functionTypesToTypeFunction(functionTypes, genericTypes);
     universalContext.addFunction(name.image, tf);
     jj_consume_token(EQUALS);
     expr = expression();
     jj_consume_token(SEMICOLON);
-return new FLPFunction(name.beginLine, name.image, tf, genericTypeDeclaration, expr);
+return new FLPFunction(name.beginLine, name.image, tf, expr);
   }
 
-  final private List < TypeGeneric > genericTypeDeclaration() throws ParseException {Token t;
-  List < TypeGeneric > genericNames = new ArrayList < TypeGeneric > ();
+  final private List < String > genericTypeDeclaration() throws ParseException {Token t;
+  List < String > genericNames = new ArrayList < String > ();
     jj_consume_token(LCHEVRON);
     t = jj_consume_token(VAR_NAME);
-genericNames.add(new TypeGeneric(t.image));
+genericNames.add(t.image);
     label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -428,7 +424,7 @@ genericNames.add(new TypeGeneric(t.image));
       }
       jj_consume_token(COMMA);
       t = jj_consume_token(VAR_NAME);
-genericNames.add(new TypeGeneric(t.image));
+genericNames.add(t.image);
     }
     jj_consume_token(RCHEVRON);
 return genericNames;
@@ -823,7 +819,7 @@ type = new TypeDouble();
         jj_la1[26] = jj_gen;
         ;
       }
-type = new TypeGeneric(t.image);
+type = new TypeUnresolvedNamed(t.image);
       break;
       }
     case OPENBRACKET:{
@@ -915,6 +911,12 @@ return new TypeRecord(name, types);
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(3, xla); }
+  }
+
+  private boolean jj_3R_31()
+ {
+    if (jj_scan_token(INT_LITERAL)) return true;
+    return false;
   }
 
   private boolean jj_3R_34()
@@ -1231,12 +1233,6 @@ return new TypeRecord(name, types);
       xsp = jj_scanpos;
       if (jj_3_4()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_31()
- {
-    if (jj_scan_token(INT_LITERAL)) return true;
     return false;
   }
 

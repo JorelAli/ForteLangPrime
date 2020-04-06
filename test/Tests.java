@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import dev.jorel.fortelangprime.compiler.CompilationException;
 import dev.jorel.fortelangprime.compiler.FLPCompiler;
-import dev.jorel.fortelangprime.parser.ParseException;
 import dev.jorel.fortelangprime.parser.exceptions.TypeException;
 
 public class Tests {

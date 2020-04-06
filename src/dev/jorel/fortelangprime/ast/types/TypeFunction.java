@@ -25,60 +25,41 @@ public class TypeFunction implements Type {
 	@Override
 	public String toBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
-		params.stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
-		result.append(")");
-		result.append(returnType.toBytecodeString(context));
+		getParams(context).stream().map(Pair::second).map(StreamUtils.with(Type::toBytecodeString, context)).forEach(result::append);
+		result.append(")");		
+		result.append(getReturnType(context).toBytecodeString(context));
 		return result.toString();
 	}
 	
 	public String toGenericBytecodeString(UniversalContext context) {
 		StringBuilder result = new StringBuilder("(");
-		params.stream().map(Pair::second)
+		getParams(context).stream().map(Pair::second)
 			.map(StreamUtils.conditioning(Type::isGeneric, t -> t.toGenericBytecodeString(context), StreamUtils.with(Type::toBytecodeString, context)))
 			.forEach(result::append);
 		result.append(")");
 		
-		if(returnType.isGeneric()) {
-			result.append(returnType.toGenericBytecodeString(context));
+		if(getReturnType(context).isGeneric()) {
+			result.append(getReturnType(context).toGenericBytecodeString(context));
 		} else {
-			result.append(returnType.toBytecodeString(context));
+			result.append(getReturnType(context).toBytecodeString(context));
 		}
 		return result.toString();
 	}
 	
-	/**
-	 * Use getReturnType(context) instead
-	 * @return
-	 */
-	@Deprecated
-	public Type getReturnType() {
-		return returnType;
-	}
-	
 	public Type getReturnType(UniversalContext context) {
-		//TODO: This might break? Maybe use a null check???
-		if(returnType.getInternalType() == InternalType.GENERIC) {
-			this.returnType = context.getRecordType(((TypeGeneric) returnType).getName());
+		if(returnType.getInternalType() == InternalType.UNRESOLVED_NAMED) {
+			this.returnType = context.getRecordType(((TypeUnresolvedNamed) returnType).getName());
 		}
 		return this.returnType;
-	}
-
-	/**
-	 * Use getParams(context) instead
-	 * @return
-	 */
-	@Deprecated
-	public List<Pair<String, Type>> getParams() {
-		return params;
 	}
 	
 	public List<Pair<String, Type>> getParams(UniversalContext context) {
 		ListIterator<Pair<String, Type>> li = this.params.listIterator();
 		while(li.hasNext()) {
 			Pair<String, Type> next = li.next();
-			if(next.second().getInternalType() == InternalType.GENERIC) {
-				TypeGeneric tng = (TypeGeneric) next.second();
-				Type result = context.getRecordType(tng.getName());
+			if(next.second().getInternalType() == InternalType.UNRESOLVED_NAMED) {
+				TypeUnresolvedNamed unresolvedNamedType = (TypeUnresolvedNamed) next.second();
+				Type result = context.getRecordType(unresolvedNamedType.getName());
 				if(result != null) {
 					li.set(Pair.of(next.first(), result));
 				}

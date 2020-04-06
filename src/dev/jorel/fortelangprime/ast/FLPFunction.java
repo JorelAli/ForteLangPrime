@@ -1,7 +1,5 @@
 package dev.jorel.fortelangprime.ast;
 
-import java.util.List;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -20,15 +18,13 @@ public class FLPFunction implements CodeableClass {
 	private final int lineNumber;
 	private final String name;
 	private final TypeFunction typeFunction;
-	private final List<TypeGeneric> genericDeclarations;
 	private final Expr body;
 	private boolean exported;
 	
-	public FLPFunction(int lineNumber, String name, TypeFunction typeFunction, List<TypeGeneric> genericDeclarations, Expr body) {
+	public FLPFunction(int lineNumber, String name, TypeFunction typeFunction, Expr body) {
 		this.lineNumber = lineNumber;
 		this.name = name;
 		this.typeFunction = typeFunction;
-		this.genericDeclarations = genericDeclarations;
 		this.body = body;
 		this.exported = false;
 	}
@@ -52,20 +48,20 @@ public class FLPFunction implements CodeableClass {
 	@Override
 	public void emit(ClassWriter classWriter, UniversalContext context) {
 		
-		String genericSignature;
-		if(genericDeclarations.size() == 0) {
-			genericSignature = null;
-		} else {
-			StringBuilder builder = new StringBuilder("<");
-			for(TypeGeneric generic : genericDeclarations) {
-				builder.append(generic.getName());
-				builder.append(":");
-				builder.append(generic.toBytecodeString(context));
-			}
-			builder.append(">");
-			builder.append(typeFunction.toGenericBytecodeString(context));
-			genericSignature = builder.toString();
-		}
+		String genericSignature = null;
+//		if(genericDeclarations.size() == 0) {
+//			genericSignature = null;
+//		} else {
+//			StringBuilder builder = new StringBuilder("<");
+//			for(TypeGeneric generic : genericDeclarations) {
+//				builder.append(generic.getName());
+//				builder.append(":");
+//				builder.append(generic.toBytecodeString(context));
+//			}
+//			builder.append(">");
+//			builder.append(typeFunction.toGenericBytecodeString(context));
+//			genericSignature = builder.toString();
+//		}
 		
 		String returnTypeString = typeFunction.toBytecodeString(context);
 		if(typeFunction.getReturnType(context) instanceof TypeGeneric) {

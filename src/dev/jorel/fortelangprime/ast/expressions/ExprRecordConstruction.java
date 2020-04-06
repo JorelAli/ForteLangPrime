@@ -42,8 +42,6 @@ public class ExprRecordConstruction implements Expr {
 		for(Pair<String, Expr> pair : values) {
 			types.add(Pair.of(pair.first(), pair.second().getType(context)));
 		}
-//		types.stream().map(p -> p.first() + p.second().getInternalType()).forEach(System.out::println);
-//		System.out.println();
 		return context.getRecordTypeMatching(types);
 	}
 
@@ -53,8 +51,7 @@ public class ExprRecordConstruction implements Expr {
 		if(base != null) {
 			ExprVariable baseVar = (ExprVariable) base;
 			baseVar.typeCheck(context);
-//			TypeNamedGeneric tng = (TypeNamedGeneric) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);
-			TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);//(TypeRecord) context.getRecordType(tng.getName());
+			TypeRecord tr = (TypeRecord) context.getFunction(baseVar.getParentFunctionName()).getReturnType(context);
 			
 			if(tr == null) {
 				throw new TypeException(baseVar.getLineNumber(), "Record type has not been declared");
