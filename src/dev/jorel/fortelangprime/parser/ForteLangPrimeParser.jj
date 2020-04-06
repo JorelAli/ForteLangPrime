@@ -204,6 +204,9 @@ private FLPLibrary program() : {
 		 thingToEmit = typeDeclaration()
 		 { thingsToEmit.add(thingToEmit); }
 	|
+		thingToEmit = algebraicDataType()
+		{ thingsToEmit.add(thingToEmit); }
+	|
 		f = functionDeclaration()
 		{
 		  	for(CodeableClass c : thingsToEmit) {
@@ -282,6 +285,12 @@ private CustomOperation customOperator() : {
 		universalContext.addCustomOperation(result);
 		return result;
 	}
+}
+
+private AlgebraicDataType algebraicDataType() : {
+	// TODO: Implement ADTs
+} {
+	// Also TODO: Create a class AlgebraicDataType in some package. IDC where, as long as it exists
 }
 
 private RecordTypeDeclaration typeDeclaration() : {
