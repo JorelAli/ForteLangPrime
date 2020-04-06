@@ -19,7 +19,7 @@ public class Tests {
 		for(File file : new File(".").listFiles(f -> f.toString().endsWith("flp"))) {
 			try {
 				new FLPCompiler(file, new File("classfolder")).compile();
-			} catch (ParseException | IOException | CompilationException | TypeException e) {
+			} catch (IOException | CompilationException | TypeException e) {
 				e.printStackTrace();
 			}
 		}
