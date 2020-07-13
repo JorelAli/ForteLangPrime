@@ -32,13 +32,13 @@ public class ForteLangPrimeParser
   {
     universalContext = new UniversalContext();
     InputStream inputStream = new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
-    return new ForteLangPrimeParser(new StreamProvider(inputStream)).input();
+    return new ForteLangPrimeParser(new StreamProvider(inputStream, Charset.forName("UTF-8"))).input();
   }
 
   public static FLPLibrary parse(File input) throws ParseException, FileNotFoundException, IOException
   {
     universalContext = new UniversalContext();
-    return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input))).input();
+    return new ForteLangPrimeParser(new StreamProvider(new FileInputStream(input), Charset.forName("UTF-8"))).input();
   }
 
   public static UniversalContext getUniversalContext()
