@@ -48,6 +48,14 @@ Library Tests {
 	## -- Generics
 	<T> id a <T> -> <T> = 
 		a;
+		
+    ## TODO: Change the syntax of generics to
+    id(<T>) a<T> -> <T> = a;
+	## This lets you easily add multiple types:
+	id(<K>, <V>) -> key<K> -> value<V> -> <Bool> = ...;
+	
+	## ALSO TODO: Add the ... operator (AKA undefined)
+	## Replace panic with ...
 
 
 	## -- Useful functions
