@@ -61,7 +61,7 @@ public class MainTests {
 	
 	@Test
 	public void testDoubles() {
-		assertEquals(123.2D, Tests.doubleTest(), 0);
+		assertEquals(123.2D, Tests.doubleTest(), 0.001D);
 		assertEquals(20.2D, Tests.doubleAdd(19.1D, 1.1D), 0.001D);
 		assertEquals(15.3D, Tests.doubleSub(16.1D, 0.8D), 0.001D);
 		assertEquals(19.1D * 112.1D, Tests.doubleMul(19.1D, 112.1D), 0.001D);
