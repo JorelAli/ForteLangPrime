@@ -10,9 +10,4 @@ public class QuickCompile {
 			new FLPCompiler(file, new File("classfolder")).compile();
 		}
 	}
-	
-	
-	
-	
-	
 }

@@ -52,6 +52,7 @@ public class BytecodeGenerator implements Opcodes {
 	
 	public void writeToFile(File parentFolder) throws IOException {
 		FLPCompiler.log("\nWriting class to file " + parentFolder + "/" + lib.name + ".class");
+		parentFolder.mkdirs();
 		Files.write(new File(parentFolder, lib.name + ".class").toPath(), compiledData);
 	}
 	

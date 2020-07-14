@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+        <groupId>dev.jorel</groupId>
+        <artifactId>ForteLangPrime</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>ForteLangPrime-Core</artifactId>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>7.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>clean compile exec:java@compile-flptests jar:jar@compiled-flptests test-compile test</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>com.helger.maven</groupId>
+				<artifactId>ph-javacc-maven-plugin</artifactId>
+				<version>4.1.4</version>
+				<executions>
+					<execution>
+						<id>jjc1</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<configuration>
+							<jdkVersion>1.5</jdkVersion>
+							<javadocFriendlyComments>true</javadocFriendlyComments>
+							<packageName>org.javacc.parser</packageName>
+							<sourceDirectory>src/main/java/</sourceDirectory>
+							<outputDirectory>src/main/java/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
