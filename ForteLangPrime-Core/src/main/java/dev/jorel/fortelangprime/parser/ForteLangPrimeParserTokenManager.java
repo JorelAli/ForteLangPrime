@@ -20,7 +20,7 @@ import dev.jorel.fortelangprime.util.*;
 /** Token Manager. */
 @SuppressWarnings ("unused")
 public class ForteLangPrimeParserTokenManager implements ForteLangPrimeParserConstants {
-  static int commentNesting = 0;
+ static int commentNesting = 0;
 private final int jjStopStringLiteralDfa_0(int pos, long active0, long active1){
    switch (pos)
    {
@@ -1025,19 +1025,19 @@ void SkipLexicalActions(Token matchedToken)
    {
       case 63 :
          image.append(input_stream.getSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-    commentNesting++;
+   commentNesting++;
          break;
       case 64 :
          image.append(input_stream.getSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-    commentNesting++;
+  commentNesting++;
          break;
       case 65 :
          image.append(input_stream.getSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-    commentNesting--;
-    if (commentNesting == 0)
-    {
-      SwitchTo(DEFAULT);
-    }
+  commentNesting--;
+  if (commentNesting == 0)
+  {
+   SwitchTo(DEFAULT);
+  }
          break;
       default :
          break;
