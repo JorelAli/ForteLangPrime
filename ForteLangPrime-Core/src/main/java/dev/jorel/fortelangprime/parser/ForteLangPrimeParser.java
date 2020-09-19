@@ -413,6 +413,7 @@ tf = Converter.functionTypesToTypeFunction(functionTypes, genericTypes);
     jj_consume_token(LCHEVRON);
     t = jj_consume_token(VAR_NAME);
 genericNames.add(t.image);
+    jj_consume_token(RCHEVRON);
     label_7:
     while (true) {
       switch (jj_ntk == -1 ? jj_ntk_f() : jj_ntk) {
@@ -424,10 +425,11 @@ genericNames.add(t.image);
         break label_7;
       }
       jj_consume_token(COMMA);
+      jj_consume_token(LCHEVRON);
       t = jj_consume_token(VAR_NAME);
 genericNames.add(t.image);
+      jj_consume_token(RCHEVRON);
     }
-    jj_consume_token(RCHEVRON);
 {if ("" != null) return genericNames;}
     throw new IllegalStateException ("Missing return statement in function");
 }
@@ -920,6 +922,18 @@ types.add(Pair.of(t.image, type));
     finally { jj_save(3, xla); }
   }
 
+  private boolean jj_3R_27()
+ {
+    if (jj_3R_35()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
   private boolean jj_3R_29()
  {
     if (jj_3R_36()) return true;
@@ -976,6 +990,19 @@ types.add(Pair.of(t.image, type));
   private boolean jj_3R_38()
  {
     if (jj_scan_token(TRUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_16()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(TYPE)) return true;
+    if (jj_scan_token(VAR_NAME)) return true;
+    if (jj_scan_token(EQUALS)) return true;
     return false;
   }
 
@@ -1052,25 +1079,6 @@ types.add(Pair.of(t.image, type));
     return false;
   }
 
-  private boolean jj_3R_12()
- {
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_16()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(TYPE)) return true;
-    if (jj_scan_token(VAR_NAME)) return true;
-    if (jj_scan_token(EQUALS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4()
- {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
   private boolean jj_3R_16()
  {
     Token xsp;
@@ -1085,6 +1093,12 @@ types.add(Pair.of(t.image, type));
   private boolean jj_3R_20()
  {
     if (jj_scan_token(PRINTABLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4()
+ {
+    if (jj_3R_14()) return true;
     return false;
   }
 
@@ -1143,6 +1157,12 @@ types.add(Pair.of(t.image, type));
     return false;
   }
 
+  private boolean jj_3_1()
+ {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
   private boolean jj_3R_22()
  {
     Token xsp;
@@ -1171,12 +1191,6 @@ types.add(Pair.of(t.image, type));
     }
     xsp = jj_scanpos;
     if (jj_3_2()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1228,18 +1242,6 @@ types.add(Pair.of(t.image, type));
   private boolean jj_3R_26()
  {
     if (jj_3R_34()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27()
- {
-    if (jj_3R_35()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_28()
- {
-    if (jj_3R_15()) return true;
     return false;
   }
 

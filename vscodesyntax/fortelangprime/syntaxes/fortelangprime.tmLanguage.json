@@ -1,88 +1,84 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "ForteLangPrime",
-	"patterns": [
-		{
-			"include": "#comments"
-		},
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		},
-		{
-			"include": "#regexstrs"
-		}
-	],
-	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "constant.character.fortelangprime",
-				"match": ""
-			}, {
-				"name": "keyword.control.fortelangprime",
-				"match": "\\|>|<\\||\\||->|\\b(if|then|else)\\b"
-			}, {
-				"name": "keyword.other.fortelangprime",
-				"match": "@Equatable|@Printable|\\b(infix|type|import|export)\\b"
-			}, {
-				"name": "invalid.illegal.fortelangprime",
-				"match": "\\b(panic)\\b"
-			}, {
-				"name": "entity.name.type.fortelangprime2",
-				"match": "(?<=type\\s)\\S+"
-			}, {
-				"name": "entity.name.type.fortelangprime",
-				"match": "<([A-Z]([a-zA-Z0-9])*)(,[A-Z]([a-zA-Z0-9])*)*>"
-			}, {
-				"name": "constant.language.fortelangprime",
-				"match": "\\b(true|false)\\b"
-			}, {
-				"name": "entity.name.function.fortelangprime",
-				"match": "[a-zA-Z0-9_]+(?=\\s+[<a-zA-Z])"
-			}, {
-				"name": "constant.numeric.fortelangprime",
-				"match": "\\b([0-9]+(\\.[0-9]+)*)\\b"
-			}, {
-				"name": "support.function.fortelangprime",
-				"match": ""
-			}, {
-				"name": "storage.type.fortelangprime",
-				"match": "\\b(Library|Script)\\b"
-			}]
-		},
-		"strings": {
-			"name": "string.quoted.double.fortelangprime",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.fortelangprime",
-					"match": "\\\\."
-				}
-			]
-		},
-		"regexstrs": {
-			"name": "string.regexp.fortelangprime",
-			"begin": "[^a-zA-Z0-9_]'",
-			"end": "'"
-		},
-		"comments": {
-			"patterns": [
-				{
-					"name": "comment.block.fortelangprime",
-					"begin": "#\\[",
-					"end": "\\]#"
-				},
-				{
-					"name": "comment.line.number-sign.fortelangprime",
-					"begin": "##",
-					"end": "\n"
-				}
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "ForteLangPrime",
+    "patterns": [{
+            "include": "#comments"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#regexstrs"
+        }
+    ],
+    "repository": {
+        "keywords": {
+            "patterns": [{
+                "name": "constant.character.fortelangprime",
+                "match": ""
+            }, {
+                "name": "keyword.control.fortelangprime",
+                "match": "\\|>|<\\||\\||->|\\b(if|then|else)\\b"
+            }, {
+                "name": "keyword.other.fortelangprime",
+                "match": "@Equatable|@Printable|\\b(infix|type|import|export)\\b"
+            }, {
+                "name": "invalid.illegal.fortelangprime",
+                "match": "\\?\\?\\?"
+            }, {
+                "name": "entity.name.type.fortelangprime2",
+                "match": "(?<=type\\s)\\S+"
+            }, {
+                "name": "entity.name.type.fortelangprime",
+                "match": "<([A-Z]([a-zA-Z0-9])*)(,[A-Z]([a-zA-Z0-9])*)*>"
+            }, {
+                "name": "constant.language.fortelangprime",
+                "match": "\\b(true|false)\\b"
+            }, {
+                "name": "entity.name.function.fortelangprime",
+                "match": "[a-zA-Z0-9_]+(?=\\s+[<a-zA-Z])"
+            }, {
+                "name": "constant.numeric.fortelangprime",
+                "match": "\\b([0-9]+(\\.[0-9]+)*)\\b"
+            }, {
+                "name": "support.function.fortelangprime",
+                "match": ""
+            }, {
+                "name": "storage.type.fortelangprime",
+                "match": "\\b(Library|Script)\\b"
+            }]
+        },
+        "strings": {
+            "name": "string.quoted.double.fortelangprime",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [{
+                "name": "constant.character.escape.fortelangprime",
+                "match": "\\\\."
+            }]
+        },
+        "regexstrs": {
+            "name": "string.regexp.fortelangprime",
+            "begin": "[^a-zA-Z0-9_]'",
+            "end": "'"
+        },
+        "comments": {
+            "patterns": [{
+                    "name": "comment.block.fortelangprime",
+                    "begin": "#\\[",
+                    "end": "\\]#"
+                },
+                {
+                    "name": "comment.line.number-sign.fortelangprime",
+                    "begin": "##",
+                    "end": "\n"
+                }
 
-			]
-		}
-	},
-	"scopeName": "source.fortelangprime"
+            ]
+        }
+    },
+    "scopeName": "source.fortelangprime"
 }

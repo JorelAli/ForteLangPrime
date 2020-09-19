@@ -28,6 +28,8 @@ The goals for ForteLang′ is better described in my [blog post](https://www.jor
 - **Lazy evaluation**
 - **A compiled language.** Compiling directly to Java bytecode gives it the best interoperability with Java. Also, I want to apply the stuff I've learnt into actually making a compiled language instead of an interpreted language
 
+- **Compatible with ASPAR**
+
 ### Core concepts/features
 
 - Compiles down to Java Bytecode
@@ -102,13 +104,13 @@ functionName a<Int> -> <Int> = ## Some expression
 Generic function declarations have to declare the name of the generic type:
 
 ```haskell
-<T> functionName a<T> -> <T> = ## Some expression
+functionName(<T>) a<T> -> <T> = ## Some expression
 ```
 
 Multiple generic types are separated with commas:
 
 ```haskell
-<T, U> functionType a<T> -> b<U> -> <Bool> = ## Some expression
+functionType(<T>, <U>) a<T> -> b<U> -> <Bool> = ## Some expression
 ```
 
 ## Record type declarations

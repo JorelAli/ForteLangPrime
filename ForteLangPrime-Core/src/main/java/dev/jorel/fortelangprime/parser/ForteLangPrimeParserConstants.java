@@ -176,7 +176,7 @@ public interface ForteLangPrimeParserConstants {
     "\"infixr\"",
     "\"true\"",
     "\"false\"",
-    "\"panic\"",
+    "\"???\"",
     "\"Library\"",
     "\"Script\"",
     "\"export\"",

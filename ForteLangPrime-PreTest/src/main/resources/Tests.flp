@@ -25,7 +25,7 @@ Library Tests {
 		true;
 
 	panicTest <Bool> = 
-		panic;
+		???; ## Undefined
 
 
 	## -- Functions with parameters
@@ -46,17 +46,10 @@ Library Tests {
 
 
 	## -- Generics
-	##<T> id a <T> -> <T> = 
-	##	a;
-		
-    ## TODO: Change the syntax of generics to
-    id(<T>) a<T> -> <T> = a;
-	## This lets you easily add multiple types:
-	##id(<K>, <V>) -> key<K> -> value<V> -> <Bool> = ...;
-	
-	## ALSO TODO: Add the ... operator (AKA undefined)
-	## Replace panic with ...
+	id(<T>) a <T> -> <T> = 
+		a;
 
+	isSimilar(<A>, <B>) a<A> -> b<B> -> <Bool> = a == b;	
 
 	## -- Useful functions
 	not input<Bool> -> <Bool> = 

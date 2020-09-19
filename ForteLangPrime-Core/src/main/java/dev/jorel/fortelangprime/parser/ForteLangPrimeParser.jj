@@ -127,7 +127,7 @@ TOKEN :
 {
 	< TRUE : "true" >
 		| 	< FALSE : "false" >
-		| 	< PANIC : "panic" >
+		| 	< PANIC : "???" >
 }
 
 // File Meta Keywords
@@ -527,14 +527,16 @@ private List < String > genericTypeDeclaration() :
 		{
 			genericNames.add(t.image);
 		}
+	< RCHEVRON >
 	(
-	 < COMMA > 
+	 < COMMA >
+	 < LCHEVRON > 
 	 t = < VAR_NAME >
 	 {
 	 genericNames.add(t.image);
 	 }
+	 < RCHEVRON >
 	)*
-		< RCHEVRON >
 		{
 			return genericNames;
 		}
