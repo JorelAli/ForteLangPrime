@@ -5,5 +5,235 @@ Library MoreTests {
 } {
 
     
+	## -- Record type declaration
+	@Equatable
+	@Printable
+	type Color = {
+		Int red;
+        Int green;
+        Int blue;
+	}
+
+
+	## -- Basic functions (returning simple parameters)
+	justTwo : Int = 2;
+    aString : String = "hello";
+    someBool : Bool = true;
+    panicTest : Bool= ???;
+
+	## -- Functions with parameters
+    paramFunction : Int -> Int = 2;
+    identity : Int a -> Int = a;
+    identity1 : Bool a -> Bool = a;
+    identity2 : String a -> String = a;
+    multiParam : Int a1 -> String a2 -> String = a2;
+
+	## -- Generics
+    id<T> : T a -> T = a;
+    isSimilar<A, B> : A a -> B b -> Bool = a == b;
+
+	## -- Useful functions
+    not : Bool input -> Bool = 
+        if input then
+            false
+        else
+            true;
+
+	## -- If statements
+    alwaysFalse : Bool =
+		if true then
+			if true then 
+				false 
+			else
+				true 
+		else 
+			true;
+
+
+	## -- Fully defined records
+	red : Color = { 
+		red = 255; 
+		green = 0; 
+		blue = 0; 
+	};
+
+	green : Color = { 
+		green = 255; 
+		red = 0; 
+		blue = 0; 
+	};
+
+	greenInt : Int = { 
+		red = 255; 
+		green = 0; 
+		blue = 0; 
+	}.green;
+
+	recordAccessTest : Int = green.green;
+
+
+	## -- Record updating using the red function as a base
+	yellow : Color = { red | 
+		green = 255; 
+	};
+
+	someOtherBool : Bool = 
+		someBool;
+
+	someOtherOtherBool : Bool = 
+		identity1 someBool;
+
+	and a<Bool> -> b<Bool> -> <Bool> = 
+		if not a then 
+			false 
+		else 
+			if not b then 
+				false 
+			else 
+				true;
+
+
+	## -- Equality tests for various types
+    eqInt : Int a -> Int b -> Bool =
+        a == b;
+
+    eqStr : String a -> String b -> Bool =
+        a == b;
+
+    eqBool : Bool a -> Bool b -> Bool =
+        a == b;
+
+    eqColor : Color a -> Color b -> Bool =
+        a == b;
+
+	neqInt : Int a -> Int b -> Bool =
+        a != b;
+
+    neqStr : String a -> String b -> Bool =
+        a != b;
+
+    neqBool : Bool a -> Bool b -> Bool =
+        a != b;
+
+    neqColor : Color a -> Color b -> Bool =
+        a != b;
+
+
+	## -- Custom operators
+	testCustomOperator : Bool = 
+		true >>= false;
+
+    @InfixLeft(2)
+    bind(>>=) : Bool -> Bool -> Bool = true;
+
+
+	## -- Integer math operators
+    mul : Int a -> Int b -> Int = 
+        a * b;
+
+	pow : Int a -> Int b -> Int = 
+        a ^ b;
+
+    add : Int a -> Int b -> Int = 
+        a + b;
+
+    sub : Int a -> Int b -> Int = 
+        a - b;
+
+
+	## -- Testing the order of operations
+	## -- Don't expect (l2r): 5 - 2 => 3 * 3 => 9 + 4 => 13
+	## -- Don't expect (r2l): 3 + 4 => 2 * 7 => 5 - 14 => -9
+	## -- Expect 3 (5 - 6 => -1 + 4 => 3)
+	ooo : Int = 5 - 2 * 3 + 4; 
+
+
+	## -- Integer math comparators
+	gt : Int a -> Int b -> Bool = 
+		a > b;
+
+	lt : Int a -> Int b -> Bool = 
+		a < b;
+
+	ge : Int a -> Int b -> Bool = 
+		a >= b;
+
+	le : Int a -> Int b -> Bool = 
+		a <= b;
+
+
+	## -- Double operator testing
+	doubleTest : Double = 123.2;
+	doubleAdd : Double a -> Double b -> Double = 
+		a + b;
+
+	doubleSub : Double a -> Double b -> Double = 
+		a - b;
+
+	doubleMul : Double a -> Double b -> Double = 
+		a * b;
+
+	doubleDiv : Double a -> Double b -> Double = 
+		a / b;
+
+	doubleMod : Double a -> Double b -> Double = 
+		a % b;
+
+
+	## -- Pipe testing
+	pipeline : Bool = 
+		true 
+		|> not;
+
+	secondPipeline : Bool = 
+		true 
+		|> not 
+		|> not;
+
+	revPipeline : Bool = 
+		not <| true;
+
+
+    @InfixLeft(1)
+    implies(==>) : Bool a -> Bool b -> Bool =
+		b || not a;
+
+    @InfixLeft(1)
+    implies2(~~>) : Bool a -> Bool b -> Bool =
+		not a || b;
+
+	impliesTest : Bool a -> Bool b -> Bool =
+		a ==> b;
+
+
+	@Equatable
+	@Printable
+	type DoubleType = {
+		Double value;
+        Double value2;
+	}
+
+	mkDoubleType : DoubleType = {
+		value = 20.0;
+		value2 = 3.0;
+	};
+
+	fancyIf : Bool = 
+		if true then false 
+		else true;
+
+    ## ADTs
+    type List<A> = Cons A List<A> | Empty;
+    ## Cons  : A elem -> List<A> list -> List<A>
+    ## Empty : List<A>
+
+    @InfixLeft
+    cons(::)<A> : A elem -> List<A> list -> List<A> =
+        List.Cons elem list;
+
+    map(<$>)<A, B> : List<A> list -> (A -> B) mapper -> List<B> =
+        match list
+        | [] => []
+        | x :: xs => mapper x :: map xs mapper;
 
 }
