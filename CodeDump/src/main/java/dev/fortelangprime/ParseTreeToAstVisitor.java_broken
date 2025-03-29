@@ -1,0 +1,63 @@
+package dev.fortelangprime;
+
+import dev.fortelangprime.ast.*;
+import dev.fortelangprime.parser.ForteLangPrimeBaseVisitor;
+import dev.fortelangprime.parser.ForteLangPrimeParser;
+
+import java.util.*;
+
+public class ParseTreeToAstVisitor extends ForteLangPrimeBaseVisitor<AstNode> {
+
+    @Override
+    public AstNode visitLibrary(ForteLangPrimeParser.LibraryContext ctx) {
+        String name = ctx.IDENTIFIER().getText();
+        List<AstNode> declarations = new ArrayList<>();
+        for (var decl : ctx.declaration()) {
+            declarations.add(visit(decl));
+        }
+        return new LibraryNode(name, declarations);
+    }
+
+    @Override
+    public AstNode visitFunctionDecl(ForteLangPrimeParser.FunctionDeclContext ctx) {
+        String name = ctx.IDENTIFIER().getText();
+        List<String> genericParams = new ArrayList<>();
+        if (ctx.genericTypeParams() != null) {
+            for (var id : ctx.genericTypeParams().typeIdentifier()) {
+                genericParams.add(id.getText());
+            }
+        }
+
+        List<FunctionDeclNode.Param> params = new ArrayList<>();
+        if (ctx.paramList() != null && ctx.paramList().param() != null) {
+            for (var param : ctx.paramList().param()) {
+                String paramName = param.IDENTIFIER().getText();
+                String paramType = param.type().IDENTIFIER().getText();
+                params.add(new FunctionDeclNode.Param(paramName, paramType));
+            }
+        }
+
+        String returnType = ctx.type().IDENTIFIER().getText();
+        ExpressionNode body = (ExpressionNode) visit(ctx.expression());
+
+        return new FunctionDeclNode(name, genericParams, params, returnType, body);
+    }
+
+    @Override
+    public AstNode visitLiteral(ForteLangPrimeParser.LiteralContext ctx) {
+        if (ctx.INT_LITERAL() != null) {
+            return new LiteralNode(Integer.parseInt(ctx.INT_LITERAL().getText()));
+        } else if (ctx.DOUBLE_LITERAL() != null) {
+            return new LiteralNode(Double.parseDouble(ctx.DOUBLE_LITERAL().getText()));
+        } else if (ctx.STRING_LITERAL() != null) {
+            return new LiteralNode(ctx.STRING_LITERAL().getText().replaceAll("\"", ""));
+        } else if (ctx.getText().equals("true")) {
+            return new LiteralNode(true);
+        } else if (ctx.getText().equals("false")) {
+            return new LiteralNode(false);
+        } else if (ctx.getText().equals("???")) {
+            return new LiteralNode(null); // placeholder for panic/undefined
+        }
+        return null;
+    }
+}

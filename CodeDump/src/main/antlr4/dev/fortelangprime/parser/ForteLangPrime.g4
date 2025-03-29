@@ -15,16 +15,21 @@ declaration
     ;
 
 functionDecl
-    : IDENTIFIER genericTypeParams? paramList '->' type '=' expression ';'
-    | IDENTIFIER ':' functionType '=' expression ';'
+    : IDENTIFIER genericDecl paramList? typeArrow? '=' expression ';' // id(<T>) a <T> -> <T> = a;
+    // | IDENTIFIER type '=' expression ';' // justTwo <Int> = 2;
     ;
 
 functionType: type ('->' type)* ;
 
-paramList: (param+)? ;
-param: IDENTIFIER type ;
+typeArrow
+    : '->' type
+    ;
 
-genericTypeParams: '<' typeIdentifier (',' typeIdentifier)* '>' ;
+paramList: param ( '->' param )* ;
+param: IDENTIFIER? type ;
+
+genericDecl: ('(' genericTypeParams ')')? ;
+genericTypeParams: type (',' type)* ;
 
 exportStmt: 'export' ('*' | IDENTIFIER) ';' ;
 importStmt: 'import' STRING_LITERAL 'as' IDENTIFIER ';' ;
@@ -50,7 +55,7 @@ typeExpr
 recordType: '{' recordField+ '}' ;
 recordField: IDENTIFIER type ';' ;
 
-type: '<' IDENTIFIER '>' ;
+type: '<' typeIdentifier '>' ;
 typeIdentifier: IDENTIFIER ;
 
 // -----------------------------
@@ -61,7 +66,7 @@ operatorDecl
     : ('infix' | 'infixl' | 'infixr') INT_LITERAL IDENTIFIER '(' operatorSymbol ')' functionType '=' expression ';'
     ;
 
-operatorSymbol: SYMBOL ;
+operatorSymbol: EQ | NEQ | LTE | GTE | LT | GT | SYMBOL ;
 
 // -----------------------------
 // Expressions (Simplified for now)
@@ -88,19 +93,6 @@ primaryExpression
 postfixExpression
     : recordAccess                            # recordAccessExpr
     ;
-
-// expression
-//     : literal                              # literalExpr
-//     | IDENTIFIER                           # identifierExpr
-//     | functionCall                         # functionCallExpr
-//     | recordLiteral                        # recordLiteralExpr
-//     | recordAccess                         # recordAccessExpr
-//     | recordUpdate                         # recordUpdateExpr
-//     | ifExpr                               # ifExprExpr
-//     | switchExpr                           # switchExprExpr
-//     | guardExpr                            # guardExprExpr
-//     | expression operatorSymbol expression # binaryOperation
-//     ;
 
 functionCall: IDENTIFIER expression+ ;
 
@@ -136,6 +128,15 @@ STRING_LITERAL: '"' (~["\\\n\r])* '"' ;
 INT_LITERAL: [0-9]+ ;
 DOUBLE_LITERAL: [0-9]+ '.' [0-9]+ ;
 
+// Relational Operators
+EQ: '==';
+NEQ: '!=';
+LTE: '<=';
+GTE: '>=';
+LT: '<';
+GT: '>';
+
+// Comments
 COMMENT: '##' ~[\n\r]* -> skip ;
-MULTILINE_COMMENT: '##' .*? '##' -> skip ;
+// MULTILINE_COMMENT: '##' .*? '##' -> skip ;
 WS: [ \t\r\n]+ -> skip ;
