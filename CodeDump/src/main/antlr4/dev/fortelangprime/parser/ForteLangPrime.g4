@@ -63,10 +63,23 @@ typeIdentifier: IDENTIFIER ;
 // -----------------------------
 
 operatorDecl
-    : ('infix' | 'infixl' | 'infixr') INT_LITERAL IDENTIFIER '(' operatorSymbol ')' functionType '=' expression ';'
+    : ('infix' | 'infixl' | 'infixr') INT_LITERAL IDENTIFIER '(' operatorSymbol ')' paramList? typeArrow? '=' expression ';'
     ;
 
-operatorSymbol: EQ | NEQ | LTE | GTE | LT | GT | SYMBOL ;
+operatorSymbol
+    : EQ
+    | NEQ
+    | LTE
+    | GTE
+    | LT
+    | GT
+    | ADD
+    | SUB
+    | MUL
+    | DIV
+    | MOD
+    | POW
+    | SYMBOL ;
 
 // -----------------------------
 // Expressions (Simplified for now)
@@ -122,19 +135,33 @@ literal
 // Lexer rules
 // -----------------------------
 
+
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]* ;
-SYMBOL: (~[a-zA-Z0-9 \t\r\n{}();:=<>"'[\]|])+ ;
+
+// Custom operators, have to be length >= 2
+fragment SYMBOL_CHAR: [!%&*+\-./<>:=?@^|~];
+SYMBOL: SYMBOL_CHAR SYMBOL_CHAR+ ;
+
+// Literals
 STRING_LITERAL: '"' (~["\\\n\r])* '"' ;
 INT_LITERAL: [0-9]+ ;
 DOUBLE_LITERAL: [0-9]+ '.' [0-9]+ ;
 
-// Relational Operators
+// Relational operators
 EQ: '==';
 NEQ: '!=';
 LTE: '<=';
 GTE: '>=';
 LT: '<';
 GT: '>';
+
+// Mathematical operators
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
+POW: '^';
 
 // Comments
 COMMENT: '##' ~[\n\r]* -> skip ;
