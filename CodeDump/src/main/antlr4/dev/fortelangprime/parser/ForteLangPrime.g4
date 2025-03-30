@@ -8,14 +8,17 @@ library: 'Library' IDENTIFIER '{' metadata* '}' '{' declaration* '}' ;
 metadata: (exportStmt | importStmt) ;
 
 declaration
+    : annotation* coreDeclaration
+    ;
+
+coreDeclaration
     : functionDecl
     | typeDecl
     | operatorDecl
-    | annotatedTypeDecl
     ;
 
 functionDecl
-    : IDENTIFIER genericDecl paramList? typeArrow? '=' expression ';' // id(<T>) a <T> -> <T> = a;
+    : IDENTIFIER genericDecl? ':' paramList? typeArrow? '=' expression ';' // id(<T>) a <T> -> <T> = a;
     // | IDENTIFIER type '=' expression ';' // justTwo <Int> = 2;
     ;
 
@@ -26,10 +29,13 @@ typeArrow
     ;
 
 paramList: param ( '->' param )* ;
-param: IDENTIFIER? type ;
+param
+    : type IDENTIFIER? 
+    | '(' functionType ')' IDENTIFIER?
+    ;
 
-genericDecl: ('(' genericTypeParams ')')? ;
-genericTypeParams: type (',' type)* ;
+genericDecl: ('<' genericTypeParams '>') ;
+genericTypeParams: typeIdentifier (',' typeIdentifier)* ;
 
 exportStmt: 'export' ('*' | IDENTIFIER) ';' ;
 importStmt: 'import' STRING_LITERAL 'as' IDENTIFIER ';' ;
@@ -39,23 +45,26 @@ importStmt: 'import' STRING_LITERAL 'as' IDENTIFIER ';' ;
 // -----------------------------
 
 typeDecl
-    : 'type' genericTypeParams? IDENTIFIER '=' typeExpr ('|' '|' typeExpr)* ';'?
+    : 'type' IDENTIFIER genericDecl? '=' typeExpr ('|' typeExpr)* ';'?
     ;
 
-annotatedTypeDecl: annotation+ typeDecl ;
-
-annotation: '@' IDENTIFIER ('(' operatorSymbol ')')? ;
+annotation: '@' IDENTIFIER ('(' literal (',' literal)* ')')? ;
 
 typeExpr
     : recordType
-    | IDENTIFIER
+    | IDENTIFIER typeExpr?
     | IDENTIFIER '<' typeExpr (',' typeExpr)* '>'
     ;
 
 recordType: '{' recordField+ '}' ;
 recordField: IDENTIFIER type ';' ;
 
-type: '<' typeIdentifier '>' ;
+type
+    : typeIdentifier
+    | typeIdentifier genericDecl
+    ;
+
+genericType: '<' typeIdentifier '>';
 typeIdentifier: IDENTIFIER ;
 
 // -----------------------------
@@ -63,7 +72,7 @@ typeIdentifier: IDENTIFIER ;
 // -----------------------------
 
 operatorDecl
-    : ('infix' | 'infixl' | 'infixr') INT_LITERAL IDENTIFIER '(' operatorSymbol ')' paramList? typeArrow? '=' expression ';'
+    : IDENTIFIER '(' operatorSymbol ')' genericDecl? ':' paramList? typeArrow? '=' expression ';'
     ;
 
 operatorSymbol
@@ -100,6 +109,7 @@ primaryExpression
     | ifExpr                                  # ifExprExpr
     | switchExpr                              # switchExprExpr
     | guardExpr                               # guardExprExpr
+    | listExpr                                # listExprExpr
     | '(' expression ')'                      # groupedExpr
     ;
 
@@ -107,7 +117,13 @@ postfixExpression
     : recordAccess                            # recordAccessExpr
     ;
 
-functionCall: IDENTIFIER expression+ ;
+functionCall
+    : callableFunction expression+
+    ;
+
+callableFunction
+    : IDENTIFIER ('.' IDENTIFIER)* // blah, or List.Cons
+    ;
 
 recordLiteral: '{' recordAssignment+ '}' ;
 recordAssignment: IDENTIFIER '=' expression ';' ;
@@ -116,11 +132,13 @@ recordAccess: '.' IDENTIFIER ;
 recordUpdate: '{' IDENTIFIER '|' recordAssignment+ '}' ;
 
 ifExpr: 'if' expression 'then' expression 'else' expression ;
-
-switchExpr: 'switch' expression ('|' pattern '=>' expression)+ ;
+switchExpr: 'match' expression ('|' pattern '=>' expression)+ ;
 guardExpr: '?:' ('|' expression '=>' expression)+ ;
+listExpr: '[' (expression (',' expression)*)? ']' ;
 
-pattern: IDENTIFIER | '[]' | pattern operatorSymbol pattern ;
+pattern
+    : expression
+    ;
 
 literal
     : INT_LITERAL
@@ -139,8 +157,10 @@ literal
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]* ;
 
 // Custom operators, have to be length >= 2
-fragment SYMBOL_CHAR: [!%&*+\-./<>:=?@^|~];
-SYMBOL: SYMBOL_CHAR SYMBOL_CHAR+ ;
+fragment SYMBOL_CHAR: [!%&*+\-./<>:=?$@^|~];
+SYMBOL
+    : SYMBOL_CHAR SYMBOL_CHAR+       { getText() != ">>" && getText() != "<<" }? // Maybe??
+    ;
 
 // Literals
 STRING_LITERAL: '"' (~["\\\n\r])* '"' ;

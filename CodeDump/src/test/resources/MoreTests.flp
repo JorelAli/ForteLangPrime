@@ -83,7 +83,7 @@ Library MoreTests {
 	someOtherOtherBool : Bool = 
 		identity1 someBool;
 
-	and a<Bool> -> b<Bool> -> <Bool> = 
+	and : Bool a -> Bool b -> Bool = 
 		if not a then 
 			false 
 		else 
@@ -226,6 +226,8 @@ Library MoreTests {
     type List<A> = Cons A List<A> | Empty;
     ## Cons  : A elem -> List<A> list -> List<A>
     ## Empty : List<A>
+
+	type Tree<T> = Node<T, Tree<T>, Tree<T>> | Leaf<T>;
 
     @InfixLeft
     cons(::)<A> : A elem -> List<A> list -> List<A> =

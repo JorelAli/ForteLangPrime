@@ -14,7 +14,7 @@ import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String input = Files.readString(Path.of("src/test/resources/sample.flp"));
+        String input = Files.readString(Path.of("src/test/resources/MoreTests.flp"));
         ForteLangPrimeLexer lexer = new ForteLangPrimeLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ForteLangPrimeParser parser = new ForteLangPrimeParser(tokens);
