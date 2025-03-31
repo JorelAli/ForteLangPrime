@@ -64,7 +64,6 @@ type
     | typeIdentifier genericDecl
     ;
 
-genericType: '<' typeIdentifier '>';
 typeIdentifier: IDENTIFIER ;
 
 // -----------------------------
@@ -159,7 +158,7 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]* ;
 // Custom operators, have to be length >= 2
 fragment SYMBOL_CHAR: [!%&*+\-./<>:=?$@^|~];
 SYMBOL
-    : SYMBOL_CHAR SYMBOL_CHAR+       { getText() != ">>" && getText() != "<<" }? // Maybe??
+    : SYMBOL_CHAR SYMBOL_CHAR+       { !getText().equals(">>") && !getText().equals("<<") }?
     ;
 
 // Literals
