@@ -39,6 +39,12 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+		<!-- lsp4j for language server protocol -->
+		<dependency>
+			<groupId>org.eclipse.lsp4j</groupId>
+			<artifactId>org.eclipse.lsp4j</artifactId>
+			<version>0.20.1</version>
+		</dependency>
     </dependencies>
 
     <build>

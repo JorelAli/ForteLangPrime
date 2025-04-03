@@ -14,17 +14,22 @@ import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String input = Files.readString(Path.of("src/test/resources/MoreTests.flp"));
-        ForteLangPrimeLexer lexer = new ForteLangPrimeLexer(CharStreams.fromString(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ForteLangPrimeParser parser = new ForteLangPrimeParser(tokens);
-        ParseTree tree = parser.library();
 
-        // System.out.println("Parse tree:");
-        // TreePrinter.printTree(tree, parser);
+		if (args.length == 1 && args[0].equals("-lsp")) {
 
-        // ParseTreeToAstVisitor visitor = new ParseTreeToAstVisitor();
-        // LibraryNode ast = (LibraryNode) visitor.visit(tree);
-        // System.out.println("Library name: " + ast.name);
+		} else {
+			String input = Files.readString(Path.of("src/test/resources/MoreTests.flp"));
+			ForteLangPrimeLexer lexer = new ForteLangPrimeLexer(CharStreams.fromString(input));
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			ForteLangPrimeParser parser = new ForteLangPrimeParser(tokens);
+			ParseTree tree = parser.library();
+
+			// System.out.println("Parse tree:");
+			// TreePrinter.printTree(tree, parser);
+
+			// ParseTreeToAstVisitor visitor = new ParseTreeToAstVisitor();
+			// LibraryNode ast = (LibraryNode) visitor.visit(tree);
+			// System.out.println("Library name: " + ast.name);
+		}
     }
 }

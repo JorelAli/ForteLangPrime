@@ -14,12 +14,11 @@ Library MoreTests {
         Int blue;
 	}
 
-
 	## -- Basic functions (returning simple parameters)
 	justTwo : Int = 2;
     aString : String = "hello";
     someBool : Bool = true;
-    panicTest : Bool= ???;
+    panicTest : Bool = ???;
 
 	## -- Functions with parameters
     paramFunction : Int -> Int = 2;
