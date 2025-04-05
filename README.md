@@ -95,22 +95,22 @@ Function types can be parameterised by an identifier or not. In this example, we
 
 ```haskell
 ## No parameter name
-functionName <Int> -> <Int> = ## Some expression
+functionName : Int -> Int = ## Some expression
 
 ## With parameter name
-functionName a<Int> -> <Int> = ## Some expression
+functionName : Int a -> Int = ## Some expression
 ```
 
 Generic function declarations have to declare the name of the generic type:
 
 ```haskell
-functionName(<T>) a<T> -> <T> = ## Some expression
+functionName<T> : T a -> T = ## Some expression
 ```
 
 Multiple generic types are separated with commas:
 
 ```haskell
-functionType(<T>, <U>) a<T> -> b<U> -> <Bool> = ## Some expression
+functionType<T, U> : T a -> U b -> Bool = ## Some expression
 ```
 
 ## Record type declarations
@@ -119,7 +119,7 @@ Record types are declared as follows. Note how you _do not_ need a semicolon at 
 
 ```haskell
 type MyRecord = {
-    value<Int>;
+    Int value;
     ## Etc.
 }
 ```
@@ -129,7 +129,8 @@ type MyRecord = {
 Custom operators are declared as follows:
 
 ```haskell
-infix 2 opName (<>) <Bool> -> <Bool> -> <Bool> = ## Some expression
+@Infix(2)
+opName(<>) : Bool -> Bool -> Bool = ## Some expression
 ```
 
 The order of associativity is set by using `infix` (no associativity), `infixl` (left associativity) or `infixr` (right associativity). The number after that is the precendence (higher is more tightly binding). The operator is declared in brackets after the operator's name (which is used when exporting custom operator functions).
@@ -147,12 +148,12 @@ Library LibraryName {
 
     import "someFile.flp" as Blah;
     export addOne; 
-	export identity;
+    export identity;
 
 } {
 
-    addOne i<Num> -> <Num> = i + 1;
-	<T> identity input<T> -> <T> = input;
+    addOne : Num i -> Num = i + 1;
+    itentity<T> : T input -> T = input;
 
 }
 ```
@@ -163,8 +164,8 @@ Library LibraryName {
 >
 > ```haskell
 > Script {} {
->  main input<String> -> <String> =
-> 	  ## Your code here;
+>  main String input -> String =
+>      ## Your code here;
 > }
 > ```
 >
@@ -174,10 +175,10 @@ Library LibraryName {
 >
 > ```haskell
 > Script {
->  export hello
+>     export hello
 > } {
->  hello <String> = "hello";
-> 	bye <String> = "bye";
+>      hello : String = "hello";
+>      bye : String = "bye";
 > }
 > ```
 >
@@ -190,13 +191,13 @@ ForteLang′ will include algebraic data types and support for generics.
 ```haskell
 {
     ## Example of a binary tree using records
-    type <T> Tree<T> = Node<{
-        lhs<Tree<T>>;
-        rhs<Tree<T>>;
-    }> || Leaf<T>;
-    
+    type Tree<T> = Node {
+        Tree<T> lhs;
+        Tree<T> rhs;
+    } | Leaf<T>;
+
     ## Example of a binary tree without using records
-    type <T> Tree<T> = Node<Tree<T>, Tree<T>> || Leaf<T>;
+    type Tree<T> = Node<Tree<T>, Tree<T>> | Leaf<T>;
 }
 ```
 
@@ -209,26 +210,51 @@ For example, say we want to represent RGB colors:
 
 ```haskell
 type Color = {
-    red<Int>;
-    green<Int>;
-    blue<Int>;
+    Int red;
+    Int green;
+    Int blue;
+}
+```
+
+Records can have default values which are declared at their type definition:
+
+```haskell
+type Color = {
+    Int red = 0;
+    Int green = 0;
+    Int blue = 0;
 }
 ```
 
 Records can be constructed:
 
 ```haskell
-getRed <Color> = {
+## Using implicit types (because we resolve the types of properties from its type definition)
+getRed : Color = {
     red = 255;
     green = 0;
     blue = 0;
 };
+
+## Using explicit types (the compiler has to verify these types match its definition, or otherwise)
+getGreen : Color = {
+    Int red = 0;
+    Int green = 255;
+    Int blue = 0;
+}
+
+## Using default values
+getBlue : Color = {
+    ## red and green use the default values from the Color declaration
+    ## If the type declaration doesn't have default values, this would be a compiler error
+    blue = 255;
+}
 ```
 
 and used as a base for other records:
 
 ```haskell
-getYellow <Color> = { getRed | green = 255; }
+getYellow : Color = { getRed | green = 255; }
 ```
 
 ### Anonymous record types
@@ -236,7 +262,7 @@ getYellow <Color> = { getRed | green = 255; }
 Record types _**have**_ to be declared before usage, unlike a language like Elm where you can have "anonymous record types" so to speak. In other words, you **can't** do something like this:
 
 ```haskell
-getComplexNumber <{ re<Int>; im<Int>; }> = {
+getComplexNumber : { Int re; Int im; } = {
     re = 0;
     im = 1;
 }
@@ -244,13 +270,13 @@ getComplexNumber <{ re<Int>; im<Int>; }> = {
 
 ## Pattern matching
 
-Pattern matching is performed using the `switch` operator. `switch expression | case => result | ... | => result`
+Pattern matching is performed using the `match` operator. `match expression | case => result | ... | => result`
 
 For example, to check if a list is empty, we pattern match on the variable `list` (which is of type "List of `a`s"). If the list is `[]` (an empty list), then we return `true`. Otherwise, we return `false`.
 
 ```
-<a> isEmpty list<[<a>]> -> <Bool> =
-  switch list 
+isEmpty<A> : List<A> list -> Bool =
+  match list 
   | [] => true 
   | => false
 ```
@@ -260,7 +286,7 @@ For example, to check if a list is empty, we pattern match on the variable `list
 Guards are used to handle conditional statements, by using the `?:` operator.
 
 ```haskell
-max num1<Num> -> num2<Num> -> <Num> =
+max : Num num1 -> Num num2 -> Num =
   ?: 
   | num1 > num2 => num1
   | => num2
