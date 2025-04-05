@@ -291,3 +291,31 @@ max : Num num1 -> Num num2 -> Num =
   | num1 > num2 => num1
   | => num2
 ```
+
+## Include ... in
+
+Similar to the `let ... in` syntax in Haskell, we have a similar syntax `include ... in`. This uses a block of function declarations and includes it in the scope of the next expression:
+
+```haskell
+calculateBonux : Int x -> Int =
+    include {
+        doubled : Int = x * 2;
+        bonus : Int = 3;
+    } in doubled + bonus;
+```
+
+## Lambdas
+
+Lambdas are wrapped in brackets. Lambdas use the standard type annotation syntax (with no colon), and end with `=>`:
+
+```haskell
+myFunc : (Int -> Int) = (Int x -> Int => x)
+```
+
+## Function types
+
+We support types that are functions/lambdas
+
+```haskell
+mapInt : Int x -> (Int -> Int) applicator -> Int = applicator x
+```
