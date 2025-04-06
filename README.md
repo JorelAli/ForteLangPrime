@@ -274,7 +274,7 @@ Pattern matching is performed using the `match` operator. `match expression | ca
 
 For example, to check if a list is empty, we pattern match on the variable `list` (which is of type "List of `a`s"). If the list is `[]` (an empty list), then we return `true`. Otherwise, we return `false`.
 
-```
+```haskell
 isEmpty<A> : List<A> list -> Bool =
   match list 
   | [] => true 
@@ -304,6 +304,14 @@ calculateBonux : Int x -> Int =
     } in doubled + bonus;
 ```
 
+## Higher-order functions
+
+We support types that are functions/lambdas
+
+```haskell
+mapInt : Int x -> (Int -> Int) applicator -> Int = applicator x
+```
+
 ## Lambdas
 
 Lambdas are wrapped in brackets. Lambdas use the standard type annotation syntax (with no colon), and end with `=>`:
@@ -312,10 +320,20 @@ Lambdas are wrapped in brackets. Lambdas use the standard type annotation syntax
 myFunc : (Int -> Int) = (Int x -> Int => x)
 ```
 
-## Function types
+## Generalized interfaces for generics
 
-We support types that are functions/lambdas
+Interfaces (also known as typeclasses in Haskell or Traits in Rust) are declared using the `interface` keyword:
 
-```haskell
-mapInt : Int x -> (Int -> Int) applicator -> Int = applicator x
+```Haskell
+interface Show<T> {
+    show : T -> String;
+}
+```
+
+Implementations of a typeclass use the `implementation` keywords
+
+```Haskell
+implementation Show<Int> {
+    show : Int a -> String = toString a;
+}
 ```

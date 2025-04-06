@@ -237,4 +237,17 @@ Library MoreTests {
         | [] => []
         | x :: xs => mapper x :: map xs mapper;
 
+    ## Higher order functions and lambdas
+	mapInt : Int x -> (Int -> Int) applicator -> Int = applicator x;
+	lambda : (Int -> Int) = (Int x -> Int => x);
+
+	# Interfaces
+	interface Show<T> {
+		show : T -> String;
+	}
+
+	implementation Show<Int> {
+		show : Int a -> String = toString a;
+	}
+
 }
