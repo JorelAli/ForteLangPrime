@@ -83,6 +83,27 @@ All functions can be exported using the `*` operator. For example:
 export *;
 ```
 
+### Imports
+
+Imports use the `import` keyword and are declared in blocks specifying the types/functions to import from a file, and any aliasing/qualifications. For example:
+
+```haskell
+import "string" {
+    String, string: { toInt, split }
+}
+
+import "list" {
+    List, list: { foldLeft as foldl, map }, isEmpty
+}
+```
+
+This lets you use the following:
+
+- The types `String` and `List`
+- The qualified functions `string.toInt`, `string.split`, `list.map`
+- The aliased function `list.foldl`
+- The unqualified function `isEmpty`
+
 ## Function declarations
 
 Function declarations are of the following formats:
@@ -337,3 +358,68 @@ implementation Show<Int> {
     show : Int a -> String = toString a;
 }
 ```
+
+----
+
+# The runtime system
+
+Because ForteLang′ is a pure programming language, libraries cannot contain impure functions.
+
+Say we have a library `Utils`:
+
+```haskell
+Library Utils {
+
+    import "string" {
+        String, string: { toInt, split }
+    }
+
+    import "list" {
+        List, list: { foldLeft, map }
+    }
+
+    export sumStringLines;
+
+} {
+
+    splitLines : String input -> List<String> =
+        string.split "\n" input;
+
+    parseInt : String s -> Int =
+        string.toInt s;
+
+    sum : List<Int> numbers -> Int =
+        list.foldLeft numbers 0 (Int acc -> Int n => acc + n);
+
+    ## Takes a string containing lines of numbers, 
+    sumStringLines : String contents -> Int =
+        contents
+        |> splitLines
+        |> list.map parseInt
+        |> sum;
+
+}
+```
+
+We can declare a runnable file using the `Runtime` keyword:
+
+```haskell
+Runtime SumNumbers {
+
+    import "MathUtils.flp" { sumStringLines }
+    import "files" { #readFile }
+    import "print" { #print }
+    import "string" { string: fromInt }
+
+} {
+
+    main : Unit =
+        include {
+          contents : String = #readFile "numbers.txt";
+          total : Int = sumStringLines contents;
+        } in #print ("Sum: " + string.fromInt total);
+
+}
+```
+
+Impure functions are prefixed with a `#`, such as `#readFile` or `#print`
